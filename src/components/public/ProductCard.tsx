@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { Tag, ShieldCheck, CheckCircle2, AlertTriangle, ArrowRight, MessageSquare } from 'lucide-react';
