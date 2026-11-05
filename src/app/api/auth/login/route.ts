@@ -9,13 +9,20 @@ export async function POST(req: NextRequest) {
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: 'Email and password are required.' },
+        { error: 'Username or email and password are required.' },
         { status: 400 }
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
+    const identifier = email.toLowerCase().trim();
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { email: `${identifier}@krishnaelectronics.com.np` },
+          { email: identifier.replace(/@.*$/, '') },
+        ],
+      },
     });
 
     if (!user || !user.isActive) {

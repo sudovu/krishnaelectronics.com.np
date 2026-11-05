@@ -7,8 +7,8 @@ import type { Metadata } from 'next';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'About Krishna Electronics & Order Suppliers | Surkhet, Nepal',
-  description: 'Learn about Krishna Electronics & Order Suppliers in Birendranagar-6, Buddhapath, Surkhet. Our mission, technical laboratory, authorized equipment, and commitment to Karnali Province.',
+  title: 'About Krishna Electronics Order & Suppliers | Surkhet, Nepal',
+  description: 'Learn about Krishna Electronics Order & Suppliers in Birendranagar-12, Surkhet. Our mission, technical laboratory, authorized equipment, and commitment to Karnali Province.',
 };
 
 export default async function AboutPage() {
@@ -16,7 +16,7 @@ export default async function AboutPage() {
     where: { id: 'site-settings' },
   }).catch(() => null);
 
-  const location = settings?.locationAddress || 'Birendranagar-6, Buddhapath, Surkhet, Nepal';
+  const location = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 space-y-16">
@@ -29,11 +29,11 @@ export default async function AboutPage() {
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
-            Krishna Electronics &amp; Order Suppliers
+            Krishna Electronics Order &amp; Suppliers
           </h1>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Headquartered at Buddhapath, Birendranagar-6, Surkhet, we are dedicated to bridging the technological divide in Western Nepal through genuine computing hardware, enterprise network infrastructure, intelligent IoT devices, and specialized chip-level electronics repair.
+            Headquartered in Birendranagar-12, Surkhet, we are dedicated to bridging the technological divide in Western Nepal through genuine computing hardware, enterprise network infrastructure, intelligent IoT devices, and specialized chip-level electronics repair.
           </p>
         </div>
       </div>
@@ -75,10 +75,10 @@ export default async function AboutPage() {
       <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-10 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-7 space-y-4">
           <h2 className="text-2xl font-extrabold text-navy-900">
-            Our Physical Facility in Buddhapath
+            Our Physical Facility in Birendranagar-12
           </h2>
           <p className="text-sm text-slate-600 leading-relaxed">
-            Located conveniently on Buddhapath in Birendranagar-6, our center features a customer demonstration zone where clients can test Wi-Fi 6 mesh routers, view live CCTV night-vision clarity, and see smart IoT automation switches in action before purchase.
+            Located conveniently in Birendranagar-12, Surkhet, our center features a customer demonstration zone where clients can test Wi-Fi 6 mesh routers, view live CCTV night-vision clarity, and see smart IoT automation switches in action before purchase.
           </p>
           <div className="space-y-2 pt-2 text-xs text-slate-700">
             <div className="flex items-center gap-2">

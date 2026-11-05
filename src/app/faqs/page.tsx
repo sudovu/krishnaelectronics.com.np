@@ -69,7 +69,7 @@ export default async function FAQsPage() {
       <div className="bg-navy-950 text-white rounded-2xl p-8 text-center border border-navy-800 space-y-4">
         <h3 className="text-xl font-bold">Have a specific question not covered here?</h3>
         <p className="text-xs text-slate-300 max-w-md mx-auto">
-          Our technical team in Buddhapath is ready to help you with personalized device guidance, network topologies, or price quotations.
+          Our technical team in Birendranagar-12 is ready to help you with personalized device guidance, network topologies, or price quotations.
         </p>
         <div className="pt-2 flex justify-center gap-3">
           <Link

@@ -94,8 +94,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Mobile Top Header */}
       <div className="md:hidden bg-navy-950 text-white p-4 flex items-center justify-between border-b border-navy-800">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white">
-            <Cpu className="w-5 h-5 text-cyan-accent" />
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-white p-0.5 border border-brand-500 shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/logo.jpg" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <span className="font-bold text-sm tracking-tight truncate max-w-[200px]">{siteName}</span>
         </div>
@@ -116,9 +117,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       >
         <div>
           {/* Logo Brand Header */}
-          <div className="p-6 border-b border-navy-800 hidden md:flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-navy-800 flex items-center justify-center text-white shadow-md">
-              <Cpu className="w-5 h-5 text-cyan-accent" />
+          <div className="p-5 border-b border-navy-800 hidden md:flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-white p-0.5 border border-brand-500 shadow-md shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/logo.jpg" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="font-extrabold text-xs text-white tracking-tight truncate max-w-[150px]" title={siteName}>

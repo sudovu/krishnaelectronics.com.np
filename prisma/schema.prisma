@@ -41,13 +41,14 @@ model AuditLog {
 
 model Setting {
   id                  String   @id @default("site-settings")
-  siteName            String   @default("Krishna Electronics & Order Suppliers")
+  siteName            String   @default("Krishna Electronics Order & Suppliers")
+  logoUrl             String   @default("/images/logo.jpg")
   siteTagline         String   @default("Premium Electronics, IoT & Professional IT Services in Surkhet")
-  siteDescription     String   @default("Sales, IoT smart home solutions, enterprise networking, CCTV surveillance, chip-level laptop & computer repair, and Annual Maintenance Contracts (AMC) in Birendranagar, Surkhet.")
+  siteDescription     String   @default("Sales, IoT smart home solutions, enterprise networking, CCTV surveillance, chip-level laptop & computer repair, and Annual Maintenance Contracts (AMC) in Birendranagar-12, Surkhet.")
   contactPhone        String   @default("") // Editable from admin - do not invent
   contactEmail        String   @default("") // Editable from admin - do not invent
   contactWhatsapp     String   @default("") // Editable from admin - do not invent
-  locationAddress     String   @default("Birendranagar-6, Buddhapath, Surkhet, Nepal")
+  locationAddress     String   @default("Birendranagar-12, Surkhet, Nepal")
   businessHours       String   @default("Sun - Fri: 9:30 AM - 6:30 PM | Saturday: Closed (On-call emergency services available)")
   googleMapsEmbedUrl  String   @default("")
   socialFacebook      String   @default("")
@@ -60,7 +61,7 @@ model Setting {
   currencySymbol      String   @default("रु")
   taxRatePercent      Float    @default(13.0)
   maintenanceMode     Boolean  @default(false)
-  metaTitle           String   @default("Krishna Electronics & Order Suppliers | Surkhet, Nepal")
+  metaTitle           String   @default("Krishna Electronics Order & Suppliers | Surkhet, Nepal")
   metaDescription     String   @default("Trusted electronics store & technology service center in Surkhet. Laptops, networking, IoT, CCTV, chip-level repairs, and IT maintenance.")
   ogImageUrl          String?
   updatedAt           DateTime @updatedAt

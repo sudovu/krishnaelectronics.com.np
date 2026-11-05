@@ -18,20 +18,22 @@ async function main() {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   console.log(`[Platform Seeder] Loaded manifest: ${manifest.identity.name} (v${manifest.manifestVersion})`);
 
-  // 1. Initial Admin User
-  const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'admin@krishnaelectronics.com.np';
-  const rawPassword = process.env.INITIAL_ADMIN_PASSWORD || 'AdminSecurePassword123!';
+  // 1. Initial Admin User (Supports 'adminbikram' & 'adminbikram@krishnaelectronics.com.np')
+  const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'adminbikram@krishnaelectronics.com.np';
+  const rawPassword = process.env.INITIAL_ADMIN_PASSWORD || 'Bikram@221$#@!';
   const passwordHash = await bcrypt.hash(rawPassword, 10);
 
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
     update: {
-      name: `${manifest.identity.name} Administrator`,
+      name: `Bikram - ${manifest.identity.name} Administrator`,
       role: 'SUPER_ADMIN',
+      passwordHash: passwordHash,
+      isActive: true,
     },
     create: {
       email: adminEmail,
-      name: `${manifest.identity.name} Administrator`,
+      name: `Bikram - ${manifest.identity.name} Administrator`,
       passwordHash: passwordHash,
       role: 'SUPER_ADMIN',
       isActive: true,
@@ -39,14 +41,46 @@ async function main() {
   });
   console.log(`✓ Admin user upserted: ${admin.email}`);
 
+  // Also support bare username 'adminbikram'
+  await prisma.user.upsert({
+    where: { email: 'adminbikram' },
+    update: {
+      name: `Bikram (Super Admin)`,
+      role: 'SUPER_ADMIN',
+      passwordHash: passwordHash,
+      isActive: true,
+    },
+    create: {
+      email: 'adminbikram',
+      name: `Bikram (Super Admin)`,
+      passwordHash: passwordHash,
+      role: 'SUPER_ADMIN',
+      isActive: true,
+    },
+  });
+
+  // Also update previous admin if existing
+  try {
+    await prisma.user.updateMany({
+      where: { email: 'admin@krishnaelectronics.com.np' },
+      data: { passwordHash: passwordHash },
+    });
+  } catch (_) {}
+
   // 2. Business Settings from Manifest
   const fullAddress = `${manifest.identity.location.address}, ${manifest.identity.location.city}, ${manifest.identity.location.country}`;
   await prisma.setting.upsert({
     where: { id: 'site-settings' },
-    update: {},
+    update: {
+      siteName: manifest.identity.name,
+      locationAddress: fullAddress,
+      logoUrl: manifest.identity.logoUrl || '/images/logo.jpg',
+      siteDescription: manifest.identity.description,
+    },
     create: {
       id: 'site-settings',
       siteName: manifest.identity.name,
+      logoUrl: manifest.identity.logoUrl || '/images/logo.jpg',
       siteTagline: manifest.identity.tagline,
       siteDescription: manifest.identity.description,
       contactPhone: manifest.identity.contact.phoneDefault,

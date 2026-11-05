@@ -99,7 +99,7 @@ export default async function HomePage() {
     }
   };
 
-  const businessLocation = settings?.locationAddress || 'Birendranagar-6, Buddhapath, Surkhet, Nepal';
+  const businessLocation = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
   const businessHours = settings?.businessHours || 'Sun - Fri: 9:30 AM - 6:30 PM | Saturday: Closed (On-call emergency services)';
 
   return (
@@ -352,9 +352,9 @@ export default async function HomePage() {
               <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                 <MapPin className="w-5 h-5 text-brand-500" />
               </div>
-              <h4 className="font-bold text-sm text-navy-900">Central Surkhet Location</h4>
+              <h4 className="font-bold text-sm text-navy-900">Surkhet Facility Location</h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Walk into our physical facility at Buddhapath, Birendranagar-6 for direct consultation, live testing, and handover.
+                Walk into our physical facility in Birendranagar-12, Surkhet for direct consultation, live testing, and handover.
               </p>
             </div>
           </div>
@@ -391,7 +391,7 @@ export default async function HomePage() {
                 <span>Visit Our Surkhet Facility</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                Krishna Electronics &amp; Order Suppliers
+                Krishna Electronics Order &amp; Suppliers
               </h3>
               <p className="text-sm text-slate-300 leading-relaxed">
                 Whether you need a quick laptop diagnostic, a custom CCTV quote for your property, or bulk office IT equipment, our doors are open in the heart of Birendranagar.

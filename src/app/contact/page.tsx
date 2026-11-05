@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Contact Us & Store Location | Krishna Electronics Surkhet',
-  description: 'Visit Krishna Electronics & Order Suppliers at Birendranagar-6, Buddhapath, Surkhet. Send an inquiry, book a diagnostic, or request a commercial quote.',
+  description: 'Visit Krishna Electronics Order & Suppliers at Birendranagar-12, Surkhet. Send an inquiry, book a diagnostic, or request a commercial quote.',
 };
 
 interface ContactPageProps {
@@ -25,7 +25,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     where: { id: 'site-settings' },
   }).catch(() => null);
 
-  const address = settings?.locationAddress || 'Birendranagar-6, Buddhapath, Surkhet, Nepal';
+  const address = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
   const hours = settings?.businessHours || 'Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency services available)';
   const phone = settings?.contactPhone || '';
   const email = settings?.contactEmail || '';
@@ -49,11 +49,11 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            Contact Krishna Electronics &amp; Order Suppliers
+            Contact Krishna Electronics Order &amp; Suppliers
           </h1>
 
           <p className="text-slate-300 text-sm leading-relaxed">
-            Have questions about equipment availability, computer motherboard diagnostics, or corporate structured cabling? We welcome visits to our Buddhapath store and respond promptly to all online inquiries.
+            Have questions about equipment availability, computer motherboard diagnostics, or corporate structured cabling? We welcome visits to our Birendranagar-12 store and respond promptly to all online inquiries.
           </p>
         </div>
       </div>
@@ -162,7 +162,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               </div>
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-brand-500" />
-                <span>Valley deliveries dispatched daily from Buddhapath</span>
+                <span>Valley deliveries dispatched daily from Birendranagar-12</span>
               </div>
             </div>
           </div>
@@ -185,9 +185,9 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             ) : (
               <div className="h-60 bg-slate-100 flex flex-col items-center justify-center p-6 text-center text-xs text-slate-500">
                 <MapPin className="w-8 h-8 text-brand-500 mb-2" />
-                <div className="font-bold text-navy-900 text-sm">Birendranagar-6, Buddhapath, Surkhet</div>
+                <div className="font-bold text-navy-900 text-sm">Birendranagar-12, Surkhet, Nepal</div>
                 <p className="text-slate-400 mt-1">
-                  Near central Buddhapath market area. Google Maps embed URL can be configured from the Admin Panel settings.
+                  Near Birendranagar-12 center. Google Maps embed URL can be configured from the Admin Panel settings.
                 </p>
               </div>
             )}

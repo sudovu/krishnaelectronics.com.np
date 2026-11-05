@@ -32,6 +32,7 @@ async function runTests() {
   assert(settings?.currencyCode === 'NPR', 'Default currency is NPR');
   assert(settings?.currencySymbol === 'रु', 'Default currency symbol is रु');
   assert(settings?.locationAddress.includes('Surkhet'), 'Store address correctly points to Surkhet, Nepal');
+  assert(settings?.siteName.includes('Order & Suppliers'), 'Store name is Krishna Electronics Order & Suppliers');
 
   // Test 2: Category & Brand Seeding
   console.log('\n[2/7] Verifying Catalog Taxonomy & Brands...');
@@ -66,11 +67,19 @@ async function runTests() {
 
   // Test 5: Authentication & Security Controls
   console.log('\n[5/7] Verifying Admin Authentication & Security...');
-  const admin = await prisma.user.findUnique({ where: { email: 'admin@krishnaelectronics.com.np' } });
+  const admin = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { email: 'adminbikram@krishnaelectronics.com.np' },
+        { email: 'adminbikram' },
+        { email: 'admin@krishnaelectronics.com.np' },
+      ],
+    },
+  });
   assert(admin !== null, 'Super-admin account exists');
   assert(admin?.role === 'SUPER_ADMIN', 'Owner account has SUPER_ADMIN role');
 
-  const passwordValid = await bcrypt.compare('AdminSecurePassword123!', admin?.passwordHash || '');
+  const passwordValid = await bcrypt.compare('Bikram@221$#@!', admin?.passwordHash || '');
   assert(passwordValid, 'Admin password hash verified using bcrypt');
 
   // JWT Token Signing & Verification
@@ -99,7 +108,7 @@ async function runTests() {
 
   const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
   assert(manifest.tenantId === 'krishna-electronics', 'Manifest carries unique tenantId');
-  assert(manifest.identity.name === 'Krishna Electronics & Order Suppliers', 'Business identity isolated in manifest');
+  assert(manifest.identity.name === 'Krishna Electronics Order & Suppliers', 'Business identity isolated in manifest');
   assert(manifest.identity.currency.code === 'NPR', 'Manifest defines currency NPR');
   assert(manifest.services.length === 7, 'All 7 service definitions isolated in business manifest');
   assert(manifest.categories.length === 6, 'All 6 category definitions isolated in business manifest');

@@ -20,7 +20,7 @@ interface FooterProps {
 
 export default function Footer({ settings }: FooterProps) {
   const currentYear = new Date().getFullYear();
-  const address = settings?.locationAddress || 'Birendranagar-6, Buddhapath, Surkhet, Nepal';
+  const address = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
   const hours = settings?.businessHours || 'Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency service available)';
   const phone = settings?.contactPhone || '';
   const email = settings?.contactEmail || '';
@@ -81,15 +81,20 @@ export default function Footer({ settings }: FooterProps) {
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-500 to-navy-800 flex items-center justify-center text-white shadow-md">
-                <Cpu className="w-5 h-5 text-cyan-accent" />
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-white p-0.5 border-2 border-brand-500 shadow-md shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/logo.jpg"
+                  alt="Krishna Electronics Order & Suppliers Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <div className="font-bold text-base text-white tracking-wide">
                   KRISHNA ELECTRONICS
                 </div>
                 <div className="text-xs text-cyan-accent font-medium">
-                  &amp; Order Suppliers &bull; Surkhet, Nepal
+                  Order &amp; Suppliers &bull; Surkhet, Nepal
                 </div>
               </div>
             </div>
@@ -287,7 +292,7 @@ export default function Footer({ settings }: FooterProps) {
       <div className="bg-navy-950 py-4 px-4 border-t border-navy-900 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <p>
-            &copy; {currentYear} Krishna Electronics &amp; Order Suppliers. All rights reserved. Birendranagar-6, Buddhapath, Surkhet, Nepal.
+            &copy; {currentYear} Krishna Electronics Order &amp; Suppliers. All rights reserved. Birendranagar-12, Surkhet, Nepal.
           </p>
           <p className="flex items-center gap-1 text-[11px]">
             <span>Official Domain:</span>

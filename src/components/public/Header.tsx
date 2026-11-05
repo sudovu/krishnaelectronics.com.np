@@ -38,7 +38,7 @@ export default function Header({ settings }: HeaderProps) {
     }
   };
 
-  const businessLocation = settings?.locationAddress || 'Birendranagar-6, Buddhapath, Surkhet, Nepal';
+  const businessLocation = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
   const businessHours = settings?.businessHours || 'Sun - Fri: 9:30 AM - 6:30 PM';
   const phone = settings?.contactPhone || '';
   const whatsapp = settings?.contactWhatsapp || '';
@@ -94,15 +94,20 @@ export default function Header({ settings }: HeaderProps) {
         <div className="flex items-center justify-between gap-4">
           {/* Logo & Brand Identity */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-gradient-to-br from-brand-600 via-brand-500 to-navy-900 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
-              <Cpu className="w-6 h-6 text-cyan-accent" />
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-brand-500 shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform bg-white p-0.5 flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/logo.jpg"
+                alt="Krishna Electronics Order & Suppliers Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
             <div>
               <div className="font-extrabold text-lg sm:text-xl text-navy-900 tracking-tight leading-tight group-hover:text-brand-600 transition">
                 KRISHNA <span className="text-brand-500">ELECTRONICS</span>
               </div>
               <p className="text-[11px] font-medium text-slate-700 tracking-wider uppercase">
-                &amp; Order Suppliers &bull; Surkhet
+                Order &amp; Suppliers &bull; Surkhet
               </p>
             </div>
           </Link>

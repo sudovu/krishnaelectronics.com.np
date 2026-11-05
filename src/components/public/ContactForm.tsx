@@ -60,7 +60,7 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
         <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
         <h3 className="font-bold text-lg text-emerald-900">Inquiry Sent Successfully!</h3>
         <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-          Thank you for reaching out to Krishna Electronics &amp; Order Suppliers. Your message has been logged in our system. A technician or sales representative will contact you via your preferred channel.
+          Thank you for reaching out to Krishna Electronics Order &amp; Suppliers. Your message has been logged in our system. A technician or sales representative will contact you via your preferred channel.
         </p>
         <button
           onClick={() => {
@@ -145,7 +145,7 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
             type="text"
             value={formData.customerAddress}
             onChange={(e) => setFormData({ ...formData, customerAddress: e.target.value })}
-            placeholder="e.g. Birendranagar-6, Surkhet"
+            placeholder="e.g. Birendranagar-12, Surkhet"
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
           />
         </div>

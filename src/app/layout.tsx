@@ -45,7 +45,7 @@ export default async function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'ElectronicsStore',
     name: profile.siteName,
-    image: 'https://krishnaelectronics.com.np/logo.png',
+    image: 'https://krishnaelectronics.com.np/logo.jpg',
     '@id': 'https://krishnaelectronics.com.np',
     url: 'https://krishnaelectronics.com.np',
     priceRange: profile.currencyCode,

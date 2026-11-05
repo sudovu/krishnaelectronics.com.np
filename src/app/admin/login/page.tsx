@@ -42,15 +42,19 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full space-y-8 bg-navy-900 border border-navy-800 p-8 rounded-2xl shadow-2xl">
         {/* Brand Header */}
         <div className="text-center space-y-3">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand-500 to-navy-800 text-white flex items-center justify-center mx-auto shadow-lg shadow-brand-500/20">
-            <Cpu className="w-8 h-8 text-cyan-accent" />
+          <div className="w-16 h-16 rounded-full overflow-hidden bg-white p-1 mx-auto shadow-lg shadow-brand-500/20 border-2 border-brand-500">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/logo.jpg" alt="Krishna Electronics Order & Suppliers Logo" className="w-full h-full object-contain" />
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-white tracking-tight">
-              Krishna Electronics Admin CMS
+              Krishna Electronics Order & Suppliers
             </h1>
+            <p className="text-xs text-brand-300 font-medium">
+              Admin CMS & Publishing Control Center
+            </p>
             <p className="text-xs text-slate-400 mt-1">
-              Birendranagar-6, Buddhapath, Surkhet, Nepal
+              Birendranagar-12, Surkhet, Nepal
             </p>
           </div>
         </div>
@@ -65,15 +69,15 @@ export default function AdminLoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
             <label className="block text-slate-300 font-semibold mb-1.5">
-              Admin Email Address
+              Admin Username or Email
             </label>
             <div className="relative">
               <input
-                type="email"
+                type="text"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@krishnaelectronics.com.np"
+                placeholder="adminbikram or adminbikram@krishnaelectronics.com.np"
                 className="w-full pl-9 pr-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-white placeholder-slate-500 focus:border-brand-500 outline-none"
               />
               <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-500" />

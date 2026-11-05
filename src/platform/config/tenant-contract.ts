@@ -8,6 +8,7 @@
 
 export interface BusinessIdentity {
   name: string;
+  logoUrl?: string;
   tagline: string;
   description: string;
   websiteUrl: string;

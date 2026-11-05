@@ -2,12 +2,13 @@
   "manifestVersion": "1.0.0",
   "tenantId": "krishna-electronics",
   "identity": {
-    "name": "Krishna Electronics & Order Suppliers",
+    "name": "Krishna Electronics Order & Suppliers",
+    "logoUrl": "/images/logo.jpg",
     "tagline": "Premium Electronics, IoT Solutions & Professional Technical Services in Surkhet",
-    "description": "Leading electronics sales, IoT smart home solutions, enterprise networking, CCTV surveillance, chip-level laptop & computer repair, and Annual Maintenance Contracts (AMC) in Birendranagar, Surkhet, Nepal.",
+    "description": "Leading electronics sales, IoT smart home solutions, enterprise networking, CCTV surveillance, chip-level laptop & computer repair, and Annual Maintenance Contracts (AMC) in Birendranagar-12, Surkhet, Nepal.",
     "websiteUrl": "https://krishnaelectronics.com.np",
     "location": {
-      "address": "Birendranagar-6, Buddhapath",
+      "address": "Birendranagar-12",
       "city": "Surkhet",
       "province": "Karnali Province",
       "country": "Nepal",
