@@ -5,7 +5,7 @@
   "description": "Enterprise Electronics Retail & Services Web Platform for Krishna Electronics & Order Suppliers, Surkhet, Nepal",
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/prepare-db.js && prisma generate && prisma db push && node prisma/seed.js && next build && node scripts/postbuild.js",
+    "build": "node scripts/prepare-db.js && prisma generate && node scripts/deploy-db.js && next build && node scripts/postbuild.js",
     "start": "node .next/standalone/server.js",
     "lint": "next lint",
     "prisma:generate": "node scripts/prepare-db.js && prisma generate",
