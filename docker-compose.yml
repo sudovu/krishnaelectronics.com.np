@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: krishna_electronics_web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/prisma/prod.db
+      - JWT_SECRET=${JWT_SECRET:-krishna-electronics-secure-production-key-2026}
+      - NEXT_PUBLIC_APP_URL=https://krishnaelectronics.com.np
+      - NEXT_PUBLIC_SITE_NAME=Krishna Electronics & Order Suppliers
+      - NEXT_PUBLIC_DEFAULT_CURRENCY=NPR
+      - NEXT_PUBLIC_CURRENCY_SYMBOL=रु
+      - NEXT_PUBLIC_BUSINESS_LOCATION=Birendranagar-6, Buddhapath, Surkhet, Nepal
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      - krishna_db_data:/app/prisma
+      - krishna_uploads_data:/app/public/uploads
+    networks:
+      - krishna_network
+
+  proxy:
+    image: caddy:2-alpine
+    container_name: krishna_electronics_caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    networks:
+      - krishna_network
+
+volumes:
+  krishna_db_data:
+    driver: local
+  krishna_uploads_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+
+networks:
+  krishna_network:
+    driver: bridge

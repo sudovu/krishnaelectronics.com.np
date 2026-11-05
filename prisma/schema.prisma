@@ -1,0 +1,259 @@
+// Prisma Schema for Krishna Electronics & Order Suppliers Platform
+// Database Provider: SQLite for simple zero-friction setup, swappable to PostgreSQL via environment config in Docker
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  role         String     @default("ADMIN") // SUPER_ADMIN, ADMIN, EDITOR, PRODUCT_MANAGER, CONTENT_MANAGER
+  avatarUrl    String?
+  isActive     Boolean    @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
+  posts        BlogPost[]
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  userName  String?
+  action    String   // e.g. "CREATE_PRODUCT", "APPROVE_BANNER", "UPDATE_SETTINGS"
+  entity    String   // e.g. "Product", "Banner", "Setting"
+  entityId  String?
+  details   String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Setting {
+  id                  String   @id @default("site-settings")
+  siteName            String   @default("Krishna Electronics & Order Suppliers")
+  siteTagline         String   @default("Premium Electronics, IoT & Professional IT Services in Surkhet")
+  siteDescription     String   @default("Sales, IoT smart home solutions, enterprise networking, CCTV surveillance, chip-level laptop & computer repair, and Annual Maintenance Contracts (AMC) in Birendranagar, Surkhet.")
+  contactPhone        String   @default("") // Editable from admin - do not invent
+  contactEmail        String   @default("") // Editable from admin - do not invent
+  contactWhatsapp     String   @default("") // Editable from admin - do not invent
+  locationAddress     String   @default("Birendranagar-6, Buddhapath, Surkhet, Nepal")
+  businessHours       String   @default("Sun - Fri: 9:30 AM - 6:30 PM | Saturday: Closed (On-call emergency services available)")
+  googleMapsEmbedUrl  String   @default("")
+  socialFacebook      String   @default("")
+  socialInstagram     String   @default("")
+  socialLinkedin      String   @default("")
+  socialYoutube       String   @default("")
+  deliveryInfo        String   @default("Fast local delivery across Surkhet Valley and dispatch across Karnali Province.")
+  paymentMethods      String   @default("Cash on Delivery, Bank Transfer, Fonepay / QR, eSewa, Khalti")
+  currencyCode        String   @default("NPR")
+  currencySymbol      String   @default("रु")
+  taxRatePercent      Float    @default(13.0)
+  maintenanceMode     Boolean  @default(false)
+  metaTitle           String   @default("Krishna Electronics & Order Suppliers | Surkhet, Nepal")
+  metaDescription     String   @default("Trusted electronics store & technology service center in Surkhet. Laptops, networking, IoT, CCTV, chip-level repairs, and IT maintenance.")
+  ogImageUrl          String?
+  updatedAt           DateTime @updatedAt
+}
+
+model Category {
+  id            String        @id @default(cuid())
+  name          String
+  slug          String        @unique
+  description   String?
+  imageUrl      String?
+  icon          String?
+  orderIndex    Int           @default(0)
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  subcategories Subcategory[]
+  products      Product[]
+}
+
+model Subcategory {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  categoryId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products    Product[]
+}
+
+model Brand {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  logoUrl     String?
+  description String?
+  websiteUrl  String?
+  isPopular   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+
+model Product {
+  id             String       @id @default(cuid())
+  title          String
+  slug           String       @unique
+  sku            String       @unique
+  categoryId     String
+  subcategoryId  String?
+  brandId        String?
+  
+  regularPrice   Float
+  offerPrice     Float?
+  discountPercent Int?
+  currency       String       @default("NPR")
+  
+  stockQuantity  Int          @default(0)
+  stockStatus    String       @default("IN_STOCK") // IN_STOCK, LOW_STOCK, OUT_OF_STOCK
+  
+  shortDescription String
+  fullDescription  String
+  specifications   String     @default("[]") // JSON string of [{ "name": "Key", "value": "Val" }]
+  warranty         String?    // e.g. "1 Year Official Brand Warranty"
+  
+  isFeatured     Boolean      @default(false)
+  isPopular      Boolean      @default(false)
+  isNewArrival   Boolean      @default(false)
+  isDeal         Boolean      @default(false)
+  
+  primaryImage   String
+  gallery        String       @default("[]") // JSON array of image URLs
+  
+  status         String       @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  viewsCount     Int          @default(0)
+  
+  publishedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  category       Category     @relation(fields: [categoryId], references: [id])
+  subcategory    Subcategory? @relation(fields: [subcategoryId], references: [id])
+  brand          Brand?       @relation(fields: [brandId], references: [id])
+}
+
+model Service {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  icon             String   // Lucide icon name or SVG representation
+  shortDescription String
+  fullDescription  String
+  features         String   @default("[]") // JSON array of bullet points
+  pricingNote      String   @default("Contact for free diagnosis & estimate")
+  startingPrice    Float?
+  isFeatured       Boolean  @default(true)
+  isActive         Boolean  @default(true)
+  orderIndex       Int      @default(0)
+  imageUrl         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Banner {
+  id                String    @id @default(cuid())
+  title             String
+  subtitle          String?
+  badgeText         String?
+  ctaText           String?   @default("Learn More")
+  ctaLink           String?   @default("/products")
+  position          String    @default("HERO_SLIDER") // HERO_SLIDER, PROMO_GRID, OFFER_BANNER, SIDEBAR
+  imageUrl          String
+  mobileImageUrl    String?
+  bgGradientOrColor String?   @default("from-navy-900 via-navy-800 to-brand-900")
+  
+  discountPercent   Int?
+  couponCode        String?
+  startDate         DateTime?
+  endDate           DateTime?
+  
+  isAiGenerated     Boolean   @default(false)
+  aiPrompt          String?
+  aiStyle           String?
+  isApproved        Boolean   @default(false)
+  approvedBy        String?
+  approvedAt        DateTime?
+  
+  status            String    @default("DRAFT") // DRAFT, PUBLISHED, ARCHIVED
+  orderIndex        Int       @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Inquiry {
+  id               String   @id @default(cuid())
+  customerName     String
+  customerPhone    String
+  customerEmail    String?
+  customerAddress  String?
+  type             String   @default("GENERAL_INQUIRY") // PRODUCT_INQUIRY, SERVICE_REQUEST, AMC_REQUEST, DIRECT_ORDER, GENERAL_INQUIRY
+  subject          String
+  message          String
+  productId        String?
+  serviceId        String?
+  preferredContact String   @default("PHONE") // PHONE, WHATSAPP, EMAIL
+  status           String   @default("NEW") // NEW, CONTACTED, IN_PROGRESS, RESOLVED, CANCELLED
+  adminNotes       String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String
+  content     String
+  coverImage  String?
+  tags        String    @default("[]") // JSON string array
+  category    String    @default("General")
+  authorId    String?
+  status      String    @default("DRAFT") // DRAFT, PUBLISHED
+  viewsCount  Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  author      User?     @relation(fields: [authorId], references: [id], onDelete: SetNull)
+}
+
+model FAQ {
+  id         String   @id @default(cuid())
+  question   String
+  answer     String
+  category   String   @default("General")
+  orderIndex Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Testimonial {
+  id                    String   @id @default(cuid())
+  customerName          String
+  customerRoleOrCompany String?
+  content               String
+  rating                Int      @default(5)
+  isVerified            Boolean  @default(false)
+  isPublished           Boolean  @default(false) // Only published when verified
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

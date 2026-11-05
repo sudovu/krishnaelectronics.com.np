@@ -1,0 +1,147 @@
+export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'EDITOR' | 'PRODUCT_MANAGER' | 'CONTENT_MANAGER';
+
+export interface AdminSessionUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatarUrl?: string | null;
+}
+
+export interface SpecificationItem {
+  name: string;
+  value: string;
+}
+
+export type ProductStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+export type StockStatus = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK';
+
+export interface ProductData {
+  id: string;
+  title: string;
+  slug: string;
+  sku: string;
+  categoryId: string;
+  subcategoryId?: string | null;
+  brandId?: string | null;
+  regularPrice: number;
+  offerPrice?: number | null;
+  discountPercent?: number | null;
+  currency: string;
+  stockQuantity: number;
+  stockStatus: StockStatus;
+  shortDescription: string;
+  fullDescription: string;
+  specifications: string; // JSON string
+  warranty?: string | null;
+  isFeatured: boolean;
+  isPopular: boolean;
+  isNewArrival: boolean;
+  isDeal: boolean;
+  primaryImage: string;
+  gallery: string; // JSON string
+  status: ProductStatus;
+  viewsCount: number;
+  publishedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  category?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  subcategory?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
+  brand?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
+}
+
+export interface ServiceData {
+  id: string;
+  title: string;
+  slug: string;
+  icon: string;
+  shortDescription: string;
+  fullDescription: string;
+  features: string; // JSON string array
+  pricingNote: string;
+  startingPrice?: number | null;
+  isFeatured: boolean;
+  isActive: boolean;
+  orderIndex: number;
+  imageUrl?: string | null;
+}
+
+export interface BannerData {
+  id: string;
+  title: string;
+  subtitle?: string | null;
+  badgeText?: string | null;
+  ctaText?: string | null;
+  ctaLink?: string | null;
+  position: 'HERO_SLIDER' | 'PROMO_GRID' | 'OFFER_BANNER' | 'SIDEBAR';
+  imageUrl: string;
+  mobileImageUrl?: string | null;
+  bgGradientOrColor?: string | null;
+  discountPercent?: number | null;
+  couponCode?: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  isAiGenerated: boolean;
+  aiPrompt?: string | null;
+  aiStyle?: string | null;
+  isApproved: boolean;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  orderIndex: number;
+}
+
+export interface InquiryData {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string | null;
+  customerAddress?: string | null;
+  type: 'PRODUCT_INQUIRY' | 'SERVICE_REQUEST' | 'AMC_REQUEST' | 'DIRECT_ORDER' | 'GENERAL_INQUIRY';
+  subject: string;
+  message: string;
+  productId?: string | null;
+  serviceId?: string | null;
+  preferredContact: 'PHONE' | 'WHATSAPP' | 'EMAIL';
+  status: 'NEW' | 'CONTACTED' | 'IN_PROGRESS' | 'RESOLVED' | 'CANCELLED';
+  adminNotes?: string | null;
+  createdAt: string;
+}
+
+export interface SiteSettingsData {
+  id: string;
+  siteName: string;
+  siteTagline: string;
+  siteDescription: string;
+  contactPhone: string;
+  contactEmail: string;
+  contactWhatsapp: string;
+  locationAddress: string;
+  businessHours: string;
+  googleMapsEmbedUrl: string;
+  socialFacebook: string;
+  socialInstagram: string;
+  socialLinkedin: string;
+  socialYoutube: string;
+  deliveryInfo: string;
+  paymentMethods: string;
+  currencyCode: string;
+  currencySymbol: string;
+  taxRatePercent: number;
+  maintenanceMode: boolean;
+  metaTitle: string;
+  metaDescription: string;
+  ogImageUrl?: string | null;
+}

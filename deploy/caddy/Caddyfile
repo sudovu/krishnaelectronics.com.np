@@ -1,0 +1,18 @@
+# Caddyfile configuration for Krishna Electronics & Order Suppliers
+# Automatic TLS certificates via Let's Encrypt / ZeroSSL
+
+krishnaelectronics.com.np, www.krishnaelectronics.com.np {
+    encode gzip zstd
+
+    # Security headers
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Proxy to Next.js container
+    reverse_proxy app:3000
+}
