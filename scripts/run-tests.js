@@ -1,6 +1,8 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'krishna-electronics-default-fallback-secret-2026';
@@ -19,12 +21,12 @@ function assert(condition, message) {
 }
 
 async function runTests() {
-  console.log('\n======================================================');
-  console.log('  Krishna Electronics Platform — QA & Verification Suite');
-  console.log('======================================================\n');
+  console.log('\n=================================================================');
+  console.log('  Krishna Electronics & Reusable Platform — Full QA Test Suite');
+  console.log('=================================================================\n');
 
   // Test 1: Database Connectivity & Site Settings
-  console.log('[1/6] Verifying Database Connection & Settings...');
+  console.log('[1/7] Verifying Database Connection & Settings...');
   const settings = await prisma.setting.findUnique({ where: { id: 'site-settings' } });
   assert(settings !== null, 'Site settings record exists in database');
   assert(settings?.currencyCode === 'NPR', 'Default currency is NPR');
@@ -32,7 +34,7 @@ async function runTests() {
   assert(settings?.locationAddress.includes('Surkhet'), 'Store address correctly points to Surkhet, Nepal');
 
   // Test 2: Category & Brand Seeding
-  console.log('\n[2/6] Verifying Catalog Taxonomy & Brands...');
+  console.log('\n[2/7] Verifying Catalog Taxonomy & Brands...');
   const categoriesCount = await prisma.category.count();
   const brandsCount = await prisma.brand.count();
   assert(categoriesCount >= 6, `Categories seeded correctly (${categoriesCount} categories)`);
@@ -42,7 +44,7 @@ async function runTests() {
   assert(tpLink !== null, 'Official brand TP-Link is present');
 
   // Test 3: Technical Services Division
-  console.log('\n[3/6] Verifying Technical Services Showcase...');
+  console.log('\n[3/7] Verifying Technical Services Showcase...');
   const servicesCount = await prisma.service.count();
   assert(servicesCount >= 7, `All 7 technical services seeded (${servicesCount} found)`);
 
@@ -51,7 +53,7 @@ async function runTests() {
   assert(repairService?.startingPrice === 500, 'Diagnostic starting price properly configured in NPR');
 
   // Test 4: Product Integrity & Specifications
-  console.log('\n[4/6] Verifying Products & Specifications...');
+  console.log('\n[4/7] Verifying Products & Specifications...');
   const productsCount = await prisma.product.count({ where: { status: 'PUBLISHED' } });
   assert(productsCount > 0, `Published products available for public storefront (${productsCount} active listings)`);
 
@@ -63,7 +65,7 @@ async function runTests() {
   assert(specs.length > 0, `Structured specifications table present (${specs.length} items)`);
 
   // Test 5: Authentication & Security Controls
-  console.log('\n[5/6] Verifying Admin Authentication & Security...');
+  console.log('\n[5/7] Verifying Admin Authentication & Security...');
   const admin = await prisma.user.findUnique({ where: { email: 'admin@krishnaelectronics.com.np' } });
   assert(admin !== null, 'Super-admin account exists');
   assert(admin?.role === 'SUPER_ADMIN', 'Owner account has SUPER_ADMIN role');
@@ -77,7 +79,7 @@ async function runTests() {
   assert(decoded.id === admin?.id, 'JWT token signing and verification functioning');
 
   // Test 6: Audit Logging
-  console.log('\n[6/6] Verifying Content Publishing & Audit Trails...');
+  console.log('\n[6/7] Verifying Content Publishing & Audit Trails...');
   const testAudit = await prisma.auditLog.create({
     data: {
       userId: admin?.id,
@@ -90,15 +92,35 @@ async function runTests() {
   });
   assert(testAudit?.id !== null, 'Audit log created and verified in database');
 
-  console.log('\n======================================================');
+  // Test 7: Layer Separation & Commercialization Verification
+  console.log('\n[7/7] Verifying Layer Separation (Business vs Reusable Platform)...');
+  const manifestFile = path.join(__dirname, '..', 'src', 'business', 'krishna-electronics', 'data.json');
+  assert(fs.existsSync(manifestFile), 'Krishna Electronics business manifest exists in isolated directory');
+
+  const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
+  assert(manifest.tenantId === 'krishna-electronics', 'Manifest carries unique tenantId');
+  assert(manifest.identity.name === 'Krishna Electronics & Order Suppliers', 'Business identity isolated in manifest');
+  assert(manifest.identity.currency.code === 'NPR', 'Manifest defines currency NPR');
+  assert(manifest.services.length === 7, 'All 7 service definitions isolated in business manifest');
+  assert(manifest.categories.length === 6, 'All 6 category definitions isolated in business manifest');
+
+  // Check tenant contract file existence
+  const contractFile = path.join(__dirname, '..', 'src', 'platform', 'config', 'tenant-contract.ts');
+  assert(fs.existsSync(contractFile), 'Platform tenant contract interface exists');
+
+  // Check white-label example
+  const whiteLabelFile = path.join(__dirname, '..', 'src', 'business', 'templates', 'white-label-template.ts');
+  assert(fs.existsSync(whiteLabelFile), 'White-label reusability template exists for future commercialization');
+
+  console.log('\n=================================================================');
   console.log(`  Tests Passed: ${passed}`);
   console.log(`  Tests Failed: ${failed}`);
-  console.log('======================================================\n');
+  console.log('=================================================================\n');
 
   if (failed > 0) {
     process.exit(1);
   } else {
-    console.log('✅ ALL TEST SUITES PASSED SUCCESSFULLY!\n');
+    console.log('✅ ALL TEST SUITES PASSED! Architectural separation confirmed.\n');
     process.exit(0);
   }
 }

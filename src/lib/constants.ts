@@ -1,8 +1,12 @@
+import { getActiveBusinessManifest } from '@/platform/engine/tenant-loader';
+
+const manifest = getActiveBusinessManifest();
+
 export const APP_CONSTANTS = {
-  BUSINESS_NAME: 'Krishna Electronics & Order Suppliers',
-  DEFAULT_LOCATION: 'Birendranagar-6, Buddhapath, Surkhet, Nepal',
-  DEFAULT_CURRENCY: 'NPR',
-  CURRENCY_SYMBOL: 'रु',
+  BUSINESS_NAME: manifest.identity.name,
+  DEFAULT_LOCATION: `${manifest.identity.location.address}, ${manifest.identity.location.city}, ${manifest.identity.location.country}`,
+  DEFAULT_CURRENCY: manifest.identity.currency.code,
+  CURRENCY_SYMBOL: manifest.identity.currency.symbol,
   DEFAULT_TIMEZONE: 'Asia/Kathmandu',
   CONTACT_NOTE: 'Phone and WhatsApp inquiry support available during store hours.',
 };

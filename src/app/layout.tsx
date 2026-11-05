@@ -1,25 +1,21 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { prisma } from '@/lib/prisma';
 import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
+import { getMergedBusinessProfile } from '@/platform/engine/tenant-loader';
 
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await prisma.setting.findUnique({
-    where: { id: 'site-settings' },
-  }).catch(() => null);
+  const profile = await getMergedBusinessProfile();
 
-  const title = settings?.metaTitle || 'Krishna Electronics & Order Suppliers | Surkhet, Nepal';
-  const description =
-    settings?.metaDescription ||
-    'Trusted electronics retail, IoT smart home solutions, enterprise networking, CCTV surveillance & chip-level laptop repair laboratory in Birendranagar-6, Buddhapath, Surkhet, Nepal.';
+  const title = profile.metaTitle || `${profile.siteName} | ${profile.locationAddress}`;
+  const description = profile.metaDescription || profile.siteDescription;
 
   return {
     title: {
       default: title,
-      template: `%s | Krishna Electronics`,
+      template: `%s | ${profile.siteName}`,
     },
     description: description,
     metadataBase: new URL('https://krishnaelectronics.com.np'),
@@ -27,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: title,
       description: description,
       url: 'https://krishnaelectronics.com.np',
-      siteName: 'Krishna Electronics & Order Suppliers',
+      siteName: profile.siteName,
       locale: 'en_NP',
       type: 'website',
     },
@@ -43,29 +39,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await prisma.setting.findUnique({
-    where: { id: 'site-settings' },
-  }).catch(() => null);
+  const profile = await getMergedBusinessProfile();
 
   const schemaJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ElectronicsStore',
-    name: 'Krishna Electronics & Order Suppliers',
+    name: profile.siteName,
     image: 'https://krishnaelectronics.com.np/logo.png',
     '@id': 'https://krishnaelectronics.com.np',
     url: 'https://krishnaelectronics.com.np',
-    priceRange: 'NPR',
+    priceRange: profile.currencyCode,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Buddhapath, Birendranagar-6',
+      streetAddress: profile.locationAddress,
       addressLocality: 'Surkhet',
       addressRegion: 'Karnali Province',
       addressCountry: 'NP',
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: 28.5983,
-      longitude: 81.6339,
     },
     openingHoursSpecification: [
       {
@@ -86,9 +75,9 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
-        <Header settings={settings as any} />
+        <Header settings={profile} />
         <main className="flex-1">{children}</main>
-        <Footer settings={settings as any} />
+        <Footer settings={profile} />
       </body>
     </html>
   );

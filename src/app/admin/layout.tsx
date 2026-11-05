@@ -26,6 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<AdminSessionUser | null>(null);
+  const [siteName, setSiteName] = useState<string>('KRISHNA CMS');
   const [loading, setLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -36,17 +37,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       return;
     }
 
-    fetch('/api/auth/me')
-      .then((res) => {
-        if (!res.ok) {
-          router.push('/admin/login');
-          return null;
+    Promise.all([
+      fetch('/api/auth/me').then((res) => (res.ok ? res.json() : null)),
+      fetch('/api/settings').then((res) => (res.ok ? res.json() : null)),
+    ])
+      .then(([authData, settingsData]) => {
+        if (settingsData?.settings?.siteName) {
+          setSiteName(settingsData.settings.siteName);
         }
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.authenticated) {
-          setCurrentUser(data.user);
+        if (authData?.authenticated) {
+          setCurrentUser(authData.user);
         } else if (pathname !== '/admin/login') {
           router.push('/admin/login');
         }
@@ -97,7 +97,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white">
             <Cpu className="w-5 h-5 text-cyan-accent" />
           </div>
-          <span className="font-bold text-sm tracking-tight">Krishna Admin</span>
+          <span className="font-bold text-sm tracking-tight truncate max-w-[200px]">{siteName}</span>
         </div>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -121,11 +121,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Cpu className="w-5 h-5 text-cyan-accent" />
             </div>
             <div>
-              <div className="font-extrabold text-sm text-white tracking-tight">
-                KRISHNA CMS
+              <div className="font-extrabold text-xs text-white tracking-tight truncate max-w-[150px]" title={siteName}>
+                {siteName}
               </div>
               <div className="text-[10px] text-cyan-accent font-medium">
-                Electronics &amp; Services
+                Business CMS Portal
               </div>
             </div>
           </div>
