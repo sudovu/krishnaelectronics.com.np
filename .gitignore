@@ -28,6 +28,8 @@
 .vercel
 /prisma/*.db
 /prisma/*.db-journal
+*.db
+*.db-journal
 
 # TypeScript
 *.tsbuildinfo
