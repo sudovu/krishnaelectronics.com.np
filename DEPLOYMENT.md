@@ -83,16 +83,17 @@ nano .env
 DATABASE_URL="file:/app/prisma/prod.db"
 JWT_SECRET="generate-a-secure-64-character-random-key-here"
 NEXT_PUBLIC_APP_URL="https://krishnaelectronics.com.np"
-NEXT_PUBLIC_SITE_NAME="Krishna Electronics & Order Suppliers"
+NEXT_PUBLIC_SITE_NAME="Krishna Electronics Order & Suppliers"
 NEXT_PUBLIC_DEFAULT_CURRENCY="NPR"
 NEXT_PUBLIC_CURRENCY_SYMBOL="रु"
-NEXT_PUBLIC_BUSINESS_LOCATION="Birendranagar-6, Buddhapath, Surkhet, Nepal"
+NEXT_PUBLIC_BUSINESS_LOCATION="Birendranagar-12, Surkhet, Nepal"
 
 # Optional AI Key (Gemini)
 GEMINI_API_KEY=""
 
+# Initial admin credentials configured securely via environment variables
 INITIAL_ADMIN_EMAIL="admin@krishnaelectronics.com.np"
-INITIAL_ADMIN_PASSWORD="ChooseStrongPassword2026!"
+INITIAL_ADMIN_PASSWORD="<YOUR_STRONG_SECRET_PASSWORD>"
 ```
 
 ---

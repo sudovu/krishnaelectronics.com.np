@@ -86,11 +86,8 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) to view the public website.  
 Open [http://localhost:3000/admin/login](http://localhost:3000/admin/login) to access the Admin Panel.
 
-**Default Initial Admin Credentials:**
-- **Email:** `admin@krishnaelectronics.com.np`
-- **Password:** `AdminSecurePassword123!`
-
-*(Make sure to change the admin password upon first login)*
+**Administrator Access:**
+The administration control center is protected by role-based authentication and rate limiting. Initial administrator accounts are configured securely via environment variables (`INITIAL_ADMIN_EMAIL` and `INITIAL_ADMIN_PASSWORD`).
 
 ---
 
