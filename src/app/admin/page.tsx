@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Package, 
+  FolderTree,
   MessageSquare, 
   Eye, 
   AlertTriangle, 
@@ -62,7 +63,14 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <Link
+            href="/admin/categories"
+            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs"
+          >
+            <FolderTree className="w-3.5 h-3.5 text-brand-600" />
+            <span>+ Add Category</span>
+          </Link>
           <Link
             href="/admin/products/new"
             className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-bold transition shadow-sm"

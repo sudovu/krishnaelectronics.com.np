@@ -135,6 +135,33 @@ export default function AdminSettingsPage() {
               </div>
             </div>
 
+            {/* Official Logo Path / URL */}
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">
+                Official Business Logo URL or Path
+              </label>
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden bg-white p-0.5 border-2 border-brand-500 shrink-0 shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={settings.logoUrl || '/images/logo.jpg'}
+                    alt="Logo preview"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <input
+                  type="text"
+                  value={settings.logoUrl || '/images/logo.jpg'}
+                  onChange={(e) => handleChange('logoUrl', e.target.value)}
+                  placeholder="/images/logo.jpg"
+                  className="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none font-mono text-xs"
+                />
+              </div>
+              <p className="text-[11px] text-slate-400 mt-1">
+                Active store logo displayed across Header, Footer, and Admin panel.
+              </p>
+            </div>
+
             <div>
               <label className="block font-semibold text-slate-700 mb-1">
                 Storefront Overview Description

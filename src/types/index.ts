@@ -123,6 +123,7 @@ export interface InquiryData {
 export interface SiteSettingsData {
   id: string;
   siteName: string;
+  logoUrl?: string;
   siteTagline: string;
   siteDescription: string;
   contactPhone: string;

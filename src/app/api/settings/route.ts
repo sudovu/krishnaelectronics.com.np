@@ -33,6 +33,7 @@ export async function PUT(req: NextRequest) {
       where: { id: 'site-settings' },
       update: {
         siteName: data.siteName,
+        logoUrl: data.logoUrl,
         siteTagline: data.siteTagline,
         siteDescription: data.siteDescription,
         contactPhone: data.contactPhone,
