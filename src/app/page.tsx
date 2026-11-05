@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import HeroSlider from '@/components/public/HeroSlider';
 import ProductCard from '@/components/public/ProductCard';
+import CampaignPopup from '@/components/public/CampaignPopup';
 import { 
   Laptop, 
   Wifi, 
@@ -104,6 +105,9 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-16 pb-16">
+      {/* 0. Promotional Campaign Pop-up Modal on website visit */}
+      <CampaignPopup banners={banners as any} />
+
       {/* 1. Dynamic Hero Slider */}
       <HeroSlider banners={banners as any} />
 

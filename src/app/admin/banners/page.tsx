@@ -521,9 +521,10 @@ export default function AdminBannersPage() {
                   <select
                     value={editingBanner.position}
                     onChange={(e) => setEditingBanner({ ...editingBanner, position: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-medium"
                   >
                     <option value="HERO_SLIDER">Homepage Hero Slider (16:9)</option>
+                    <option value="POPUP_MODAL">⚡ Homepage Entrance Pop-up (Pops up on website visit)</option>
                     <option value="PROMO_GRID">Category Header Banner</option>
                     <option value="OFFER_BANNER">Offer Strip Banner</option>
                   </select>

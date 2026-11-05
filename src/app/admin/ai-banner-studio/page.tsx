@@ -42,7 +42,7 @@ export default function AiBannerStudioPage() {
   const [prompt, setPrompt] = useState('High-performance Wi-Fi 6 routers Ruijie & TP-Link');
   const [style, setStyle] = useState('cyber-clean');
   const [productName, setProductName] = useState('TP-Link Wi-Fi 6');
-  const [placement, setPlacement] = useState<'HERO_SLIDER' | 'PROMO_GRID' | 'OFFER_BANNER'>('HERO_SLIDER');
+  const [placement, setPlacement] = useState<'HERO_SLIDER' | 'POPUP_MODAL' | 'PROMO_GRID' | 'OFFER_BANNER'>('HERO_SLIDER');
   const [discountPercent, setDiscountPercent] = useState('15');
 
   const [generating, setGenerating] = useState(false);
@@ -273,9 +273,10 @@ export default function AiBannerStudioPage() {
                 <select
                   value={placement}
                   onChange={(e) => setPlacement(e.target.value as any)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none font-medium"
                 >
                   <option value="HERO_SLIDER">Homepage Hero Slider (16:9)</option>
+                  <option value="POPUP_MODAL">⚡ Homepage Entrance Pop-up (Pops up on website visit)</option>
                   <option value="PROMO_GRID">Category Header Banner</option>
                   <option value="OFFER_BANNER">Offer Strip Banner</option>
                 </select>
