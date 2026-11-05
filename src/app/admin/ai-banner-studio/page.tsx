@@ -110,9 +110,10 @@ export default function AiBannerStudioPage() {
     else if (field === 'badge') currentVal = editableBadge;
 
     const el = document.getElementById(`field-${field}`) as HTMLInputElement | HTMLTextAreaElement | null;
-    if (el && el.selectionStart !== undefined && el.selectionEnd !== undefined && el.selectionStart !== el.selectionEnd) {
-      const start = el.selectionStart;
-      const end = el.selectionEnd;
+    const start = el?.selectionStart ?? 0;
+    const end = el?.selectionEnd ?? 0;
+
+    if (el && start !== end) {
       const selected = currentVal.substring(start, end);
       const replaced = `<${tag}>${selected}</${tag}>`;
       const newVal = currentVal.substring(0, start) + replaced + currentVal.substring(end);

@@ -110,10 +110,10 @@ export default function AdminBannersPage() {
     if (!editingBanner) return;
     const currentVal = editingBanner[field] || '';
     const el = document.getElementById(`edit-field-${field}`) as HTMLInputElement | HTMLTextAreaElement | null;
+    const start = el?.selectionStart ?? 0;
+    const end = el?.selectionEnd ?? 0;
     
-    if (el && el.selectionStart !== undefined && el.selectionEnd !== undefined && el.selectionStart !== el.selectionEnd) {
-      const start = el.selectionStart;
-      const end = el.selectionEnd;
+    if (el && start !== end) {
       const selected = currentVal.substring(start, end);
       const replaced = `<${tag}>${selected}</${tag}>`;
       const newVal = currentVal.substring(0, start) + replaced + currentVal.substring(end);
@@ -520,7 +520,7 @@ export default function AdminBannersPage() {
                   <label className="block font-semibold text-slate-700 mb-1">Placement Slot</label>
                   <select
                     value={editingBanner.position}
-                    onChange={(e) => setEditingBanner({ ...editingBanner, position: e.target.value })}
+                    onChange={(e) => setEditingBanner({ ...editingBanner, position: e.target.value as any })}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-medium"
                   >
                     <option value="HERO_SLIDER">Homepage Hero Slider (16:9)</option>

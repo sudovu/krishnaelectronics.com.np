@@ -85,7 +85,7 @@ export interface BannerData {
   badgeText?: string | null;
   ctaText?: string | null;
   ctaLink?: string | null;
-  position: 'HERO_SLIDER' | 'PROMO_GRID' | 'OFFER_BANNER' | 'SIDEBAR';
+  position: 'HERO_SLIDER' | 'POPUP_MODAL' | 'PROMO_GRID' | 'OFFER_BANNER' | 'SIDEBAR';
   imageUrl: string;
   mobileImageUrl?: string | null;
   bgGradientOrColor?: string | null;
