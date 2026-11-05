@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentAdminFromRequest, hasPermission, logAudit } from '@/lib/auth';
+import { clearProfileCache } from '@/platform/engine/tenant-loader';
+import { revalidatePath } from 'next/cache';
 
 export async function GET() {
   try {
@@ -66,6 +68,11 @@ export async function PUT(req: NextRequest) {
         ...data,
       },
     });
+
+    clearProfileCache();
+    try {
+      revalidatePath('/', 'layout');
+    } catch (_) {}
 
     await logAudit({
       userId: admin.id,

@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
               Krishna Electronics Order &amp; Suppliers
             </h1>
             <p className="text-xs text-cyan-accent font-semibold tracking-wide uppercase mt-0.5">
-              Secure Management Portal
+              Authorized Portal
             </p>
             <p className="text-xs text-slate-400 mt-1">
               Birendranagar-12, Surkhet, Nepal
@@ -82,7 +82,7 @@ export default function AdminLoginPage() {
                 autoComplete="username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your administrative username"
+                placeholder="Username or email"
                 className="w-full pl-9 pr-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-white placeholder-slate-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
               />
               <Mail className="absolute left-3 top-3 w-4 h-4 text-slate-500" />
@@ -100,7 +100,7 @@ export default function AdminLoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your secret password"
+                placeholder="Password"
                 className="w-full pl-9 pr-3.5 py-2.5 bg-navy-950 border border-navy-700 rounded-xl text-white placeholder-slate-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500 outline-none"
               />
               <Lock className="absolute left-3 top-3 w-4 h-4 text-slate-500" />
@@ -112,7 +112,7 @@ export default function AdminLoginPage() {
             disabled={loading}
             className="w-full py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-extrabold rounded-xl transition shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2 tracking-wide uppercase"
           >
-            <span>{loading ? 'Verifying Identity...' : 'Sign In to Control Center'}</span>
+            <span>{loading ? 'Signing in...' : 'Sign In'}</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
@@ -124,7 +124,7 @@ export default function AdminLoginPage() {
             <span>256-Bit Encrypted Session • Protected Access</span>
           </div>
           <p className="text-[10px] text-slate-500">
-            Authorized administrative personnel only. All access attempts and IP addresses are audited and logged.
+            Authorized personnel only. All access attempts and IP addresses are audited and logged.
           </p>
         </div>
       </div>

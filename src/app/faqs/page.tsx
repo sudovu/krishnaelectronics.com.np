@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { HelpCircle, ArrowRight, MessageSquare } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions (FAQs) | Krishna Electronics Surkhet',

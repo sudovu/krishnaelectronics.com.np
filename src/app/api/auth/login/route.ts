@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
 
       // Audit log failed login
       await logAudit({
-        userId: user?.id || null,
+        userId: user?.id || undefined,
         userName: user?.name || identifier,
         action: 'LOGIN_FAILED',
         entity: 'Security',

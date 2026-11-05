@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentAdminFromRequest, logAudit } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 
 export async function PUT(
   req: NextRequest,
@@ -31,6 +32,10 @@ export async function PUT(
         status: data.status,
       },
     });
+
+    try {
+      revalidatePath('/', 'layout');
+    } catch (_) {}
 
     await logAudit({
       userId: admin.id,
@@ -68,6 +73,10 @@ export async function DELETE(
     await prisma.banner.delete({
       where: { id: params.id },
     });
+
+    try {
+      revalidatePath('/', 'layout');
+    } catch (_) {}
 
     await logAudit({
       userId: admin.id,

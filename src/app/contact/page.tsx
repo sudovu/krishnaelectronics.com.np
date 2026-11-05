@@ -4,7 +4,7 @@ import ContactForm from '@/components/public/ContactForm';
 import { MapPin, Phone, Mail, Clock, MessageSquare, ShieldCheck, Zap } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Contact Us & Store Location | Krishna Electronics Surkhet',

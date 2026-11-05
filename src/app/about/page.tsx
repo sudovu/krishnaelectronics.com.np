@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { Cpu, ShieldCheck, Wrench, MapPin, CheckCircle2, ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'About Krishna Electronics Order & Suppliers | Surkhet, Nepal',

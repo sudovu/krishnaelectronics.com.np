@@ -87,6 +87,9 @@ export default function Footer({ settings }: FooterProps) {
                   src="/images/logo.jpg"
                   alt="Krishna Electronics Order & Suppliers Logo"
                   className="w-full h-full object-contain"
+                  width={48}
+                  height={48}
+                  loading="lazy"
                 />
               </div>
               <div>

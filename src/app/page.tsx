@@ -26,66 +26,64 @@ import {
 } from 'lucide-react';
 import { formatNPR } from '@/lib/formatters';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 30;
 
 export default async function HomePage() {
-  // Fetch real banners from DB
-  const banners = await prisma.banner.findMany({
-    where: { status: 'PUBLISHED', isApproved: true },
-    orderBy: { orderIndex: 'asc' },
-  }).catch(() => []);
-
-  // Fetch categories
-  const categories = await prisma.category.findMany({
-    where: { isActive: true },
-    include: {
-      _count: {
-        select: { products: true }
-      }
-    },
-    orderBy: { orderIndex: 'asc' },
-  }).catch(() => []);
-
-  // Fetch featured products
-  const featuredProducts = await prisma.product.findMany({
-    where: { status: 'PUBLISHED', isFeatured: true },
-    include: {
-      category: true,
-      subcategory: true,
-      brand: true,
-    },
-    take: 8,
-    orderBy: { createdAt: 'desc' },
-  }).catch(() => []);
-
-  // Fetch latest arrivals
-  const latestArrivals = await prisma.product.findMany({
-    where: { status: 'PUBLISHED', isNewArrival: true },
-    include: {
-      category: true,
-      subcategory: true,
-      brand: true,
-    },
-    take: 4,
-    orderBy: { createdAt: 'desc' },
-  }).catch(() => []);
-
-  // Fetch services
-  const services = await prisma.service.findMany({
-    where: { isActive: true },
-    orderBy: { orderIndex: 'asc' },
-  }).catch(() => []);
-
-  // Fetch brands
-  const brands = await prisma.brand.findMany({
-    where: { isPopular: true },
-    take: 12,
-  }).catch(() => []);
-
-  // Fetch site settings
-  const settings = await prisma.setting.findUnique({
-    where: { id: 'site-settings' },
-  }).catch(() => null);
+  // Concurrently fetch homepage datasets for sub-second database response
+  const [
+    banners,
+    categories,
+    featuredProducts,
+    latestArrivals,
+    services,
+    brands,
+    settings,
+  ] = await Promise.all([
+    prisma.banner.findMany({
+      where: { status: 'PUBLISHED', isApproved: true },
+      orderBy: { orderIndex: 'asc' },
+    }).catch(() => []),
+    prisma.category.findMany({
+      where: { isActive: true },
+      include: {
+        _count: {
+          select: { products: true },
+        },
+      },
+      orderBy: { orderIndex: 'asc' },
+    }).catch(() => []),
+    prisma.product.findMany({
+      where: { status: 'PUBLISHED', isFeatured: true },
+      include: {
+        category: true,
+        subcategory: true,
+        brand: true,
+      },
+      take: 8,
+      orderBy: { createdAt: 'desc' },
+    }).catch(() => []),
+    prisma.product.findMany({
+      where: { status: 'PUBLISHED', isNewArrival: true },
+      include: {
+        category: true,
+        subcategory: true,
+        brand: true,
+      },
+      take: 4,
+      orderBy: { createdAt: 'desc' },
+    }).catch(() => []),
+    prisma.service.findMany({
+      where: { isActive: true },
+      orderBy: { orderIndex: 'asc' },
+    }).catch(() => []),
+    prisma.brand.findMany({
+      where: { isPopular: true },
+      take: 12,
+    }).catch(() => []),
+    prisma.setting.findUnique({
+      where: { id: 'site-settings' },
+    }).catch(() => null),
+  ]);
 
   // Category Icon Resolver
   const getCategoryIcon = (iconName: string | null) => {

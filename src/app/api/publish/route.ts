@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentAdminFromRequest, logAudit } from '@/lib/auth';
+import { clearProfileCache } from '@/platform/engine/tenant-loader';
 import { revalidatePath } from 'next/cache';
 
 export async function POST(req: NextRequest) {
@@ -47,6 +48,8 @@ export async function POST(req: NextRequest) {
       where: { id: 'site-settings' },
       data: { updatedAt: new Date() },
     }).catch(() => {});
+
+    clearProfileCache();
 
     // Revalidate critical paths
     try {

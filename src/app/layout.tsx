@@ -4,7 +4,7 @@ import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import { getMergedBusinessProfile } from '@/platform/engine/tenant-loader';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const profile = await getMergedBusinessProfile();
@@ -75,7 +75,7 @@ export default async function RootLayout({
 
   const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(
     fontFamily
-  )}:wght@300;400;500;600;700;800;900&display=swap`;
+  )}:wght@400;600;700&display=swap`;
 
   const dynamicCss = `
     :root {
@@ -85,13 +85,16 @@ export default async function RootLayout({
       --surface-dark: ${darkSurface};
       --surface-dark-alt: ${darkSurface}dd;
       --surface-light: ${lightSurface};
-      --font-custom: '${fontFamily}';
+      --font-custom: '${fontFamily}', system-ui, -apple-system, sans-serif;
     }
   `;
 
   return (
     <html lang="en">
       <head>
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href={fontUrl} />

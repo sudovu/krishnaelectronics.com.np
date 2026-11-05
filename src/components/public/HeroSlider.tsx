@@ -108,7 +108,7 @@ export default function HeroSlider({ banners }: HeroSliderProps) {
             </div>
 
             {/* Credibility Badges */}
-            <div className="grid grid-cols-3 gap-3 pt-6 border-t border-navy-800/80">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-navy-800/80">
               <div className="flex items-center gap-2 text-xs text-slate-300">
                 <Shield className="w-4 h-4 text-cyan-accent shrink-0" />
                 <span>Authorized Hardware</span>
@@ -133,6 +133,7 @@ export default function HeroSlider({ banners }: HeroSliderProps) {
                   src={current.imageUrl}
                   alt={current.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="eager"
                 />
               </div>
 

@@ -2,6 +2,11 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  compress: true,
+  poweredByHeader: false,
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
   images: {
     unoptimized: true,
     remotePatterns: [
@@ -43,6 +48,15 @@ const nextConfig = {
           {
             key: 'X-XSS-Protection',
             value: '1; mode=block',
+          },
+        ],
+      },
+      {
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },

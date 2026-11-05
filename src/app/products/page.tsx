@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/public/ProductCard';
 import { Filter, Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 interface ProductsPageProps {
   searchParams: {

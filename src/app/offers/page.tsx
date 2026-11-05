@@ -6,7 +6,7 @@ import { Zap, Tag, Calendar, ArrowRight } from 'lucide-react';
 import { formatDate } from '@/lib/formatters';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Special Offers & Seasonal Promotions | Krishna Electronics Surkhet',

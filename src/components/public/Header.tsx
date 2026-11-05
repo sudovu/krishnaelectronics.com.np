@@ -80,10 +80,10 @@ export default function Header({ settings }: HeaderProps) {
             <Link 
               href="/admin/login" 
               className="flex items-center gap-1 text-slate-400 hover:text-slate-200 border-l border-navy-800 pl-3 transition"
-              title="Admin Portal"
+              title="Staff Portal"
             >
               <Lock className="w-3 h-3 text-slate-400" />
-              <span>Admin</span>
+              <span>Portal</span>
             </Link>
           </div>
         </div>
@@ -100,6 +100,8 @@ export default function Header({ settings }: HeaderProps) {
                 src="/images/logo.jpg"
                 alt="Krishna Electronics Order & Suppliers Logo"
                 className="w-full h-full object-contain"
+                width={48}
+                height={48}
               />
             </div>
             <div>

@@ -15,7 +15,7 @@ import {
 import type { Metadata } from 'next';
 import ServiceBookingForm from '@/components/public/ServiceBookingForm';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 interface ServiceDetailPageProps {
   params: {

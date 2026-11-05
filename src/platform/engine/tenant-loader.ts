@@ -15,10 +15,24 @@ export function getActiveBusinessManifest(): BusinessManifest {
   return krishnaElectronicsManifest;
 }
 
+let cachedProfile: SiteSettingsData | null = null;
+let cachedTime = 0;
+const CACHE_TTL_MS = 60 * 1000; // 60 seconds in-memory cache
+
+export function clearProfileCache() {
+  cachedProfile = null;
+  cachedTime = 0;
+}
+
 /**
  * Merges database-persisted administrator overrides on top of the active business manifest.
  */
 export async function getMergedBusinessProfile(): Promise<SiteSettingsData> {
+  const now = Date.now();
+  if (cachedProfile && (now - cachedTime < CACHE_TTL_MS)) {
+    return cachedProfile;
+  }
+
   const manifest = getActiveBusinessManifest();
 
   try {
@@ -27,7 +41,7 @@ export async function getMergedBusinessProfile(): Promise<SiteSettingsData> {
     });
 
     if (dbSetting) {
-      return {
+      const profile: SiteSettingsData = {
         id: dbSetting.id,
         siteName: dbSetting.siteName || manifest.identity.name,
         siteTagline: dbSetting.siteTagline || manifest.identity.tagline,
@@ -58,6 +72,9 @@ export async function getMergedBusinessProfile(): Promise<SiteSettingsData> {
         metaDescription: dbSetting.metaDescription || manifest.identity.description,
         ogImageUrl: dbSetting.ogImageUrl,
       };
+      cachedProfile = profile;
+      cachedTime = now;
+      return profile;
     }
   } catch (err) {
     console.error('Error fetching settings from DB, falling back to manifest:', err);
