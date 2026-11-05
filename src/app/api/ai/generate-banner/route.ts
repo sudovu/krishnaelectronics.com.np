@@ -28,12 +28,14 @@ export async function POST(req: NextRequest) {
 
     const { prompt, style, productName, targetPlacement, discountPercent } = body;
 
+    const cleanProduct = productName?.trim();
+
     // High quality themed creative image options
     // Curated high-resolution professional tech visuals tuned to electronics, networking, and repairs
     const styleOptions = [
       {
         id: 'opt-1',
-        title: productName ? `${productName} – Karnali Tech Special` : 'High-Performance Gigabit & Wi-Fi 6 Solutions',
+        title: cleanProduct || 'High-Performance Gigabit & Wi-Fi 6 Solutions',
         subtitle: 'Enterprise speed, ultra-low latency, and reliable coverage for business and home in Surkhet.',
         badgeText: 'Official Authorized Hub',
         ctaText: 'Explore Gear',
@@ -47,9 +49,9 @@ export async function POST(req: NextRequest) {
       },
       {
         id: 'opt-2',
-        title: productName ? `Specialized Support: ${productName}` : 'Certified Chip-Level Diagnostics & Motherboard Lab',
+        title: cleanProduct ? `${cleanProduct} – Genuine Lab Warranty` : 'Certified Chip-Level Diagnostics & Motherboard Lab',
         subtitle: 'Hardware micro-soldering, liquid spill recovery, screen replacement, and thermal tuning.',
-        badgeText: 'Birendranagar-6 Laboratory',
+        badgeText: 'Certified Laboratory',
         ctaText: 'Book Free Diagnostic',
         ctaLink: '/services/computer-laptop-repair',
         imageUrl: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=1600&q=80',
@@ -61,15 +63,15 @@ export async function POST(req: NextRequest) {
       },
       {
         id: 'opt-3',
-        title: productName ? `Smart Automation with ${productName}` : 'IoT Smart Automation & 24/7 Security CCTV',
+        title: cleanProduct ? `${cleanProduct} – Exclusive Offer` : 'IoT Smart Automation & 24/7 Security CCTV',
         subtitle: 'Automated water tank controllers, smart power relays, and Hikvision full-color night surveillance.',
-        badgeText: 'Smart Karnali Living',
-        ctaText: 'View IoT Solutions',
+        badgeText: 'Limited Offer',
+        ctaText: 'View Solutions',
         ctaLink: '/services/iot-smart-device-solutions',
         imageUrl: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=1600&q=80',
         palette: 'Emerald & Navy (#10B981, #06B6D4, #060B18)',
         discountPercent: discountPercent || 10,
-        couponCode: 'SMARTKRNL',
+        couponCode: 'SMART2026',
         aiPromptUsed: prompt,
         aiStyle: style || 'dark-navy-neon',
       },

@@ -21,11 +21,13 @@ export async function PUT(
         badgeText: data.badgeText,
         ctaText: data.ctaText,
         ctaLink: data.ctaLink,
+        position: data.position || undefined,
         imageUrl: data.imageUrl,
         discountPercent: data.discountPercent !== undefined ? (data.discountPercent ? parseInt(data.discountPercent, 10) : null) : undefined,
         couponCode: data.couponCode,
         startDate: data.startDate ? new Date(data.startDate) : null,
         endDate: data.endDate ? new Date(data.endDate) : null,
+        isApproved: data.isApproved !== undefined ? Boolean(data.isApproved) : undefined,
         status: data.status,
       },
     });

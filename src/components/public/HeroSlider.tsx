@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight, ArrowRight, Shield, Zap, Award, Wrench } from 'lucide-react';
 import { BannerData } from '@/types';
+import FormattedText from '@/components/common/FormattedText';
 
 interface HeroSliderProps {
   banners: BannerData[];
@@ -69,15 +70,15 @@ export default function HeroSlider({ banners }: HeroSliderProps) {
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-500/20 border border-brand-500/40 text-cyan-accent text-xs font-semibold uppercase tracking-wider">
               <span className="w-2 h-2 rounded-full bg-cyan-accent animate-ping"></span>
-              {current.badgeText || 'Krishna Electronics Order & Suppliers'}
+              <FormattedText text={current.badgeText || 'Krishna Electronics Order & Suppliers'} />
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
-              {current.title}
+              <FormattedText text={current.title} />
             </h1>
 
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-xl">
-              {current.subtitle}
+              <FormattedText text={current.subtitle} />
             </p>
 
             {/* CTAs & Discount info */}

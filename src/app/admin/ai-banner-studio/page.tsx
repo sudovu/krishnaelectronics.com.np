@@ -14,8 +14,13 @@ import {
   Save, 
   RefreshCw,
   Layers,
-  Check
+  Check,
+  Rocket,
+  Bold,
+  Italic,
+  Underline
 } from 'lucide-react';
+import FormattedText from '@/components/common/FormattedText';
 
 interface BannerOption {
   id: string;
@@ -34,9 +39,9 @@ interface BannerOption {
 
 export default function AiBannerStudioPage() {
   const router = useRouter();
-  const [prompt, setPrompt] = useState('High-performance Wi-Fi 6 routers and smart CCTV security camera systems with electric blue lighting');
+  const [prompt, setPrompt] = useState('High-performance Wi-Fi 6 routers Ruijie & TP-Link');
   const [style, setStyle] = useState('cyber-clean');
-  const [productName, setProductName] = useState('TP-Link Wi-Fi 6 & Hikvision ColorVu');
+  const [productName, setProductName] = useState('TP-Link Wi-Fi 6');
   const [placement, setPlacement] = useState<'HERO_SLIDER' | 'PROMO_GRID' | 'OFFER_BANNER'>('HERO_SLIDER');
   const [discountPercent, setDiscountPercent] = useState('15');
 
@@ -48,7 +53,7 @@ export default function AiBannerStudioPage() {
   const [editableTitle, setEditableTitle] = useState('');
   const [editableSubtitle, setEditableSubtitle] = useState('');
   const [editableBadge, setEditableBadge] = useState('');
-  const [editableCtaText, setEditableCtaText] = useState('Explore Catalog');
+  const [editableCtaText, setEditableCtaText] = useState('Explore Gear');
   const [editableCtaLink, setEditableCtaLink] = useState('/products');
   const [previewViewport, setPreviewViewport] = useState<'desktop' | 'mobile'>('desktop');
 
@@ -98,14 +103,38 @@ export default function AiBannerStudioPage() {
     setEditableCtaLink(opt.ctaLink);
   };
 
-  const handleSaveBanner = async (shouldApproveAndPublish: boolean) => {
+  const applyFormat = (field: 'title' | 'subtitle' | 'badge', tag: 'b' | 'i' | 'u') => {
+    let currentVal = '';
+    if (field === 'title') currentVal = editableTitle;
+    else if (field === 'subtitle') currentVal = editableSubtitle;
+    else if (field === 'badge') currentVal = editableBadge;
+
+    const el = document.getElementById(`field-${field}`) as HTMLInputElement | HTMLTextAreaElement | null;
+    if (el && el.selectionStart !== undefined && el.selectionEnd !== undefined && el.selectionStart !== el.selectionEnd) {
+      const start = el.selectionStart;
+      const end = el.selectionEnd;
+      const selected = currentVal.substring(start, end);
+      const replaced = `<${tag}>${selected}</${tag}>`;
+      const newVal = currentVal.substring(0, start) + replaced + currentVal.substring(end);
+      if (field === 'title') setEditableTitle(newVal);
+      else if (field === 'subtitle') setEditableSubtitle(newVal);
+      else if (field === 'badge') setEditableBadge(newVal);
+    } else {
+      const newVal = currentVal ? `${currentVal} <${tag}>Text</${tag}>` : `<${tag}>Text</${tag}>`;
+      if (field === 'title') setEditableTitle(newVal);
+      else if (field === 'subtitle') setEditableSubtitle(newVal);
+      else if (field === 'badge') setEditableBadge(newVal);
+    }
+  };
+
+  const handleSaveBanner = async (shouldRunLive: boolean) => {
     if (!selectedOption) return;
     setSaving(true);
     setError(null);
     setMessage(null);
 
     try {
-      // 1. Create banner draft first
+      // 1. Create banner
       const createRes = await fetch('/api/banners', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -126,28 +155,28 @@ export default function AiBannerStudioPage() {
       });
 
       const createData = await createRes.json();
-      if (!createRes.ok) throw new Error(createData.error || 'Failed to save banner');
+      if (!createRes.ok) throw new Error(createData.error || 'Failed to save campaign');
 
       const createdBanner = createData.banner;
 
-      // 2. If user chose Approve & Publish immediately
-      if (shouldApproveAndPublish) {
+      // 2. If user chose Run Campaign immediately
+      if (shouldRunLive) {
         const approveRes = await fetch(`/api/banners/${createdBanner.id}/approve`, {
           method: 'POST',
         });
         const approveData = await approveRes.json();
-        if (!approveRes.ok) throw new Error(approveData.error || 'Failed to approve banner');
+        if (!approveRes.ok) throw new Error(approveData.error || 'Failed to launch campaign');
 
-        setMessage('Banner successfully approved and published live on the homepage!');
+        setMessage('🚀 Campaign launched! It is now running live on your website.');
       } else {
-        setMessage('Banner saved as draft in promotional inventory. You can review and publish later.');
+        setMessage('Campaign saved as draft in promotional inventory. You can run it anytime.');
       }
 
       setTimeout(() => {
         router.push('/admin/banners');
       }, 1500);
     } catch (err: any) {
-      setError(err.message || 'Error processing banner action.');
+      setError(err.message || 'Error processing campaign action.');
     } finally {
       setSaving(false);
     }
@@ -162,10 +191,10 @@ export default function AiBannerStudioPage() {
           <span>AI-Assisted Promotional Studio</span>
         </div>
         <h1 className="text-2xl font-extrabold text-navy-900 tracking-tight">
-          Create AI-Assisted Graphics &amp; Banners
+          Create AI-Assisted Graphics &amp; Promotional Campaigns
         </h1>
         <p className="text-xs text-slate-500 mt-1">
-          Generate promotional visual concepts, customize live text/pricing, preview on actual homepage layouts, and require explicit approval before publishing.
+          Generate promotional visual concepts, customize live text, bold/italic/underline formatting, and run campaigns live on the website.
         </p>
       </div>
 
@@ -202,7 +231,7 @@ export default function AiBannerStudioPage() {
                 required
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g. Modern electronics workshop with motherboards, oscilloscope, clean blue lighting..."
+                placeholder="e.g. High-performance Wi-Fi 6 routers Ruijie..."
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none leading-relaxed"
               ></textarea>
             </div>
@@ -215,7 +244,7 @@ export default function AiBannerStudioPage() {
                 type="text"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
-                placeholder="e.g. Wi-Fi 6 Routers &amp; CCTV Packages"
+                placeholder="e.g. TP-Link Wi-Fi 6"
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
               />
             </div>
@@ -339,20 +368,52 @@ export default function AiBannerStudioPage() {
             <div className="space-y-6">
               {/* Copy Editor */}
               <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 text-xs">
-                <h3 className="font-bold text-sm text-navy-900 uppercase tracking-wider pb-2 border-b border-slate-100">
-                  3. Customize Editable Website Text &amp; CTAs
-                </h3>
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <h3 className="font-bold text-sm text-navy-900 uppercase tracking-wider">
+                    3. Customize Editable Website Text &amp; CTAs
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={saving}
+                      onClick={() => handleSaveBanner(true)}
+                      className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-extrabold rounded-lg transition shadow-md flex items-center gap-1.5 uppercase text-[11px]"
+                    >
+                      <Rocket className="w-3.5 h-3.5" />
+                      <span>Run Campaign Live</span>
+                    </button>
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">
-                      Badge Pill Text
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="font-semibold text-slate-700">Badge Pill Text</label>
+                      <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded border border-slate-200">
+                        <button
+                          type="button"
+                          onClick={() => applyFormat('badge', 'b')}
+                          className="px-1.5 py-0.5 rounded text-[10px] font-black hover:bg-white text-slate-700 transition"
+                          title="Bold"
+                        >
+                          B
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => applyFormat('badge', 'u')}
+                          className="px-1.5 py-0.5 rounded text-[10px] underline hover:bg-white text-slate-700 transition"
+                          title="Underline"
+                        >
+                          U
+                        </button>
+                      </div>
+                    </div>
                     <input
+                      id="field-badge"
                       type="text"
                       value={editableBadge}
                       onChange={(e) => setEditableBadge(e.target.value)}
-                      placeholder="e.g. Surkhet Tech Festival"
+                      placeholder="e.g. Official Authorized Hub"
                       className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
                     />
                   </div>
@@ -365,29 +426,89 @@ export default function AiBannerStudioPage() {
                       type="text"
                       value={editableCtaText}
                       onChange={(e) => setEditableCtaText(e.target.value)}
+                      placeholder="e.g. Explore Gear"
                       className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
                     />
                   </div>
                 </div>
 
+                {/* Headline with B, I, U toolbar */}
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Banner Headline *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-semibold text-slate-700">Banner Headline *</label>
+                    <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded border border-slate-200">
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('title', 'b')}
+                        className="px-2 py-0.5 rounded text-[11px] font-black hover:bg-white text-slate-700 transition shadow-sm"
+                        title="Bold (<b>...</b>)"
+                      >
+                        B
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('title', 'i')}
+                        className="px-2 py-0.5 rounded text-[11px] italic font-serif hover:bg-white text-slate-700 transition shadow-sm"
+                        title="Italic (<i>...</i>)"
+                      >
+                        I
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('title', 'u')}
+                        className="px-2 py-0.5 rounded text-[11px] underline hover:bg-white text-slate-700 transition shadow-sm"
+                        title="Underline (<u>...</u>)"
+                      >
+                        U
+                      </button>
+                    </div>
+                  </div>
                   <input
+                    id="field-title"
                     type="text"
                     required
                     value={editableTitle}
                     onChange={(e) => setEditableTitle(e.target.value)}
                     className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-bold focus:bg-white focus:border-brand-500 outline-none"
                   />
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Tip: Highlight any word and click B, I, or U to format.
+                  </p>
                 </div>
 
+                {/* Subtitle with B, I, U toolbar */}
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
-                    Subtitle Description
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="font-semibold text-slate-700">Subtitle Description</label>
+                    <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded border border-slate-200">
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('subtitle', 'b')}
+                        className="px-2 py-0.5 rounded text-[11px] font-black hover:bg-white text-slate-700 transition shadow-sm"
+                        title="Bold (<b>...</b>)"
+                      >
+                        B
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('subtitle', 'i')}
+                        className="px-2 py-0.5 rounded text-[11px] italic font-serif hover:bg-white text-slate-700 transition shadow-sm"
+                        title="Italic (<i>...</i>)"
+                      >
+                        I
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyFormat('subtitle', 'u')}
+                        className="px-2 py-0.5 rounded text-[11px] underline hover:bg-white text-slate-700 transition shadow-sm"
+                        title="Underline (<u>...</u>)"
+                      >
+                        U
+                      </button>
+                    </div>
+                  </div>
                   <textarea
+                    id="field-subtitle"
                     rows={2}
                     value={editableSubtitle}
                     onChange={(e) => setEditableSubtitle(e.target.value)}
@@ -441,14 +562,14 @@ export default function AiBannerStudioPage() {
                       <div className={`${previewViewport === 'mobile' ? 'col-span-1' : 'md:col-span-7'} space-y-3`}>
                         {editableBadge && (
                           <span className="inline-block px-2.5 py-0.5 rounded-full bg-brand-500/20 text-cyan-accent text-[10px] font-bold uppercase tracking-wider border border-brand-500/30">
-                            {editableBadge}
+                            <FormattedText text={editableBadge} />
                           </span>
                         )}
                         <h4 className="font-extrabold text-base sm:text-lg text-white leading-tight">
-                          {editableTitle}
+                          <FormattedText text={editableTitle} />
                         </h4>
                         <p className="text-slate-300 text-xs leading-relaxed line-clamp-2">
-                          {editableSubtitle}
+                          <FormattedText text={editableSubtitle} />
                         </p>
                         <div className="pt-1 flex items-center gap-2">
                           <span className="px-3 py-1 bg-brand-500 text-white rounded-md text-xs font-bold shadow-sm">
@@ -476,10 +597,10 @@ export default function AiBannerStudioPage() {
                   </div>
                 </div>
 
-                {/* Approval & Action Buttons */}
+                {/* Prominent Action & Run Campaign Buttons */}
                 <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
                   <span className="text-slate-500 italic">
-                    AI content is isolated until approved by the administrator.
+                    Ready to display this banner on your website? Click Run Campaign.
                   </span>
 
                   <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -497,10 +618,10 @@ export default function AiBannerStudioPage() {
                       type="button"
                       disabled={saving}
                       onClick={() => handleSaveBanner(true)}
-                      className="flex-1 sm:flex-none px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition shadow-md flex items-center justify-center gap-1.5 uppercase tracking-wider"
+                      className="flex-1 sm:flex-none px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl transition shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 uppercase tracking-wider"
                     >
-                      <ShieldCheck className="w-4 h-4" />
-                      <span>Approve &amp; Publish Live</span>
+                      <Rocket className="w-4 h-4" />
+                      <span>🚀 Run Campaign Live</span>
                     </button>
                   </div>
                 </div>
