@@ -1,12 +1,20 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { getMergedBusinessProfile } from '@/platform/engine/tenant-loader';
 
-export const metadata: Metadata = {
-  title: 'Privacy Policy | Krishna Electronics Surkhet',
-  description: 'Privacy policy for Krishna Electronics & Order Suppliers website and inquiry platform.',
-};
+export const revalidate = 60;
 
-export default function PrivacyPolicyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const profile = await getMergedBusinessProfile();
+  return {
+    title: `Privacy Policy | ${profile.siteName}`,
+    description: `Privacy policy for ${profile.siteName} website and inquiry platform.`,
+  };
+}
+
+export default async function PrivacyPolicyPage() {
+  const profile = await getMergedBusinessProfile();
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
       <div>
@@ -14,13 +22,13 @@ export default function PrivacyPolicyPage() {
           Privacy Policy
         </h1>
         <p className="text-xs text-slate-500 mt-1">
-          Effective date: 2026 &bull; Krishna Electronics &amp; Order Suppliers
+          Effective date: 2026 &bull; {profile.siteName}
         </p>
       </div>
 
       <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6 text-xs text-slate-600 leading-relaxed">
         <p>
-          Krishna Electronics &amp; Order Suppliers (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) respects your privacy and is committed to protecting the personal information you share with us through our website at <code>https://krishnaelectronics.com.np</code>.
+          {profile.siteName} (&ldquo;we&rdquo;, &ldquo;our&rdquo;, or &ldquo;us&rdquo;) respects your privacy and is committed to protecting the personal information you share with us through our website at <code>https://krishnaelectronics.com.np</code>.
         </p>
 
         <h2 className="text-sm font-bold text-navy-900">1. Information We Collect</h2>
@@ -40,7 +48,7 @@ export default function PrivacyPolicyPage() {
 
         <h2 className="text-sm font-bold text-navy-900">4. Contacting Our Data Controller</h2>
         <p>
-          If you have any questions regarding your personal details or wish to have your inquiry record removed from our systems, please contact our physical store at Birendranagar-6, Buddhapath, Surkhet, Nepal.
+          If you have any questions regarding your personal details or wish to have your inquiry record removed from our systems, please contact our physical store at {profile.locationAddress}.
         </p>
       </div>
     </div>

@@ -84,8 +84,8 @@ export default function Footer({ settings }: FooterProps) {
               <div className="w-12 h-12 rounded-full overflow-hidden bg-white p-0.5 border-2 border-brand-500 shadow-md shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/images/logo.jpg"
-                  alt="Krishna Electronics Order & Suppliers Logo"
+                  src={settings?.logoUrl || '/images/logo.jpg'}
+                  alt={`${settings?.siteName || 'Krishna Electronics Order & Suppliers'} Logo`}
                   className="w-full h-full object-contain"
                   width={48}
                   height={48}
@@ -94,16 +94,16 @@ export default function Footer({ settings }: FooterProps) {
               </div>
               <div>
                 <div className="font-bold text-base text-white tracking-wide">
-                  KRISHNA ELECTRONICS
+                  {settings?.siteName || 'KRISHNA ELECTRONICS'}
                 </div>
                 <div className="text-xs text-cyan-accent font-medium">
-                  Order &amp; Suppliers &bull; Surkhet, Nepal
+                  {settings?.siteTagline || 'Order & Suppliers • Surkhet, Nepal'}
                 </div>
               </div>
             </div>
 
             <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
-              Your premier electronics, networking, and technical service partner in Karnali Province. We provide certified IT hardware, CCTV surveillance, IoT automation, chip-level laptop repairs, and Annual Maintenance Contracts (AMC) for institutions.
+              {settings?.siteDescription || 'Your premier electronics, networking, and technical service partner in Karnali Province. We provide certified IT hardware, CCTV surveillance, IoT automation, chip-level laptop repairs, and Annual Maintenance Contracts (AMC) for institutions.'}
             </p>
 
             <div className="space-y-2 text-xs">

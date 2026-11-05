@@ -67,127 +67,114 @@ async function main() {
     });
   } catch (_) {}
 
-  // 2. Business Settings from Manifest
+  // 2. Business Settings from Manifest (Preserves user changes if already configured)
   const fullAddress = `${manifest.identity.location.address}, ${manifest.identity.location.city}, ${manifest.identity.location.country}`;
-  await prisma.setting.upsert({
+  const existingSetting = await prisma.setting.findUnique({
     where: { id: 'site-settings' },
-    update: {
-      siteName: manifest.identity.name,
-      locationAddress: fullAddress,
-      logoUrl: manifest.identity.logoUrl || '/images/logo.jpg',
-      siteDescription: manifest.identity.description,
-    },
-    create: {
-      id: 'site-settings',
-      siteName: manifest.identity.name,
-      logoUrl: manifest.identity.logoUrl || '/images/logo.jpg',
-      siteTagline: manifest.identity.tagline,
-      siteDescription: manifest.identity.description,
-      contactPhone: manifest.identity.contact.phoneDefault,
-      contactEmail: manifest.identity.contact.emailDefault,
-      contactWhatsapp: manifest.identity.contact.whatsappDefault,
-      locationAddress: fullAddress,
-      businessHours: manifest.identity.contact.hoursDefault,
-      googleMapsEmbedUrl: '',
-      socialFacebook: '',
-      socialInstagram: '',
-      socialLinkedin: '',
-      socialYoutube: '',
-      deliveryInfo: manifest.deliveryNote,
-      paymentMethods: manifest.paymentMethodsNote,
-      currencyCode: manifest.identity.currency.code,
-      currencySymbol: manifest.identity.currency.symbol,
-      taxRatePercent: 13.0,
-      maintenanceMode: false,
-      metaTitle: `${manifest.identity.name} | ${manifest.identity.location.city}, ${manifest.identity.location.country}`,
-      metaDescription: manifest.identity.description,
-    },
   });
-  console.log('✓ Site settings configured from business manifest');
+
+  if (!existingSetting) {
+    await prisma.setting.create({
+      data: {
+        id: 'site-settings',
+        siteName: manifest.identity.name,
+        logoUrl: manifest.identity.logoUrl || '/images/logo.jpg',
+        siteTagline: manifest.identity.tagline,
+        siteDescription: manifest.identity.description,
+        contactPhone: manifest.identity.contact.phoneDefault,
+        contactEmail: manifest.identity.contact.emailDefault,
+        contactWhatsapp: manifest.identity.contact.whatsappDefault,
+        locationAddress: fullAddress,
+        businessHours: manifest.identity.contact.hoursDefault,
+        googleMapsEmbedUrl: '',
+        socialFacebook: '',
+        socialInstagram: '',
+        socialLinkedin: '',
+        socialYoutube: '',
+        deliveryInfo: manifest.deliveryNote,
+        paymentMethods: manifest.paymentMethodsNote,
+        currencyCode: manifest.identity.currency.code,
+        currencySymbol: manifest.identity.currency.symbol,
+        taxRatePercent: 13.0,
+        maintenanceMode: false,
+        metaTitle: `${manifest.identity.name} | ${manifest.identity.location.city}, ${manifest.identity.location.country}`,
+        metaDescription: manifest.identity.description,
+      },
+    });
+    console.log('✓ Initial site settings initialized from business manifest');
+  } else {
+    console.log('✓ Existing customized site settings preserved (no overwrite)');
+  }
 
   // 3. Categories & Subcategories
   const categoryMap = new Map();
   for (const cat of manifest.categories) {
-    const createdCat = await prisma.category.upsert({
-      where: { slug: cat.slug },
-      update: {
-        name: cat.name,
-        description: cat.description,
-        icon: cat.icon,
-        orderIndex: cat.orderIndex,
-      },
-      create: {
-        name: cat.name,
-        slug: cat.slug,
-        description: cat.description,
-        icon: cat.icon,
-        orderIndex: cat.orderIndex,
-        isActive: true,
-      },
-    });
+    let createdCat = await prisma.category.findUnique({ where: { slug: cat.slug } });
+    if (!createdCat) {
+      createdCat = await prisma.category.create({
+        data: {
+          name: cat.name,
+          slug: cat.slug,
+          description: cat.description,
+          icon: cat.icon,
+          orderIndex: cat.orderIndex,
+          isActive: true,
+        },
+      });
+    }
     categoryMap.set(cat.slug, createdCat.id);
 
     for (const subName of cat.subcategories) {
       const subSlug = subName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      await prisma.subcategory.upsert({
-        where: { slug: subSlug },
-        update: {
-          name: subName,
-          categoryId: createdCat.id,
-        },
-        create: {
-          name: subName,
-          slug: subSlug,
-          categoryId: createdCat.id,
-        },
-      });
+      const existingSub = await prisma.subcategory.findUnique({ where: { slug: subSlug } });
+      if (!existingSub) {
+        await prisma.subcategory.create({
+          data: {
+            name: subName,
+            slug: subSlug,
+            categoryId: createdCat.id,
+          },
+        });
+      }
     }
   }
-  console.log('✓ Categories and subcategories seeded');
+  console.log('✓ Categories and subcategories verified/seeded');
 
   // 4. Brands
   const brandMap = new Map();
   for (const b of manifest.brands) {
-    const createdBrand = await prisma.brand.upsert({
-      where: { slug: b.slug },
-      update: { name: b.name, isPopular: b.isPopular },
-      create: { name: b.name, slug: b.slug, isPopular: b.isPopular },
-    });
+    let createdBrand = await prisma.brand.findUnique({ where: { slug: b.slug } });
+    if (!createdBrand) {
+      createdBrand = await prisma.brand.create({
+        data: { name: b.name, slug: b.slug, isPopular: b.isPopular },
+      });
+    }
     brandMap.set(b.slug, createdBrand.id);
   }
-  console.log('✓ Brands seeded');
+  console.log('✓ Brands verified/seeded');
 
   // 5. Technical Services
   for (const s of manifest.services) {
-    await prisma.service.upsert({
-      where: { slug: s.slug },
-      update: {
-        title: s.title,
-        icon: s.icon,
-        shortDescription: s.shortDescription,
-        fullDescription: s.fullDescription,
-        features: JSON.stringify(s.features),
-        pricingNote: s.pricingNote,
-        startingPrice: s.startingPrice,
-        isFeatured: s.isFeatured,
-        orderIndex: s.orderIndex,
-      },
-      create: {
-        title: s.title,
-        slug: s.slug,
-        icon: s.icon,
-        shortDescription: s.shortDescription,
-        fullDescription: s.fullDescription,
-        features: JSON.stringify(s.features),
-        pricingNote: s.pricingNote,
-        startingPrice: s.startingPrice,
-        isFeatured: s.isFeatured,
-        orderIndex: s.orderIndex,
-        isActive: true,
-      },
-    });
+    const existingService = await prisma.service.findUnique({ where: { slug: s.slug } });
+    if (!existingService) {
+      await prisma.service.create({
+        data: {
+          title: s.title,
+          slug: s.slug,
+          icon: s.icon,
+          shortDescription: s.shortDescription,
+          fullDescription: s.fullDescription,
+          features: JSON.stringify(s.features),
+          pricingNote: s.pricingNote,
+          startingPrice: s.startingPrice,
+          isFeatured: s.isFeatured,
+          orderIndex: s.orderIndex,
+          isActive: true,
+        },
+      });
+    }
   }
-  console.log('✓ Services seeded');
+  console.log('✓ Services verified/seeded');
 
   // 6. Products
   for (const p of manifest.products) {
@@ -199,50 +186,35 @@ async function main() {
       continue;
     }
 
-    await prisma.product.upsert({
-      where: { slug: p.slug },
-      update: {
-        title: p.title,
-        sku: p.sku,
-        regularPrice: p.regularPrice,
-        offerPrice: p.offerPrice,
-        discountPercent: p.discountPercent,
-        stockQuantity: p.stockQuantity,
-        stockStatus: p.stockStatus,
-        shortDescription: p.shortDescription,
-        fullDescription: p.fullDescription,
-        specifications: JSON.stringify(p.specifications),
-        warranty: p.warranty,
-        isFeatured: p.isFeatured,
-        isPopular: p.isPopular,
-        isNewArrival: p.isNewArrival,
-        primaryImage: p.primaryImage,
-        status: p.status,
-      },
-      create: {
-        title: p.title,
-        slug: p.slug,
-        sku: p.sku,
-        categoryId: categoryId,
-        brandId: brandId,
-        regularPrice: p.regularPrice,
-        offerPrice: p.offerPrice,
-        discountPercent: p.discountPercent,
-        stockQuantity: p.stockQuantity,
-        stockStatus: p.stockStatus,
-        shortDescription: p.shortDescription,
-        fullDescription: p.fullDescription,
-        specifications: JSON.stringify(p.specifications),
-        warranty: p.warranty,
-        isFeatured: p.isFeatured,
-        isPopular: p.isPopular,
-        isNewArrival: p.isNewArrival,
-        primaryImage: p.primaryImage,
-        status: p.status,
-        publishedAt: p.status === 'PUBLISHED' ? new Date() : null,
-      },
-    });
+    const existingProduct = await prisma.product.findUnique({ where: { slug: p.slug } });
+    if (!existingProduct) {
+      await prisma.product.create({
+        data: {
+          title: p.title,
+          slug: p.slug,
+          sku: p.sku,
+          categoryId: categoryId,
+          brandId: brandId,
+          regularPrice: p.regularPrice,
+          offerPrice: p.offerPrice,
+          discountPercent: p.discountPercent,
+          stockQuantity: p.stockQuantity,
+          stockStatus: p.stockStatus,
+          shortDescription: p.shortDescription,
+          fullDescription: p.fullDescription,
+          specifications: JSON.stringify(p.specifications),
+          warranty: p.warranty,
+          isFeatured: p.isFeatured,
+          isPopular: p.isPopular,
+          isNewArrival: p.isNewArrival,
+          primaryImage: p.primaryImage,
+          status: p.status,
+          publishedAt: p.status === 'PUBLISHED' ? new Date() : null,
+        },
+      });
+    }
   }
+  console.log('✓ Products verified/seeded');
   console.log('✓ Products seeded');
 
   // 7. Banners

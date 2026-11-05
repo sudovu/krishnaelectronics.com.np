@@ -1,12 +1,20 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { getMergedBusinessProfile } from '@/platform/engine/tenant-loader';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service | Krishna Electronics Surkhet',
-  description: 'Terms and conditions governing the use of Krishna Electronics & Order Suppliers website and commercial quotes.',
-};
+export const revalidate = 60;
 
-export default function TermsPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const profile = await getMergedBusinessProfile();
+  return {
+    title: `Terms of Service | ${profile.siteName}`,
+    description: `Terms and conditions governing the use of ${profile.siteName} website and commercial quotes.`,
+  };
+}
+
+export default async function TermsPage() {
+  const profile = await getMergedBusinessProfile();
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
       <div>
@@ -14,19 +22,19 @@ export default function TermsPage() {
           Terms &amp; Conditions
         </h1>
         <p className="text-xs text-slate-500 mt-1">
-          Effective date: 2026 &bull; Krishna Electronics &amp; Order Suppliers
+          Effective date: 2026 &bull; {profile.siteName}
         </p>
       </div>
 
       <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6 text-xs text-slate-600 leading-relaxed">
         <h2 className="text-sm font-bold text-navy-900">1. Acceptance of Terms</h2>
         <p>
-          By accessing this website, submitting inquiry forms, or engaging Krishna Electronics &amp; Order Suppliers for repairs, hardware procurement, or network cabling, you agree to be bound by these terms.
+          By accessing this website, submitting inquiry forms, or engaging {profile.siteName} for repairs, hardware procurement, or network cabling, you agree to be bound by these terms.
         </p>
 
         <h2 className="text-sm font-bold text-navy-900">2. Pricing, Currencies &amp; Quotations</h2>
         <p>
-          All prices displayed or quoted on this website are denominated in Nepalese Rupees (NPR / रु) and include applicable taxes unless specified otherwise in written commercial proposals. Prices and promotional discounts are subject to stock availability and supplier cost adjustments.
+          All prices displayed or quoted on this website are denominated in {profile.currencyCode} ({profile.currencySymbol}) and include applicable taxes unless specified otherwise in written commercial proposals. Prices and promotional discounts are subject to stock availability and supplier cost adjustments.
         </p>
 
         <h2 className="text-sm font-bold text-navy-900">3. Repair Estimates &amp; Bench Diagnostics</h2>

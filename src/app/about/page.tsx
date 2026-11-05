@@ -16,7 +16,9 @@ export default async function AboutPage() {
     where: { id: 'site-settings' },
   }).catch(() => null);
 
+  const siteName = settings?.siteName || 'Krishna Electronics Order & Suppliers';
   const location = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
+  const siteDescription = settings?.siteDescription || 'Headquartered in Surkhet, we are dedicated to bridging the technological divide in Western Nepal through genuine computing hardware, enterprise network infrastructure, intelligent IoT devices, and specialized chip-level electronics repair.';
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 space-y-16">
@@ -29,11 +31,11 @@ export default async function AboutPage() {
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
-            Krishna Electronics Order &amp; Suppliers
+            {siteName}
           </h1>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Headquartered in Birendranagar-12, Surkhet, we are dedicated to bridging the technological divide in Western Nepal through genuine computing hardware, enterprise network infrastructure, intelligent IoT devices, and specialized chip-level electronics repair.
+            {siteDescription}
           </p>
         </div>
       </div>
@@ -64,7 +66,7 @@ export default async function AboutPage() {
           <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
             <MapPin className="w-6 h-6 text-indigo-600" />
           </div>
-          <h2 className="text-lg font-bold text-navy-900">Karnali Regional Commitment</h2>
+          <h2 className="text-lg font-bold text-navy-900">Regional Commitment</h2>
           <p className="text-xs text-slate-600 leading-relaxed">
             From Surkhet Valley to Dailekh, Jajarkot, Jumla, and Kalikot, we deploy reliable on-site networking, security cameras, and provide corporate Annual Maintenance Contracts for schools, banks, and offices.
           </p>
@@ -75,10 +77,10 @@ export default async function AboutPage() {
       <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-10 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div className="lg:col-span-7 space-y-4">
           <h2 className="text-2xl font-extrabold text-navy-900">
-            Our Physical Facility in Birendranagar-12
+            Our Physical Facility in {location}
           </h2>
           <p className="text-sm text-slate-600 leading-relaxed">
-            Located conveniently in Birendranagar-12, Surkhet, our center features a customer demonstration zone where clients can test Wi-Fi 6 mesh routers, view live CCTV night-vision clarity, and see smart IoT automation switches in action before purchase.
+            Located conveniently in {location}, our center features a customer demonstration zone where clients can test Wi-Fi 6 mesh routers, view live CCTV night-vision clarity, and see smart IoT automation switches in action before purchase.
           </p>
           <div className="space-y-2 pt-2 text-xs text-slate-700">
             <div className="flex items-center gap-2">

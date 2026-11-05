@@ -2,13 +2,21 @@ import React from 'react';
 import Link from 'next/link';
 import { ShieldCheck, RotateCcw, AlertTriangle } from 'lucide-react';
 import type { Metadata } from 'next';
+import { getMergedBusinessProfile } from '@/platform/engine/tenant-loader';
 
-export const metadata: Metadata = {
-  title: 'Warranty & Return Policy | Krishna Electronics Surkhet',
-  description: 'Official manufacturer warranty procedures and return policies for products purchased at Krishna Electronics & Order Suppliers, Surkhet.',
-};
+export const revalidate = 60;
 
-export default function WarrantyPolicyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const profile = await getMergedBusinessProfile();
+  return {
+    title: `Warranty & Return Policy | ${profile.siteName}`,
+    description: `Official manufacturer warranty procedures and return policies for products purchased at ${profile.siteName}.`,
+  };
+}
+
+export default async function WarrantyPolicyPage() {
+  const profile = await getMergedBusinessProfile();
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
       <div>
@@ -20,7 +28,7 @@ export default function WarrantyPolicyPage() {
           Warranty &amp; Return Policy
         </h1>
         <p className="text-xs text-slate-500 mt-1">
-          Last revised: 2026 &bull; Krishna Electronics &amp; Order Suppliers, Surkhet, Nepal
+          Last revised: 2026 &bull; {profile.siteName}
         </p>
       </div>
 
@@ -28,14 +36,14 @@ export default function WarrantyPolicyPage() {
         <section className="space-y-3">
           <h2 className="text-base font-bold text-navy-900">1. Official Hardware Warranties</h2>
           <p className="text-xs text-slate-600">
-            All brand-new laptops, networking hardware (TP-Link, MikroTik), security cameras (Hikvision, Dahua), and power backups sold by Krishna Electronics carry official manufacturer warranties ranging from 6 months to 2 years, depending on the product category. The warranty period is explicitly stated on your purchase invoice.
+            All brand-new laptops, networking hardware, security cameras, and power backups sold by {profile.siteName} carry official manufacturer warranties ranging from 6 months to 2 years, depending on the product category. The warranty period is explicitly stated on your purchase invoice.
           </p>
         </section>
 
         <section className="space-y-3 border-t border-slate-100 pt-4">
           <h2 className="text-base font-bold text-navy-900">2. Service &amp; Laboratory Repair Warranties</h2>
           <p className="text-xs text-slate-600">
-            Chip-level motherboard repairs, display panel replacements, and power supply repairs performed in our Buddhapath laboratory include a dedicated 30 to 90-day service warranty covering the specific component or circuit serviced.
+            Chip-level motherboard repairs, display panel replacements, and power supply repairs performed in our laboratory include a dedicated 30 to 90-day service warranty covering the specific component or circuit serviced.
           </p>
         </section>
 
@@ -57,7 +65,7 @@ export default function WarrantyPolicyPage() {
         <section className="space-y-3 border-t border-slate-100 pt-4">
           <h2 className="text-base font-bold text-navy-900">5. Claiming Warranty in Surkhet</h2>
           <p className="text-xs text-slate-600">
-            To claim warranty, simply bring the device with its purchase bill to our store at <strong>Birendranagar-6, Buddhapath, Surkhet</strong>. Our technical support desk will log the unit, conduct preliminary testing, and coordinate replacement or factory servicing without requiring you to handle complex courier arrangements yourself.
+            To claim warranty, simply bring the device with its purchase bill to our store at <strong>{profile.locationAddress}</strong>. Our technical support desk will log the unit, conduct preliminary testing, and coordinate replacement or factory servicing without requiring you to handle complex courier arrangements yourself.
           </p>
         </section>
       </div>

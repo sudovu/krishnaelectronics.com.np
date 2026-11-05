@@ -97,8 +97,8 @@ export default function Header({ settings }: HeaderProps) {
             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-brand-500 shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform bg-white p-0.5 flex-shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/logo.jpg"
-                alt="Krishna Electronics Order & Suppliers Logo"
+                src={settings?.logoUrl || '/images/logo.jpg'}
+                alt={`${settings?.siteName || 'Krishna Electronics Order & Suppliers'} Logo`}
                 className="w-full h-full object-contain"
                 width={48}
                 height={48}
@@ -106,10 +106,10 @@ export default function Header({ settings }: HeaderProps) {
             </div>
             <div>
               <div className="font-extrabold text-lg sm:text-xl text-navy-900 tracking-tight leading-tight group-hover:text-brand-600 transition">
-                KRISHNA <span className="text-brand-500">ELECTRONICS</span>
+                {settings?.siteName || 'Krishna Electronics Order & Suppliers'}
               </div>
               <p className="text-[11px] font-medium text-slate-700 tracking-wider uppercase">
-                Order &amp; Suppliers &bull; Surkhet
+                {settings?.siteTagline || 'Order & Suppliers • Surkhet'}
               </p>
             </div>
           </Link>
