@@ -14,25 +14,25 @@ module.exports = {
           200: '#bfdbfe',
           300: '#93c5fd',
           400: '#60a5fa',
-          500: '#0066FF', // Electric blue primary
-          600: '#0052cc',
+          500: 'var(--brand-primary, #0066FF)', // Electric blue primary / dynamically adjustable
+          600: 'var(--brand-secondary, #0052cc)',
           700: '#003d99',
           800: '#002966',
           900: '#001433',
         },
         navy: {
-          800: '#1C2541',
-          900: '#0B132B',
-          950: '#060B18',
+          800: 'var(--surface-dark-alt, #1C2541)',
+          900: 'var(--surface-dark, #0B132B)',
+          950: 'var(--surface-dark, #060B18)',
         },
         cyan: {
           400: '#22d3ee',
           500: '#06b6d4',
-          accent: '#00F0FF',
+          accent: 'var(--brand-accent, #00F0FF)',
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['var(--font-custom, Inter)', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
     },
   },

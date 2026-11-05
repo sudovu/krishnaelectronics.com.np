@@ -1,3 +1,8 @@
+try {
+  require('dotenv').config();
+} catch (e) {
+  // dotenv optional
+}
 const { execSync } = require('child_process');
 
 async function run() {

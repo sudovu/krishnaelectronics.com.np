@@ -12,9 +12,80 @@ import {
   Clock, 
   CreditCard, 
   Truck, 
-  Globe 
+  Globe,
+  Palette,
+  Type,
+  Sparkles,
+  Eye
 } from 'lucide-react';
 import { SiteSettingsData } from '@/types';
+
+const THEME_PRESETS = [
+  {
+    name: 'Electric Blue (Default)',
+    primaryColor: '#0066FF',
+    secondaryColor: '#0052cc',
+    accentColor: '#00F0FF',
+    darkSurface: '#0B132B',
+    lightSurface: '#F8FAFC',
+    fontFamily: 'Inter',
+  },
+  {
+    name: 'Emerald Tech',
+    primaryColor: '#059669',
+    secondaryColor: '#047857',
+    accentColor: '#10B981',
+    darkSurface: '#062C24',
+    lightSurface: '#F0FDF4',
+    fontFamily: 'Plus Jakarta Sans',
+  },
+  {
+    name: 'Royal Indigo',
+    primaryColor: '#6366F1',
+    secondaryColor: '#4F46E5',
+    accentColor: '#A855F7',
+    darkSurface: '#0F172A',
+    lightSurface: '#F8FAFC',
+    fontFamily: 'Outfit',
+  },
+  {
+    name: 'Crimson Tech',
+    primaryColor: '#DC2626',
+    secondaryColor: '#B91C1C',
+    accentColor: '#F87171',
+    darkSurface: '#1A0B0E',
+    lightSurface: '#FFF5F5',
+    fontFamily: 'Poppins',
+  },
+  {
+    name: 'Amber Gold',
+    primaryColor: '#D97706',
+    secondaryColor: '#B45309',
+    accentColor: '#FBBF24',
+    darkSurface: '#1A160E',
+    lightSurface: '#FFFBEB',
+    fontFamily: 'Montserrat',
+  },
+  {
+    name: 'Cyber Midnight',
+    primaryColor: '#2563EB',
+    secondaryColor: '#1D4ED8',
+    accentColor: '#38BDF8',
+    darkSurface: '#020617',
+    lightSurface: '#0B132B',
+    fontFamily: 'Inter',
+  },
+];
+
+const AVAILABLE_FONTS = [
+  { name: 'Inter', desc: 'Modern, clean, balanced typography (Default)' },
+  { name: 'Poppins', desc: 'Geometric, stylish, high-impact headings' },
+  { name: 'Outfit', desc: 'Trendy, sleek, ultra-modern tech' },
+  { name: 'Plus Jakarta Sans', desc: 'Contemporary crisp enterprise feel' },
+  { name: 'Roboto', desc: 'Classic, universal, structured readability' },
+  { name: 'Montserrat', desc: 'Bold, elegant, architectural presence' },
+  { name: 'Open Sans', desc: 'Neutral, warm, highly legible' },
+];
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<SiteSettingsData | null>(null);
@@ -41,6 +112,19 @@ export default function AdminSettingsPage() {
     setSettings({ ...settings, [field]: value });
   };
 
+  const applyPreset = (preset: typeof THEME_PRESETS[0]) => {
+    if (!settings) return;
+    setSettings({
+      ...settings,
+      primaryColor: preset.primaryColor,
+      secondaryColor: preset.secondaryColor,
+      accentColor: preset.accentColor,
+      darkSurface: preset.darkSurface,
+      lightSurface: preset.lightSurface,
+      fontFamily: preset.fontFamily,
+    });
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!settings) return;
@@ -58,7 +142,7 @@ export default function AdminSettingsPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to update settings');
 
-      setMessage('Website operational settings updated successfully!');
+      setMessage('Website operational settings and visual branding updated successfully!');
     } catch (err: any) {
       setError(err.message || 'Error updating settings');
     } finally {
@@ -74,14 +158,21 @@ export default function AdminSettingsPage() {
     );
   }
 
+  const primaryCol = settings?.primaryColor || '#0066FF';
+  const secondaryCol = settings?.secondaryColor || '#0052cc';
+  const accentCol = settings?.accentColor || '#00F0FF';
+  const darkSurf = settings?.darkSurface || '#0B132B';
+  const lightSurf = settings?.lightSurface || '#F8FAFC';
+  const fontFam = settings?.fontFamily || 'Inter';
+
   return (
     <div className="p-6 md:p-8 space-y-6 max-w-5xl mx-auto">
       <div>
         <h1 className="text-2xl font-extrabold text-navy-900 tracking-tight">
-          Website Settings &amp; Business Profile
+          Website Settings &amp; Visual Design
         </h1>
         <p className="text-xs text-slate-500 mt-1">
-          Configure official contact information, location details, opening hours, currencies, and SEO parameters.
+          Customize website fonts, brand colors, backgrounds, official contact channels, and store identity.
         </p>
       </div>
 
@@ -101,6 +192,277 @@ export default function AdminSettingsPage() {
 
       {settings && (
         <form onSubmit={handleSave} className="space-y-6 text-xs">
+          {/* Visual Design, Fonts & Colors Section */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h2 className="text-sm font-bold text-navy-900 uppercase tracking-wider flex items-center gap-2">
+                <Palette className="w-4 h-4 text-brand-500" />
+                <span>Visual Design, Fonts &amp; Background Colors</span>
+              </h2>
+              <span className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Instant Customization
+              </span>
+            </div>
+
+            {/* 1-Click Color Presets */}
+            <div>
+              <label className="block font-semibold text-slate-700 mb-2">
+                Quick Preset Themes
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+                {THEME_PRESETS.map((preset) => (
+                  <button
+                    key={preset.name}
+                    type="button"
+                    onClick={() => applyPreset(preset)}
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-brand-500 transition text-left bg-slate-50 hover:bg-white group"
+                  >
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <span
+                        className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm border border-black/10"
+                        style={{ backgroundColor: preset.primaryColor }}
+                      />
+                      <span
+                        className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm border border-black/10"
+                        style={{ backgroundColor: preset.darkSurface }}
+                      />
+                      <span
+                        className="w-3.5 h-3.5 rounded-full shrink-0 shadow-sm border border-black/10"
+                        style={{ backgroundColor: preset.accentColor }}
+                      />
+                    </div>
+                    <div className="font-bold text-[11px] text-slate-800 truncate group-hover:text-brand-600">
+                      {preset.name}
+                    </div>
+                    <div className="text-[10px] text-slate-400 font-mono">
+                      {preset.fontFamily}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Typography Selector */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
+                  <Type className="w-3.5 h-3.5 text-brand-500" />
+                  Website Font Family
+                </label>
+                <select
+                  value={settings.fontFamily || 'Inter'}
+                  onChange={(e) => handleChange('fontFamily', e.target.value)}
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none font-medium"
+                >
+                  {AVAILABLE_FONTS.map((f) => (
+                    <option key={f.name} value={f.name}>
+                      {f.name} — {f.desc}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Loaded dynamically via Google Fonts across every public page and storefront.
+                </p>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">
+                  Active Font Preview
+                </label>
+                <div 
+                  className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
+                  style={{ fontFamily: fontFam }}
+                >
+                  <div className="font-bold text-sm">Krishna Electronics Order &amp; Suppliers</div>
+                  <div className="text-[11px] text-slate-500">
+                    The quick brown fox jumps over the lazy dog. ०१२३४५६७८९ रु ५०,०००/-
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Color Palette Pickers */}
+            <div>
+              <label className="block font-semibold text-slate-700 mb-2">
+                Brand &amp; Surface Colors
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                {/* Primary Color */}
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                  <span className="text-[11px] font-bold text-slate-700 block">Primary Color</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={primaryCol}
+                      onChange={(e) => handleChange('primaryColor', e.target.value)}
+                      className="w-8 h-8 rounded border border-slate-300 cursor-pointer p-0 bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={primaryCol}
+                      onChange={(e) => handleChange('primaryColor', e.target.value)}
+                      className="flex-1 px-2 py-1 bg-white border border-slate-200 rounded font-mono text-[11px] uppercase text-slate-800"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 block">Buttons, brand accents, badges</span>
+                </div>
+
+                {/* Secondary Color */}
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                  <span className="text-[11px] font-bold text-slate-700 block">Secondary Color</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={secondaryCol}
+                      onChange={(e) => handleChange('secondaryColor', e.target.value)}
+                      className="w-8 h-8 rounded border border-slate-300 cursor-pointer p-0 bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={secondaryCol}
+                      onChange={(e) => handleChange('secondaryColor', e.target.value)}
+                      className="flex-1 px-2 py-1 bg-white border border-slate-200 rounded font-mono text-[11px] uppercase text-slate-800"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 block">Button hover states, sub-elements</span>
+                </div>
+
+                {/* Accent Color */}
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                  <span className="text-[11px] font-bold text-slate-700 block">Accent / Highlight</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={accentCol}
+                      onChange={(e) => handleChange('accentColor', e.target.value)}
+                      className="w-8 h-8 rounded border border-slate-300 cursor-pointer p-0 bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={accentCol}
+                      onChange={(e) => handleChange('accentColor', e.target.value)}
+                      className="flex-1 px-2 py-1 bg-white border border-slate-200 rounded font-mono text-[11px] uppercase text-slate-800"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 block">Glow highlights, offer badges</span>
+                </div>
+
+                {/* Dark Surface Background */}
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                  <span className="text-[11px] font-bold text-slate-700 block">Dark Background</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={darkSurf}
+                      onChange={(e) => handleChange('darkSurface', e.target.value)}
+                      className="w-8 h-8 rounded border border-slate-300 cursor-pointer p-0 bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={darkSurf}
+                      onChange={(e) => handleChange('darkSurface', e.target.value)}
+                      className="flex-1 px-2 py-1 bg-white border border-slate-200 rounded font-mono text-[11px] uppercase text-slate-800"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 block">Navbar, footer &amp; dark sections</span>
+                </div>
+
+                {/* Light Surface Background */}
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1.5">
+                  <span className="text-[11px] font-bold text-slate-700 block">Light / Page Canvas</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={lightSurf}
+                      onChange={(e) => handleChange('lightSurface', e.target.value)}
+                      className="w-8 h-8 rounded border border-slate-300 cursor-pointer p-0 bg-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={lightSurf}
+                      onChange={(e) => handleChange('lightSurface', e.target.value)}
+                      className="flex-1 px-2 py-1 bg-white border border-slate-200 rounded font-mono text-[11px] uppercase text-slate-800"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 block">Public page body canvas</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Live Interactive Preview Card */}
+            <div>
+              <label className="block font-semibold text-slate-700 mb-2 flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-brand-500" />
+                Live Theme Preview
+              </label>
+              <div 
+                className="p-4 rounded-xl border border-slate-200 transition-all shadow-inner"
+                style={{ backgroundColor: lightSurf, fontFamily: fontFam }}
+              >
+                {/* Navbar mini preview */}
+                <div 
+                  className="px-4 py-2.5 rounded-lg flex items-center justify-between text-white shadow-sm mb-3"
+                  style={{ backgroundColor: darkSurf }}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full overflow-hidden bg-white p-0.5">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={settings.logoUrl || '/images/logo.jpg'} alt="Logo" className="w-full h-full object-contain" />
+                    </div>
+                    <span className="font-bold text-xs tracking-tight">{settings.siteName || 'Krishna Electronics'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px]">
+                    <span className="text-white/70">Laptops</span>
+                    <span className="font-bold underline" style={{ color: accentCol }}>Services</span>
+                    <span 
+                      className="px-2 py-0.5 rounded text-[10px] font-bold text-white shadow-sm"
+                      style={{ backgroundColor: primaryCol }}
+                    >
+                      Login
+                    </span>
+                  </div>
+                </div>
+
+                {/* Content preview */}
+                <div className="p-3 bg-white rounded-lg border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span 
+                        className="px-2 py-0.5 rounded-full text-[10px] font-bold text-slate-900 shadow-sm"
+                        style={{ backgroundColor: accentCol }}
+                      >
+                        OFFER • 15% OFF
+                      </span>
+                      <span className="text-[10px] text-slate-400">Surkhet Delivery Available</span>
+                    </div>
+                    <h3 className="font-extrabold text-sm text-slate-900">
+                      Smart CCTV &amp; Computer Repair in Surkhet
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      Sample preview demonstrating custom font ({fontFam}) and customized palette.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      className="px-3.5 py-1.5 rounded-lg text-white font-bold text-xs shadow-sm transition"
+                      style={{ backgroundColor: primaryCol }}
+                    >
+                      Primary Button
+                    </button>
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 rounded-lg font-bold text-xs border transition"
+                      style={{ borderColor: primaryCol, color: primaryCol }}
+                    >
+                      Outline
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Business Identity */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <h2 className="text-sm font-bold text-navy-900 uppercase tracking-wider pb-2 border-b border-slate-100 flex items-center gap-2">

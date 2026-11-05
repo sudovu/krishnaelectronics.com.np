@@ -61,6 +61,12 @@ model Setting {
   currencySymbol      String   @default("रु")
   taxRatePercent      Float    @default(13.0)
   maintenanceMode     Boolean  @default(false)
+  primaryColor        String   @default("#0066FF")
+  secondaryColor      String   @default("#0052cc")
+  accentColor         String   @default("#00F0FF")
+  darkSurface         String   @default("#0B132B")
+  lightSurface        String   @default("#F8FAFC")
+  fontFamily          String   @default("Inter")
   metaTitle           String   @default("Krishna Electronics Order & Suppliers | Surkhet, Nepal")
   metaDescription     String   @default("Trusted electronics store & technology service center in Surkhet. Laptops, networking, IoT, CCTV, chip-level repairs, and IT maintenance.")
   ogImageUrl          String?

@@ -142,6 +142,12 @@ export interface SiteSettingsData {
   currencySymbol: string;
   taxRatePercent: number;
   maintenanceMode: boolean;
+  primaryColor?: string;
+  secondaryColor?: string;
+  accentColor?: string;
+  darkSurface?: string;
+  lightSurface?: string;
+  fontFamily?: string;
   metaTitle: string;
   metaDescription: string;
   ogImageUrl?: string | null;

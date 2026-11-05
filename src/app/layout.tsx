@@ -66,15 +66,42 @@ export default async function RootLayout({
     ],
   };
 
+  const primaryColor = profile.primaryColor || '#0066FF';
+  const secondaryColor = profile.secondaryColor || '#0052cc';
+  const accentColor = profile.accentColor || '#00F0FF';
+  const darkSurface = profile.darkSurface || '#0B132B';
+  const lightSurface = profile.lightSurface || '#F8FAFC';
+  const fontFamily = profile.fontFamily || 'Inter';
+
+  const fontUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(
+    fontFamily
+  )}:wght@300;400;500;600;700;800;900&display=swap`;
+
+  const dynamicCss = `
+    :root {
+      --brand-primary: ${primaryColor};
+      --brand-secondary: ${secondaryColor};
+      --brand-accent: ${accentColor};
+      --surface-dark: ${darkSurface};
+      --surface-dark-alt: ${darkSurface}dd;
+      --surface-light: ${lightSurface};
+      --font-custom: '${fontFamily}';
+    }
+  `;
+
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href={fontUrl} />
+        <style dangerouslySetInnerHTML={{ __html: dynamicCss }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaJsonLd) }}
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
+      <body className="min-h-screen flex flex-col text-slate-900 font-sans" style={{ backgroundColor: lightSurface }}>
         <Header settings={profile} />
         <main className="flex-1">{children}</main>
         <Footer settings={profile} />
