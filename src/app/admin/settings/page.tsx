@@ -247,8 +247,21 @@ export default function AdminSettingsPage() {
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to update settings');
+      let data = null;
+      const text = await res.text();
+      if (text) {
+        try {
+          data = JSON.parse(text);
+        } catch (_) {}
+      }
+
+      if (!res.ok) {
+        const errorMsg =
+          (data && data.error) ||
+          (text && text.length < 300 ? text : null) ||
+          `Server returned error ${res.status} (${res.statusText || 'Request failed'})`;
+        throw new Error(errorMsg);
+      }
 
       setMessage('Website operational settings, homepage copy, and branding updated successfully!');
       window.scrollTo({ top: 0, behavior: 'smooth' });

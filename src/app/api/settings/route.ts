@@ -100,6 +100,11 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ success: true, settings: updated });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to update settings' }, { status: 500 });
+    console.error('Settings update error:', error);
+    let errorMsg = error?.message || 'Failed to update settings';
+    if (errorMsg.includes('EROFS') || errorMsg.includes('read-only')) {
+      errorMsg = 'Database is in read-only mode. On Vercel serverless, please connect a cloud PostgreSQL database (e.g. Neon or Supabase) via DATABASE_URL.';
+    }
+    return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
 }
