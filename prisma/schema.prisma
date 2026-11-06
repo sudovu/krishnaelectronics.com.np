@@ -70,6 +70,7 @@ model Setting {
   metaTitle           String   @default("Krishna Electronics Order & Suppliers | Surkhet, Nepal")
   metaDescription     String   @default("Trusted electronics store & technology service center in Surkhet. Laptops, networking, IoT, CCTV, chip-level repairs, and IT maintenance.")
   ogImageUrl          String?
+  homeConfig          String?
   updatedAt           DateTime @updatedAt
 }
 

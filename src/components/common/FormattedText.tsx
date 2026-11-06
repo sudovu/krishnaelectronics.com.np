@@ -13,13 +13,13 @@ export function FormattedText({
   text?: string | null; 
   className?: string;
 }) {
-  if (!text) return null;
+  if (!text || typeof text !== 'string') return null;
 
-  // Convert markdown to standard HTML tags if present
+  // Convert markdown to standard HTML tags safely across all browsers
   let html = text
     .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
     .replace(/__(.*?)__/g, '<u>$1</u>')
-    .replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<i>$1</i>');
+    .replace(/\*([^*]+)\*/g, '<i>$1</i>');
 
   return (
     <span

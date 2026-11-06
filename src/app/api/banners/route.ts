@@ -39,6 +39,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const discount = data.discountPercent !== undefined && data.discountPercent !== null && data.discountPercent !== '' && !isNaN(parseInt(data.discountPercent, 10))
+      ? parseInt(data.discountPercent, 10)
+      : null;
+
+    const startDate = data.startDate && !isNaN(Date.parse(data.startDate)) ? new Date(data.startDate) : null;
+    const endDate = data.endDate && !isNaN(Date.parse(data.endDate)) ? new Date(data.endDate) : null;
+
     const banner = await prisma.banner.create({
       data: {
         title: data.title,
@@ -48,15 +55,15 @@ export async function POST(req: NextRequest) {
         ctaLink: data.ctaLink || '/products',
         position: data.position || 'HERO_SLIDER',
         imageUrl: data.imageUrl,
-        discountPercent: data.discountPercent ? parseInt(data.discountPercent, 10) : null,
+        discountPercent: discount,
         couponCode: data.couponCode || null,
-        startDate: data.startDate ? new Date(data.startDate) : null,
-        endDate: data.endDate ? new Date(data.endDate) : null,
+        startDate: startDate,
+        endDate: endDate,
         isAiGenerated: Boolean(data.isAiGenerated),
         aiPrompt: data.aiPrompt || null,
         aiStyle: data.aiStyle || null,
-        status: 'DRAFT', // Always created as DRAFT until explicitly approved
-        isApproved: false,
+        status: data.status || 'DRAFT',
+        isApproved: Boolean(data.isApproved),
       },
     });
 

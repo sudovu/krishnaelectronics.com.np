@@ -71,6 +71,7 @@ export async function getMergedBusinessProfile(): Promise<SiteSettingsData> {
         metaTitle: dbSetting.metaTitle || `${manifest.identity.name} | ${manifest.identity.location.city}, ${manifest.identity.location.country}`,
         metaDescription: dbSetting.metaDescription || manifest.identity.description,
         ogImageUrl: dbSetting.ogImageUrl,
+        homeConfig: dbSetting.homeConfig || null,
       };
       cachedProfile = profile;
       cachedTime = now;
@@ -111,5 +112,6 @@ export async function getMergedBusinessProfile(): Promise<SiteSettingsData> {
     metaTitle: `${manifest.identity.name} | ${manifest.identity.location.city}, ${manifest.identity.location.country}`,
     metaDescription: manifest.identity.description,
     ogImageUrl: null,
+    homeConfig: null,
   };
 }

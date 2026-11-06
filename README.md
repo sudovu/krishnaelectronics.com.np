@@ -18,15 +18,16 @@ A high-performance, enterprise-grade electronics retail marketplace, specialized
 1. [Architectural Principles: Changeable, Scalable & Migratable](#1-architectural-principles-changeable-scalable--migratable)
 2. [How to Access the Admin Portal](#2-how-to-access-the-admin-portal)
 3. [How to Make Changes on the Website (100% Changeable)](#3-how-to-make-changes-on-the-website-100-changeable)
-   - [A. Website Settings, Visual Design, Colors & Fonts](#a-website-settings-visual-design-colors--fonts)
-   - [B. Products, Pricing, Discounts & Specifications](#b-products-pricing-discounts--specifications)
-   - [C. Categories, Subcategories & Brands](#c-categories-subcategories--brands)
-   - [D. Technical Services & Chip-Level Repair Lab](#d-technical-services--chip-level-repair-lab)
-   - [E. Promotional Campaigns, Banners & Entrance Pop-Ups](#e-promotional-campaigns-banners--entrance-pop-ups)
-   - [F. AI Banner Studio](#f-ai-banner-studio)
-   - [G. Customer Inquiries & Order Requests](#g-customer-inquiries--order-requests)
-   - [H. FAQs & Policy Content](#h-faqs--policy-content)
-   - [I. Staff & Team Roles Management](#i-staff--team-roles-management)
+   - [A. 🏠 Homepage Customizer & Section Content (100% Editable Main Page)](#a--homepage-customizer--section-content-100-editable-main-page)
+   - [B. Website Settings, Visual Design, Colors & Fonts](#b-website-settings-visual-design-colors--fonts)
+   - [C. Products, Pricing, Discounts & Specifications](#c-products-pricing-discounts--specifications)
+   - [D. Categories, Subcategories & Brands](#d-categories-subcategories--brands)
+   - [E. Technical Services & Chip-Level Repair Lab](#e-technical-services--chip-level-repair-lab)
+   - [F. Promotional Campaigns, Banners & Entrance Pop-Ups](#f-promotional-campaigns-banners--entrance-pop-ups)
+   - [G. AI Banner Studio](#g-ai-banner-studio)
+   - [H. Customer Inquiries & Order Requests](#h-customer-inquiries--order-requests)
+   - [I. FAQs & Policy Content](#i-faqs--policy-content)
+   - [J. Staff & Team Roles Management](#j-staff--team-roles-management)
 4. [How to Test Changes Before Publishing (Safe Preview)](#4-how-to-test-changes-before-publishing-safe-preview)
 5. [How to Publish Changes Live to the Website](#5-how-to-publish-changes-live-to-the-website)
 6. [Scalability & Database Migration Guide](#6-scalability--database-migration-guide)
@@ -61,7 +62,66 @@ The platform is designed around three core principles:
 
 ## 3. How to Make Changes on the Website (100% Changeable)
 
-### A. Website Settings, Visual Design, Colors & Fonts
+### A. 🏠 Homepage Customizer & Section Content (100% Editable Main Page)
+**Location:** Admin Panel → **Website Settings** (`/admin/settings`) → Click the **🏠 Homepage Customizer** tab.
+
+Every single visual section, badge pill, headline, and explanatory paragraph on the homepage can be customized directly without touching any code:
+
+1. **Product Categories Section:**
+   - **Badge Pill Text:** Change the category badge (e.g. `Explore Department Catalogs`).
+   - **Section Main Heading:** Change the section title (e.g. `Product Categories`).
+   - **Section Subtitle / Description:** Change the descriptive subtitle under the heading.
+   - *Note: Individual categories, slugs, and icons are managed dynamically in `/admin/categories`.*
+
+2. **Featured Products Showcase Section:**
+   - **Badge Pill Text:** Change the badge (e.g. `Verified Top Recommendations`).
+   - **Section Main Heading:** Change the showcase title (e.g. `Featured Electronics & Hardware`).
+   - **Section Subtitle:** Change the subtitle description.
+   - *Note: Products appearing here are managed in `/admin/products`. Simply toggle "Featured" on any product to display it here immediately.*
+
+3. **Mid-Page Smart Showcase Banner (IoT Automation & Telemetry):**
+   - **Showcase Badge:** e.g. `Next-Gen Smart Living`.
+   - **Showcase Headline:** e.g. `Transform Your Home & Facility with IoT Automation`.
+   - **Showcase Narrative / Description:** Explanatory text about automated water tank controllers, smart circuit breakers, and Sonoff relays.
+   - **Primary Action Button (CTA):** Label and destination URL (e.g. `Explore IoT Solutions` → `/services/iot-smart-device-solutions`).
+   - **Secondary Action Button (CTA):** Label and destination URL (e.g. `Request Smart Site Survey` → `/contact`).
+   - **4 Feature Highlight Cards:** Customize the title and description for all 4 highlight cards:
+     - Card 1: e.g. *Mobile App — Remote control of lights, pumps & AC from anywhere*
+     - Card 2: e.g. *Energy Saving — Real-time kWh telemetry & automated cut-off schedules*
+     - Card 3: e.g. *Tank Automation — Automatic water pump on/off with dry-run protection*
+     - Card 4: e.g. *Professional Lab — Tested and calibrated for local 220V grid stability*
+   - *Pro Tip: If you publish a banner in `/admin/banners` with placement slot set to `Promo Grid` or `Offer Banner`, that custom graphic banner will seamlessly take over this spot automatically.*
+
+4. **Why Choose Us / Trust Badges Section:**
+   - **Section Main Heading:** e.g. `Why Customers Rely on Us`.
+   - **Section Subtitle:** e.g. `Serving Birendranagar and Karnali Province with genuine hardware...`.
+   - **4 Trust Cards:** Customize titles and descriptions for all 4 cards:
+     - Card 1: *100% Genuine Brands*
+     - Card 2: *Chip-Level Repair Lab*
+     - Card 3: *Enterprise AMC Contracts*
+     - Card 4: *Local Store & Lab*
+
+5. **Technical Services Showcase Section:**
+   - **Badge Pill Text:** e.g. `Certified Laboratory & On-Site Support`.
+   - **Section Main Heading:** e.g. `Repair, Installation & Maintenance Services`.
+   - **Section Subtitle:** e.g. `From chip-level laptop motherboard diagnostics to optical fiber...`.
+   - *Note: Individual service cards, diagnostic pricing, and turnaround SLAs are managed in `/admin/services`.*
+
+6. **Local Store Visit & Facility Section:**
+   - **Badge Pill Text:** e.g. `Visit Our Local Facility`.
+   - **Section Main Heading:** e.g. `Krishna Electronics Order & Suppliers`.
+   - **Section Subtitle:** Welcome text inviting customers to the Surkhet facility.
+   - *Note: Store address, opening hours, WhatsApp, and currency dynamically sync from your Contact & Operations tabs.*
+
+7. **One-Click Restore Defaults:**
+   - If you ever want to revert all homepage headings and text back to original pristine defaults, simply click the **Restore Defaults** button at the top of the Homepage Customizer tab.
+
+8. **Zero-Error Crash Protection:**
+   - The homepage rendering engine is built with defensive fallbacks: even if any field is left empty or deleted, it seamlessly falls back to valid defaults without ever throwing a runtime error or 500 crash.
+
+---
+
+### B. Website Settings, Visual Design, Colors & Fonts
 **Location:** Admin Panel → **Website Settings** (`/admin/settings`)
 
 Here you can customize the entire appearance and operational rules of the platform:
@@ -97,7 +157,7 @@ Here you can customize the entire appearance and operational rules of the platfo
 
 ---
 
-### B. Products, Pricing, Discounts & Specifications
+### C. Products, Pricing, Discounts & Specifications
 **Location:** Admin Panel → **Products & Inventory** (`/admin/products`)
 
 - **Add a New Product:**
@@ -118,7 +178,7 @@ Here you can customize the entire appearance and operational rules of the platfo
 
 ---
 
-### C. Categories, Subcategories & Brands
+### D. Categories, Subcategories & Brands
 **Location:** Admin Panel → **Categories & Brands** (`/admin/categories`)
 
 - **Manage Categories:**
@@ -131,7 +191,7 @@ Here you can customize the entire appearance and operational rules of the platfo
 
 ---
 
-### D. Technical Services & Chip-Level Repair Lab
+### E. Technical Services & Chip-Level Repair Lab
 **Location:** Admin Panel → **Technical Services** (`/admin/services`)
 
 - Showcase the specialized engineering capabilities in Surkhet:
@@ -144,7 +204,7 @@ Here you can customize the entire appearance and operational rules of the platfo
 
 ---
 
-### E. Promotional Campaigns, Banners & Entrance Pop-Ups
+### F. Promotional Campaigns, Banners & Entrance Pop-Ups
 **Location:** Admin Panel → **Banners & Promotions** (`/admin/banners`)
 
 - **Create a New Promotional Campaign:**
@@ -156,8 +216,8 @@ Here you can customize the entire appearance and operational rules of the platfo
      - `Offer Banner`: Dedicated seasonal specials page banner.
   3. Enter **Banner Headline** and **Subtitle Description**.
   4. Use the **Formatting Toolbar**:
-     - **Bold:** Highlight text and click **B** (adds `**bold text**`).
-     - *Italic:* Highlight text and click *I* (adds `*italic text*`).
+     - **Bold:** Highlight text and click **B** (adds `<b>bold text</b>`).
+     - *Italic:* Highlight text and click *I* (adds `<i>italic text</i>`).
      - <u>Underline:</u> Highlight text and click <u>U</u> (adds `<u>underlined text</u>`).
   5. Customize Badge Pill text, Button CTA Label, and CTA Destination Link (e.g. `/products?category=networking`).
   6. Optionally set **Discount %** and **Coupon Code**.
@@ -168,7 +228,7 @@ Here you can customize the entire appearance and operational rules of the platfo
 
 ---
 
-### F. AI Banner Studio
+### G. AI Banner Studio
 **Location:** Admin Panel → **AI Banner Studio** (`/admin/ai-banner-studio`)
 
 - Prompt-driven creative campaign generation:
@@ -182,7 +242,7 @@ Here you can customize the entire appearance and operational rules of the platfo
 
 ---
 
-### G. Customer Inquiries & Order Requests
+### H. Customer Inquiries & Order Requests
 **Location:** Admin Panel → **Inquiries & Orders** (`/admin/inquiries`)
 
 - View live requests submitted by customers through product inquiry and repair booking forms.
@@ -192,7 +252,7 @@ Here you can customize the entire appearance and operational rules of the platfo
 
 ---
 
-### H. FAQs & Policy Content
+### I. FAQs & Policy Content
 **Location:** Admin Panel → **FAQs & Content** (`/admin/faqs`)
 
 - Add, edit, or reorder frequently asked questions grouped by categories (*Warranties, Repairs, Delivery, Payments*).
@@ -200,7 +260,7 @@ Here you can customize the entire appearance and operational rules of the platfo
 
 ---
 
-### I. Staff & Team Roles Management
+### J. Staff & Team Roles Management
 **Location:** Admin Panel → **User Management** (`/admin/users`) *(Super Admin Only)*
 
 - Add new staff accounts with granular role-based access:
@@ -228,16 +288,41 @@ Before publishing changes to the public website, you can verify how everything l
 
 ## 5. How to Publish Changes Live to the Website
 
-Once your drafts, banners, products, or settings are ready:
+There are two publishing workflows depending on whether you are updating content/settings or deploying new code:
 
-1. Click the prominent blue **🚀 Publish to Website** button in the top navigation bar of the Admin Panel.
+### Method 1: Instant In-Browser Publishing (Content, Banners, Products & Settings)
+When you modify banners, products, categories, homepage text, or visual theme settings:
+
+1. In the Admin Panel, click the prominent blue **🚀 Publish to Website** button in the top navigation bar.
 2. Confirm the prompt: *"Are you ready to publish all approved changes to the live website?"*.
 3. **What happens automatically:**
    - All approved `DRAFT` banners and products are updated to `PUBLISHED`.
    - In-memory database caches are purged.
    - Next.js on-demand cache revalidation (`revalidatePath`) purges the homepage, catalog, services, about, contact, and FAQ routes.
-   - Vercel's global CDN distributes the updated pre-rendered HTML worldwide within seconds.
-4. A green toast notification will display the exact timestamp and the number of active products, services, and banners published live.
+   - The live website updates immediately without needing to restart the server or redeploy on Vercel.
+4. A green toast notification displays the exact timestamp and publishing report.
+
+### Method 2: Publishing Code & Repository Updates (GitHub & Vercel)
+When making source code changes, package updates, or database schema additions:
+
+1. **Verify build locally first:**
+   ```bash
+   npm test
+   npm run build
+   ```
+2. **Commit and push to GitHub:**
+   ```bash
+   git add .
+   git commit -m "feat: your descriptive change message"
+   git push origin main
+   ```
+3. **Automatic Vercel Deployment:**
+   - Vercel automatically detects the push to the `main` branch.
+   - The Vercel build pipeline executes `scripts/prepare-db.js`, configures the PostgreSQL provider, builds all routes, and deploys globally to the Edge CDN.
+4. **If Vercel Shows a Build Error:**
+   - Check the build logs in your Vercel Dashboard under **Deployments**.
+   - Common fix: Ensure `DATABASE_URL` or `POSTGRES_PRISMA_URL` is set in Vercel Project Settings → Environment Variables.
+   - Run `npx prisma generate` to ensure the Prisma client matches your schema.
 
 ---
 

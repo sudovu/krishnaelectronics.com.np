@@ -95,8 +95,8 @@ export default function CampaignPopup({ banners }: CampaignPopupProps) {
         <div className="relative aspect-[16/9] w-full bg-navy-950 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={activeBanner.imageUrl}
-            alt={activeBanner.title}
+            src={activeBanner.imageUrl || 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80'}
+            alt={activeBanner.title || 'Special Promotion'}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/30 to-transparent"></div>

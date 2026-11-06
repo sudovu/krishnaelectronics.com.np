@@ -101,6 +101,19 @@ export default async function HomePage() {
   const businessLocation = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
   const businessHours = settings?.businessHours || 'Sun - Fri: 9:30 AM - 6:30 PM | Saturday: Closed (On-call emergency services)';
 
+  // Parse homepage customizer configurations
+  let homeConfig: any = {};
+  try {
+    if (settings?.homeConfig) {
+      homeConfig = typeof settings.homeConfig === 'string'
+        ? JSON.parse(settings.homeConfig)
+        : settings.homeConfig;
+    }
+  } catch (_) {}
+
+  // Check for admin-published promo grid banner
+  const promoBanner = banners.find((b) => b.position === 'PROMO_GRID' || b.position === 'OFFER_BANNER');
+
   return (
     <div className="space-y-16 pb-16">
       {/* 0. Promotional Campaign Pop-up Modal on website visit */}
@@ -115,13 +128,13 @@ export default async function HomePage() {
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-2.5 py-1 rounded-md mb-2">
               <Layers className="w-3.5 h-3.5" />
-              <span>Explore Department Catalogs</span>
+              <span>{homeConfig.categoryBadge || 'Explore Department Catalogs'}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-navy-900 tracking-tight">
-              Product Categories
+              {homeConfig.categoryTitle || 'Product Categories'}
             </h2>
             <p className="text-sm text-slate-500 mt-1">
-              Select a specialized category for commercial equipment, networking, and smart electronics.
+              {homeConfig.categorySubtitle || 'Select a specialized category for commercial equipment, networking, and smart electronics.'}
             </p>
           </div>
 
@@ -148,7 +161,7 @@ export default async function HomePage() {
                 {cat.name}
               </h3>
               <span className="text-[11px] text-slate-600 mt-1 font-mono">
-                {cat._count.products} Products
+                {cat._count?.products ?? 0} Products
               </span>
             </Link>
           ))}
@@ -161,13 +174,13 @@ export default async function HomePage() {
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md mb-2">
               <Zap className="w-3.5 h-3.5" />
-              <span>Verified Top Recommendations</span>
+              <span>{homeConfig.featuredBadge || 'Verified Top Recommendations'}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-navy-900 tracking-tight">
-              Featured Electronics &amp; Hardware
+              {homeConfig.featuredTitle || 'Featured Electronics & Hardware'}
             </h2>
             <p className="text-sm text-slate-500 mt-1">
-              Top-selling routers, surveillance cameras, laptops, and IoT devices in Surkhet.
+              {homeConfig.featuredSubtitle || 'Top-selling routers, surveillance cameras, laptops, and IoT devices in Surkhet.'}
             </p>
           </div>
 
@@ -180,64 +193,129 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product as any} />
-          ))}
-        </div>
+        {featuredProducts && featuredProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product as any} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-8 text-center text-xs text-slate-500">
+            No products marked as featured yet. Mark items as &quot;Featured&quot; in Admin Panel to showcase them here.
+          </div>
+        )}
       </section>
 
-      {/* 4. IoT & Smart Technology Showcase Banner */}
+      {/* 4. Mid-Page Promotional or IoT Showcase Banner */}
       <section className="max-w-7xl mx-auto px-4">
-        <div className="relative rounded-2xl bg-gradient-to-r from-navy-950 via-navy-900 to-brand-900 text-white overflow-hidden p-8 md:p-12 border border-navy-700 shadow-xl">
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        {promoBanner ? (
+          <div className="relative rounded-2xl bg-navy-950 text-white overflow-hidden border border-navy-700 shadow-xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-center p-8 md:p-12">
             <div className="lg:col-span-7 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-accent text-xs font-bold uppercase tracking-wider border border-cyan-500/30">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Next-Gen Smart Living</span>
-              </div>
+              {promoBanner.badgeText && (
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-accent text-xs font-bold uppercase tracking-wider border border-cyan-500/30">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{promoBanner.badgeText}</span>
+                </div>
+              )}
               <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight">
-                Transform Your Home &amp; Facility with IoT Automation
+                {promoBanner.title}
               </h3>
-              <p className="text-slate-300 text-sm leading-relaxed max-w-xl">
-                We supply and commission automated water tank controllers, smart circuit breakers, Sonoff/Tuya Wi-Fi relays, and environmental telemetry sensors across Karnali Province. Control everything from your smartphone.
-              </p>
-              <div className="pt-2 flex flex-wrap gap-3">
+              {promoBanner.subtitle && (
+                <p className="text-slate-300 text-sm leading-relaxed max-w-xl">
+                  {promoBanner.subtitle}
+                </p>
+              )}
+              {promoBanner.discountPercent && (
+                <div className="inline-flex items-center gap-1 px-3 py-1 bg-red-600/30 border border-red-500 text-red-300 text-xs font-bold rounded-lg">
+                  <span>Special Promotion: {promoBanner.discountPercent}% Off</span>
+                </div>
+              )}
+              <div className="pt-2">
                 <Link
-                  href="/services/iot-smart-device-solutions"
-                  className="px-5 py-2.5 bg-cyan-accent hover:bg-cyan-400 text-navy-950 font-bold text-xs uppercase tracking-wider rounded-lg transition shadow-md"
+                  href={promoBanner.ctaLink || '/products'}
+                  className="px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold text-xs uppercase tracking-wider rounded-lg transition shadow-md inline-flex items-center gap-2"
                 >
-                  Explore IoT Solutions
-                </Link>
-                <Link
-                  href="/contact"
-                  className="px-5 py-2.5 bg-navy-800 hover:bg-navy-700 text-white font-semibold text-xs rounded-lg border border-navy-600 transition"
-                >
-                  Request Smart Site Survey
+                  <span>{promoBanner.ctaText || 'Explore Now'}</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
+            <div className="lg:col-span-5 rounded-xl overflow-hidden aspect-[16/10] bg-navy-900 border border-navy-700">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={promoBanner.imageUrl || 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80'}
+                alt={promoBanner.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="relative rounded-2xl bg-gradient-to-r from-navy-950 via-navy-900 to-brand-900 text-white overflow-hidden p-8 md:p-12 border border-navy-700 shadow-xl">
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-7 space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-accent text-xs font-bold uppercase tracking-wider border border-cyan-500/30">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{homeConfig.showcaseBadge || 'Next-Gen Smart Living'}</span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight">
+                  {homeConfig.showcaseTitle || 'Transform Your Home & Facility with IoT Automation'}
+                </h3>
+                <p className="text-slate-300 text-sm leading-relaxed max-w-xl">
+                  {homeConfig.showcaseSubtitle || 'We supply and commission automated water tank controllers, smart circuit breakers, Sonoff/Tuya Wi-Fi relays, and environmental telemetry sensors across Karnali Province. Control everything from your smartphone.'}
+                </p>
+                <div className="pt-2 flex flex-wrap gap-3">
+                  <Link
+                    href={homeConfig.showcaseCtaLink || '/services/iot-smart-device-solutions'}
+                    className="px-5 py-2.5 bg-cyan-accent hover:bg-cyan-400 text-navy-950 font-bold text-xs uppercase tracking-wider rounded-lg transition shadow-md"
+                  >
+                    {homeConfig.showcaseCtaText || 'Explore IoT Solutions'}
+                  </Link>
+                  <Link
+                    href={homeConfig.showcaseCtaSecondaryLink || '/contact'}
+                    className="px-5 py-2.5 bg-navy-800 hover:bg-navy-700 text-white font-semibold text-xs rounded-lg border border-navy-600 transition"
+                  >
+                    {homeConfig.showcaseCtaSecondaryText || 'Request Smart Site Survey'}
+                  </Link>
+                </div>
+              </div>
 
-            <div className="lg:col-span-5 grid grid-cols-2 gap-4">
-              <div className="bg-navy-800/80 backdrop-blur-sm p-4 rounded-xl border border-navy-700">
-                <div className="text-cyan-accent font-extrabold text-xl mb-1">Mobile App</div>
-                <div className="text-xs text-slate-300">Remote control of lights, pumps &amp; AC from anywhere</div>
-              </div>
-              <div className="bg-navy-800/80 backdrop-blur-sm p-4 rounded-xl border border-navy-700">
-                <div className="text-cyan-accent font-extrabold text-xl mb-1">Energy Saving</div>
-                <div className="text-xs text-slate-300">Real-time kWh telemetry &amp; automated cut-off schedules</div>
-              </div>
-              <div className="bg-navy-800/80 backdrop-blur-sm p-4 rounded-xl border border-navy-700">
-                <div className="text-cyan-accent font-extrabold text-xl mb-1">Tank Automation</div>
-                <div className="text-xs text-slate-300">Automatic water pump on/off with dry-run protection</div>
-              </div>
-              <div className="bg-navy-800/80 backdrop-blur-sm p-4 rounded-xl border border-navy-700">
-                <div className="text-cyan-accent font-extrabold text-xl mb-1">Professional Lab</div>
-                <div className="text-xs text-slate-300">Tested and calibrated for local 220V grid stability</div>
+              <div className="lg:col-span-5 grid grid-cols-2 gap-4">
+                <div className="bg-navy-800/80 backdrop-blur-sm p-4 rounded-xl border border-navy-700">
+                  <div className="text-cyan-accent font-extrabold text-xl mb-1">
+                    {homeConfig.showcaseFeature1Title || 'Mobile App'}
+                  </div>
+                  <div className="text-xs text-slate-300">
+                    {homeConfig.showcaseFeature1Desc || 'Remote control of lights, pumps & AC from anywhere'}
+                  </div>
+                </div>
+                <div className="bg-navy-800/80 backdrop-blur-sm p-4 rounded-xl border border-navy-700">
+                  <div className="text-cyan-accent font-extrabold text-xl mb-1">
+                    {homeConfig.showcaseFeature2Title || 'Energy Saving'}
+                  </div>
+                  <div className="text-xs text-slate-300">
+                    {homeConfig.showcaseFeature2Desc || 'Real-time kWh telemetry & automated cut-off schedules'}
+                  </div>
+                </div>
+                <div className="bg-navy-800/80 backdrop-blur-sm p-4 rounded-xl border border-navy-700">
+                  <div className="text-cyan-accent font-extrabold text-xl mb-1">
+                    {homeConfig.showcaseFeature3Title || 'Tank Automation'}
+                  </div>
+                  <div className="text-xs text-slate-300">
+                    {homeConfig.showcaseFeature3Desc || 'Automatic water pump on/off with dry-run protection'}
+                  </div>
+                </div>
+                <div className="bg-navy-800/80 backdrop-blur-sm p-4 rounded-xl border border-navy-700">
+                  <div className="text-cyan-accent font-extrabold text-xl mb-1">
+                    {homeConfig.showcaseFeature4Title || 'Professional Lab'}
+                  </div>
+                  <div className="text-xs text-slate-300">
+                    {homeConfig.showcaseFeature4Desc || 'Tested and calibrated for local 220V grid stability'}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* 5. Professional Technical Services Showcase */}
@@ -245,13 +323,13 @@ export default async function HomePage() {
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-2.5 py-1 rounded-md mb-2">
             <Wrench className="w-3.5 h-3.5" />
-            <span>Certified Laboratory &amp; On-Site Support</span>
+            <span>{homeConfig.servicesBadge || 'Certified Laboratory & On-Site Support'}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-navy-900 tracking-tight">
-            Repair, Installation &amp; Maintenance Services
+            {homeConfig.servicesTitle || 'Repair, Installation & Maintenance Services'}
           </h2>
           <p className="text-sm text-slate-500 mt-2">
-            From chip-level laptop motherboard diagnostics to enterprise optical fiber cabling and corporate Annual Maintenance Contracts (AMC).
+            {homeConfig.servicesSubtitle || 'From chip-level laptop motherboard diagnostics to enterprise optical fiber cabling and corporate Annual Maintenance Contracts (AMC).'}
           </p>
         </div>
 
@@ -281,7 +359,7 @@ export default async function HomePage() {
                       Starts from {formatNPR(svc.startingPrice)}
                     </span>
                   ) : (
-                    <span className="text-brand-600">{svc.pricingNote}</span>
+                    <span className="text-brand-600">{svc.pricingNote || 'Quotation on request'}</span>
                   )}
                 </div>
               </div>
@@ -307,15 +385,15 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 6. Why Choose Krishna Electronics */}
+      {/* 6. Why Customers Rely on Us */}
       <section className="bg-slate-100/70 py-16 border-y border-slate-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center max-w-xl mx-auto mb-12">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-navy-900 tracking-tight">
-              Why Customers Rely on Us
+              {homeConfig.whyTitle || 'Why Customers Rely on Us'}
             </h2>
             <p className="text-xs text-slate-500 mt-2">
-              Serving Birendranagar and Karnali Province with genuine hardware, transparent pricing, and deep technical mastery.
+              {homeConfig.whySubtitle || `Serving Birendranagar and Karnali Province with genuine hardware, transparent pricing, and deep technical mastery.`}
             </p>
           </div>
 
@@ -324,9 +402,11 @@ export default async function HomePage() {
               <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                 <CheckCircle2 className="w-5 h-5 text-brand-500" />
               </div>
-              <h4 className="font-bold text-sm text-navy-900">100% Genuine Brands</h4>
+              <h4 className="font-bold text-sm text-navy-900">
+                {homeConfig.whyCard1Title || '100% Genuine Brands'}
+              </h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Authorized TP-Link, MikroTik, Hikvision, Dell, HP, and Sonoff equipment with genuine manufacturer warranties.
+                {homeConfig.whyCard1Desc || 'Authorized TP-Link, MikroTik, Hikvision, Dell, HP, and Sonoff equipment with genuine manufacturer warranties.'}
               </p>
             </div>
 
@@ -334,9 +414,11 @@ export default async function HomePage() {
               <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                 <Wrench className="w-5 h-5 text-brand-500" />
               </div>
-              <h4 className="font-bold text-sm text-navy-900">Chip-Level Repair Lab</h4>
+              <h4 className="font-bold text-sm text-navy-900">
+                {homeConfig.whyCard2Title || 'Chip-Level Repair Lab'}
+              </h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Advanced micro-soldering, motherboard component tracing, clean OS flashing, and diagnostic instruments under one roof.
+                {homeConfig.whyCard2Desc || 'Advanced micro-soldering, motherboard component tracing, clean OS flashing, and diagnostic instruments under one roof.'}
               </p>
             </div>
 
@@ -344,9 +426,11 @@ export default async function HomePage() {
               <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                 <Award className="w-5 h-5 text-brand-500" />
               </div>
-              <h4 className="font-bold text-sm text-navy-900">Enterprise AMC Contracts</h4>
+              <h4 className="font-bold text-sm text-navy-900">
+                {homeConfig.whyCard3Title || 'Enterprise AMC Contracts'}
+              </h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Guaranteed response SLA, routine preventative maintenance, and on-call engineer dispatch for institutions across Surkhet.
+                {homeConfig.whyCard3Desc || 'Guaranteed response SLA, routine preventative maintenance, and on-call engineer dispatch for institutions.'}
               </p>
             </div>
 
@@ -354,9 +438,11 @@ export default async function HomePage() {
               <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
                 <MapPin className="w-5 h-5 text-brand-500" />
               </div>
-              <h4 className="font-bold text-sm text-navy-900">Surkhet Facility Location</h4>
+              <h4 className="font-bold text-sm text-navy-900">
+                {homeConfig.whyCard4Title || 'Local Store & Lab'}
+              </h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Walk into our physical facility in Birendranagar-12, Surkhet for direct consultation, live testing, and handover.
+                {homeConfig.whyCard4Desc || `Walk into our physical facility in ${businessLocation} for direct consultation, live testing, and handover.`}
               </p>
             </div>
           </div>
@@ -364,24 +450,26 @@ export default async function HomePage() {
       </section>
 
       {/* 7. Popular Brands Showcase */}
-      <section className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-6">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            Authorized Brands &amp; Technology Partners
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 opacity-70 hover:opacity-100 transition-opacity">
-          {brands.map((b) => (
-            <Link
-              key={b.id}
-              href={`/products?brand=${b.slug}`}
-              className="px-4 py-2 bg-white rounded-lg border border-slate-200 font-bold text-xs text-slate-700 hover:text-brand-600 hover:border-brand-400 transition shadow-sm"
-            >
-              {b.name}
-            </Link>
-          ))}
-        </div>
-      </section>
+      {brands && brands.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-6">
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Authorized Brands &amp; Technology Partners
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 opacity-70 hover:opacity-100 transition-opacity">
+            {brands.map((b) => (
+              <Link
+                key={b.id}
+                href={`/products?brand=${b.slug}`}
+                className="px-4 py-2 bg-white rounded-lg border border-slate-200 font-bold text-xs text-slate-700 hover:text-brand-600 hover:border-brand-400 transition shadow-sm"
+              >
+                {b.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 8. Location & Store Visit Section */}
       <section className="max-w-7xl mx-auto px-4">
@@ -390,13 +478,13 @@ export default async function HomePage() {
             <div className="lg:col-span-7 space-y-4">
               <div className="inline-flex items-center gap-1.5 text-xs font-bold text-cyan-accent uppercase tracking-wider">
                 <MapPin className="w-4 h-4" />
-                <span>Visit Our Surkhet Facility</span>
+                <span>{homeConfig.locationBadge || 'Visit Our Local Facility'}</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                Krishna Electronics Order &amp; Suppliers
+                {homeConfig.locationTitle || settings?.siteName || 'Krishna Electronics Order & Suppliers'}
               </h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                Whether you need a quick laptop diagnostic, a custom CCTV quote for your property, or bulk office IT equipment, our doors are open in the heart of Birendranagar.
+                {homeConfig.locationSubtitle || settings?.siteDescription || 'Whether you need a quick laptop diagnostic, a custom CCTV quote for your property, or bulk office IT equipment, our doors are open.'}
               </p>
 
               <div className="space-y-2 pt-2 text-xs text-slate-300">
@@ -440,13 +528,13 @@ export default async function HomePage() {
               <div className="p-3 bg-navy-900 rounded-lg border border-navy-800">
                 <div className="text-slate-400 text-[11px] mb-1">Default Transaction Currency</div>
                 <div className="text-base font-bold text-white font-mono">
-                  Nepalese Rupee (NPR / रु)
+                  {settings?.currencyCode || 'NPR'} ({settings?.currencySymbol || 'रु'})
                 </div>
               </div>
               <div className="p-3 bg-navy-900 rounded-lg border border-navy-800">
                 <div className="text-slate-400 text-[11px] mb-1">Local Valley Dispatch</div>
                 <div className="text-white font-medium">
-                  Same-day delivery across Birendranagar municipal area.
+                  {settings?.deliveryInfo || 'Same-day delivery across local municipal area.'}
                 </div>
               </div>
             </div>

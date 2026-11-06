@@ -151,4 +151,51 @@ export interface SiteSettingsData {
   metaTitle: string;
   metaDescription: string;
   ogImageUrl?: string | null;
+  homeConfig?: string | null;
+}
+
+export interface HomeConfigData {
+  // Category Section
+  categoryBadge?: string;
+  categoryTitle?: string;
+  categorySubtitle?: string;
+  // Featured Section
+  featuredBadge?: string;
+  featuredTitle?: string;
+  featuredSubtitle?: string;
+  // Mid Showcase Section
+  showcaseBadge?: string;
+  showcaseTitle?: string;
+  showcaseSubtitle?: string;
+  showcaseCtaText?: string;
+  showcaseCtaLink?: string;
+  showcaseCtaSecondaryText?: string;
+  showcaseCtaSecondaryLink?: string;
+  showcaseFeature1Title?: string;
+  showcaseFeature1Desc?: string;
+  showcaseFeature2Title?: string;
+  showcaseFeature2Desc?: string;
+  showcaseFeature3Title?: string;
+  showcaseFeature3Desc?: string;
+  showcaseFeature4Title?: string;
+  showcaseFeature4Desc?: string;
+  // Services Section
+  servicesBadge?: string;
+  servicesTitle?: string;
+  servicesSubtitle?: string;
+  // Why Choose Us Section
+  whyTitle?: string;
+  whySubtitle?: string;
+  whyCard1Title?: string;
+  whyCard1Desc?: string;
+  whyCard2Title?: string;
+  whyCard2Desc?: string;
+  whyCard3Title?: string;
+  whyCard3Desc?: string;
+  whyCard4Title?: string;
+  whyCard4Desc?: string;
+  // Store Location & Visit Section
+  locationBadge?: string;
+  locationTitle?: string;
+  locationSubtitle?: string;
 }

@@ -14,6 +14,19 @@ export async function PUT(
     }
 
     const data = await req.json();
+
+    const discountPercent = data.discountPercent !== undefined
+      ? (data.discountPercent !== null && data.discountPercent !== '' && !isNaN(parseInt(data.discountPercent, 10)) ? parseInt(data.discountPercent, 10) : null)
+      : undefined;
+
+    const startDate = data.startDate !== undefined
+      ? (data.startDate && !isNaN(Date.parse(data.startDate)) ? new Date(data.startDate) : null)
+      : undefined;
+
+    const endDate = data.endDate !== undefined
+      ? (data.endDate && !isNaN(Date.parse(data.endDate)) ? new Date(data.endDate) : null)
+      : undefined;
+
     const updated = await prisma.banner.update({
       where: { id: params.id },
       data: {
@@ -24,10 +37,10 @@ export async function PUT(
         ctaLink: data.ctaLink,
         position: data.position || undefined,
         imageUrl: data.imageUrl,
-        discountPercent: data.discountPercent !== undefined ? (data.discountPercent ? parseInt(data.discountPercent, 10) : null) : undefined,
+        discountPercent: discountPercent,
         couponCode: data.couponCode,
-        startDate: data.startDate ? new Date(data.startDate) : null,
-        endDate: data.endDate ? new Date(data.endDate) : null,
+        startDate: startDate,
+        endDate: endDate,
         isApproved: data.isApproved !== undefined ? Boolean(data.isApproved) : undefined,
         status: data.status,
       },

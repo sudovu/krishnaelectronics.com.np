@@ -37,7 +37,11 @@ export default function HeroSlider({ banners }: HeroSliderProps) {
     },
   ];
 
-  const activeBanners = banners && banners.length > 0 ? banners : defaultBanners;
+  const sliderBanners = (banners && banners.length > 0)
+    ? banners.filter((b) => b.position === 'HERO_SLIDER' || !b.position)
+    : [];
+
+  const activeBanners = sliderBanners.length > 0 ? sliderBanners : defaultBanners;
 
   useEffect(() => {
     if (activeBanners.length <= 1) return;
@@ -55,7 +59,8 @@ export default function HeroSlider({ banners }: HeroSliderProps) {
     setCurrentIndex((prev) => (prev + 1) % activeBanners.length);
   };
 
-  const current = activeBanners[currentIndex];
+  const safeIndex = currentIndex < activeBanners.length ? currentIndex : 0;
+  const current = activeBanners[safeIndex] || defaultBanners[0];
 
   return (
     <section className="relative bg-navy-950 text-white overflow-hidden border-b border-navy-800">

@@ -31,41 +31,55 @@ export async function PUT(req: NextRequest) {
 
     const data = await req.json();
 
+    const taxRatePercent = data.taxRatePercent !== undefined && data.taxRatePercent !== '' && !isNaN(parseFloat(data.taxRatePercent))
+      ? parseFloat(data.taxRatePercent)
+      : undefined;
+
+    const homeConfig = data.homeConfig !== undefined
+      ? (typeof data.homeConfig === 'object' && data.homeConfig !== null ? JSON.stringify(data.homeConfig) : (data.homeConfig || null))
+      : undefined;
+
+    const settingPayload = {
+      siteName: data.siteName,
+      logoUrl: data.logoUrl,
+      siteTagline: data.siteTagline,
+      siteDescription: data.siteDescription,
+      contactPhone: data.contactPhone,
+      contactEmail: data.contactEmail,
+      contactWhatsapp: data.contactWhatsapp,
+      locationAddress: data.locationAddress,
+      businessHours: data.businessHours,
+      googleMapsEmbedUrl: data.googleMapsEmbedUrl,
+      socialFacebook: data.socialFacebook,
+      socialInstagram: data.socialInstagram,
+      socialLinkedin: data.socialLinkedin,
+      socialYoutube: data.socialYoutube,
+      deliveryInfo: data.deliveryInfo,
+      paymentMethods: data.paymentMethods,
+      currencyCode: data.currencyCode,
+      currencySymbol: data.currencySymbol,
+      taxRatePercent: taxRatePercent,
+      maintenanceMode: data.maintenanceMode !== undefined ? Boolean(data.maintenanceMode) : undefined,
+      primaryColor: data.primaryColor || undefined,
+      secondaryColor: data.secondaryColor || undefined,
+      accentColor: data.accentColor || undefined,
+      darkSurface: data.darkSurface || undefined,
+      lightSurface: data.lightSurface || undefined,
+      fontFamily: data.fontFamily || undefined,
+      metaTitle: data.metaTitle,
+      metaDescription: data.metaDescription,
+      ogImageUrl: data.ogImageUrl,
+      homeConfig: homeConfig,
+    };
+
     const updated = await prisma.setting.upsert({
       where: { id: 'site-settings' },
-      update: {
-        siteName: data.siteName,
-        logoUrl: data.logoUrl,
-        siteTagline: data.siteTagline,
-        siteDescription: data.siteDescription,
-        contactPhone: data.contactPhone,
-        contactEmail: data.contactEmail,
-        contactWhatsapp: data.contactWhatsapp,
-        locationAddress: data.locationAddress,
-        businessHours: data.businessHours,
-        googleMapsEmbedUrl: data.googleMapsEmbedUrl,
-        socialFacebook: data.socialFacebook,
-        socialInstagram: data.socialInstagram,
-        socialLinkedin: data.socialLinkedin,
-        socialYoutube: data.socialYoutube,
-        deliveryInfo: data.deliveryInfo,
-        paymentMethods: data.paymentMethods,
-        currencyCode: data.currencyCode,
-        currencySymbol: data.currencySymbol,
-        taxRatePercent: data.taxRatePercent !== undefined ? parseFloat(data.taxRatePercent) : undefined,
-        maintenanceMode: data.maintenanceMode !== undefined ? Boolean(data.maintenanceMode) : undefined,
-        primaryColor: data.primaryColor || undefined,
-        secondaryColor: data.secondaryColor || undefined,
-        accentColor: data.accentColor || undefined,
-        darkSurface: data.darkSurface || undefined,
-        lightSurface: data.lightSurface || undefined,
-        fontFamily: data.fontFamily || undefined,
-        metaTitle: data.metaTitle,
-        metaDescription: data.metaDescription,
-      },
+      update: settingPayload,
       create: {
         id: 'site-settings',
-        ...data,
+        ...settingPayload,
+        taxRatePercent: taxRatePercent ?? 13.0,
+        maintenanceMode: Boolean(data.maintenanceMode),
       },
     });
 
