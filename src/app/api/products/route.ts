@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 const productSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
-  sku: z.string().min(2, 'SKU must be at least 2 characters'),
+  sku: z.string().min(1, 'SKU is required (can be single digit, e.g. 1)'),
   categoryId: z.string().min(1, 'Category is required'),
   subcategoryId: z.string().optional().nullable(),
   brandId: z.string().optional().nullable(),

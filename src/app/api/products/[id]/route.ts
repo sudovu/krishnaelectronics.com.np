@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 const updateProductSchema = z.object({
   title: z.string().min(3).optional(),
-  sku: z.string().min(2).optional(),
+  sku: z.string().min(1, 'SKU is required (can be single digit, e.g. 1)').optional(),
   categoryId: z.string().min(1).optional(),
   subcategoryId: z.string().optional().nullable(),
   brandId: z.string().optional().nullable(),

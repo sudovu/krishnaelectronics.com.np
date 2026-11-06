@@ -197,6 +197,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                 required
                 value={formData.sku}
                 onChange={(e) => setFormData({ ...formData, sku: e.target.value.toUpperCase() })}
+                placeholder="e.g. 1, 101, or TPL-AX73-GIG"
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none font-mono"
               />
             </div>
