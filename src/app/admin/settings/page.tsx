@@ -110,6 +110,11 @@ const DEFAULT_HOME_CONFIG: HomeConfigData = {
   topNotificationText: '',
   showTopContactLinks: true,
   showTopPortalLink: true,
+  // Special Occasion / Festive Greeting Ribbon
+  showOccasionBanner: false,
+  occasionBannerText: '🎉 Happy Festive Greetings from Krishna Electronics! Special seasonal discounts & offers available across Surkhet & Karnali Province. Visit our store or order online! 🪔',
+  occasionBannerBadge: 'Festive Greeting',
+  occasionBannerRollable: true,
   showContactButton: true,
   contactButtonLabel: 'Contact Store',
   showBookRepairButton: true,
@@ -672,6 +677,75 @@ export default function AdminSettingsPage() {
                         />
                         <span>Show Admin Portal Quick Link</span>
                       </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              
+              {/* Special Occasion & Festive Greeting Ribbon (Rollable Ticker) */}
+              <div className="p-4 bg-gradient-to-r from-amber-50 to-rose-50 rounded-xl border border-amber-200 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="showOccasionBanner"
+                      checked={Boolean(homeConfig.showOccasionBanner)}
+                      onChange={(e) => handleHomeConfigChange('showOccasionBanner', e.target.checked)}
+                      className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 border-amber-300 cursor-pointer"
+                    />
+                    <label htmlFor="showOccasionBanner" className="font-bold text-amber-950 text-xs cursor-pointer flex items-center gap-1.5">
+                      <span>🎉 Special Occasion / Festive Greeting Ribbon</span>
+                    </label>
+                  </div>
+                  <span className="text-[11px] font-semibold text-amber-800">
+                    {homeConfig.showOccasionBanner ? '✅ Greeting ribbon active on website' : '🚫 Greeting ribbon turned off'}
+                  </span>
+                </div>
+
+                {homeConfig.showOccasionBanner && (
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <label className="block font-semibold text-slate-800 mb-1">
+                        Occasion / Festive Greeting Message *
+                      </label>
+                      <input
+                        type="text"
+                        value={homeConfig.occasionBannerText || ''}
+                        onChange={(e) => handleHomeConfigChange('occasionBannerText', e.target.value)}
+                        placeholder="e.g. 🎉 Happy Dashain & Tihar! Special seasonal discounts & offers available now across Surkhet. Visit our store! 🪔"
+                        className="w-full px-3.5 py-2.5 bg-white border border-amber-300 rounded-lg text-slate-900 focus:border-amber-500 outline-none font-medium text-xs"
+                      />
+                      <p className="text-[11px] text-amber-800/80 mt-1">
+                        This message will be shown in a festive banner at the top of the website for festivals, celebrations, or announcements.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                      <div>
+                        <label className="block font-semibold text-slate-800 mb-1">
+                          Badge Label
+                        </label>
+                        <input
+                          type="text"
+                          value={homeConfig.occasionBannerBadge || ''}
+                          onChange={(e) => handleHomeConfigChange('occasionBannerBadge', e.target.value)}
+                          placeholder="e.g. Festive Greeting, Dashain Special, Notice"
+                          className="w-full px-3 py-2 bg-white border border-amber-300 rounded-lg text-slate-900 text-xs focus:border-amber-500 outline-none"
+                        />
+                      </div>
+
+                      <div className="flex items-center pt-5">
+                        <label className="flex items-center gap-2 text-slate-800 cursor-pointer text-xs font-semibold">
+                          <input
+                            type="checkbox"
+                            checked={homeConfig.occasionBannerRollable !== false}
+                            onChange={(e) => handleHomeConfigChange('occasionBannerRollable', e.target.checked)}
+                            className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 border-amber-300 cursor-pointer"
+                          />
+                          <span>Enable Rollable Marquee (Smooth Continuous Scrolling)</span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 )}

@@ -171,6 +171,12 @@ export interface HomeConfigData {
   showNavbarBadge?: boolean;
   navbarBadgeText?: string;
 
+  // Festive & Special Occasion Rollable Greeting Bar
+  showOccasionBanner?: boolean;
+  occasionBannerText?: string;
+  occasionBannerBadge?: string;
+  occasionBannerRollable?: boolean;
+
   // Category Section
   categoryBadge?: string;
   categoryTitle?: string;

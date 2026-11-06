@@ -81,12 +81,12 @@ export default function Footer({ settings }: FooterProps) {
           {/* Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full overflow-hidden bg-white p-0.5 border-2 border-brand-500 shadow-md shrink-0">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-white p-1 border-2 border-brand-500 shadow-lg shadow-brand-500/20 shrink-0 flex items-center justify-center ring-2 ring-brand-100/30">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={settings?.logoUrl || '/images/logo.jpg'}
                   alt={`${settings?.siteName || 'Krishna Electronics Order & Suppliers'} Logo`}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain filter contrast-105" style={{ imageRendering: '-webkit-optimize-contrast' }} width={64} height={64}
                   width={48}
                   height={48}
                   loading="lazy"

@@ -17,7 +17,8 @@ import {
   X, 
   ChevronDown, 
   MessageSquare,
-  Lock
+  Lock,
+  Mail
 } from 'lucide-react';
 import { SiteSettingsData, HomeConfigData } from '@/types';
 
@@ -81,6 +82,7 @@ export default function Header({ settings }: HeaderProps) {
   const businessHours = settings?.businessHours || 'Sun - Fri: 9:30 AM - 6:30 PM';
   const phone = settings?.contactPhone || '';
   const whatsapp = settings?.contactWhatsapp || '';
+  const email = settings?.contactEmail || '';
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-slate-200">
@@ -99,7 +101,19 @@ export default function Header({ settings }: HeaderProps) {
                     <MapPin className="w-3.5 h-3.5 text-brand-400" />
                     {businessLocation}
                   </span>
-                  <span className="hidden md:flex items-center gap-1.5 text-slate-400">
+                  {phone && (
+                    <a href={`tel:${phone}`} className="flex items-center gap-1 text-slate-200 hover:text-white transition font-medium border-l border-navy-800 pl-3">
+                      <Phone className="w-3 h-3 text-brand-400" />
+                      <span>{phone}</span>
+                    </a>
+                  )}
+                  {email && (
+                    <a href={`mailto:${email}`} className="hidden sm:flex items-center gap-1 text-slate-200 hover:text-white transition font-medium border-l border-navy-800 pl-3">
+                      <Mail className="w-3 h-3 text-brand-400" />
+                      <span>{email}</span>
+                    </a>
+                  )}
+                  <span className="hidden md:flex items-center gap-1.5 text-slate-400 border-l border-navy-800 pl-3">
                     <Clock className="w-3.5 h-3.5 text-slate-400" />
                     {businessHours}
                   </span>
@@ -144,30 +158,60 @@ export default function Header({ settings }: HeaderProps) {
         </div>
       )}
 
+      
+      {/* Special Occasion / Festive Greeting Rollable Ribbon */}
+      {homeConfig.showOccasionBanner && Boolean(homeConfig.occasionBannerText?.trim()) && (
+        <div className="bg-gradient-to-r from-amber-600 via-rose-600 to-amber-600 text-white py-2 px-4 shadow-sm text-xs font-semibold overflow-hidden border-b border-amber-700/50">
+          <div className="max-w-7xl mx-auto flex items-center gap-3">
+            <span className="shrink-0 bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[10px] tracking-wider uppercase font-bold text-amber-100 border border-white/30 flex items-center gap-1">
+              <span>🎉</span>
+              <span>{homeConfig.occasionBannerBadge?.trim() || 'Festive Greeting'}</span>
+            </span>
+            <div className="flex-1 overflow-hidden relative">
+              {homeConfig.occasionBannerRollable !== false ? (
+                <div className="animate-rollable-ticker py-0.5">
+                  <span className="mr-12 flex items-center gap-2">
+                    {homeConfig.occasionBannerText}
+                  </span>
+                  <span className="mr-12 flex items-center gap-2">
+                    {homeConfig.occasionBannerText}
+                  </span>
+                </div>
+              ) : (
+                <div className="truncate text-center">
+                  {homeConfig.occasionBannerText}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Branding & Search Navigation */}
       <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo & Brand Identity */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-brand-500 shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform bg-white p-0.5 flex-shrink-0">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-brand-500 shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform bg-white p-1 flex-shrink-0 flex items-center justify-center ring-2 ring-brand-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={settings?.logoUrl || '/images/logo.jpg'}
                 alt={`${displayHeading || 'Store'} Logo`}
-                className="w-full h-full object-contain"
-                width={48}
-                height={48}
+                className="w-full h-full object-contain filter contrast-105"
+                width={96}
+                height={96}
+                style={{ imageRendering: '-webkit-optimize-contrast' }}
               />
             </div>
             {hasBrandText && (
               <div>
                 {displayHeading && (
-                  <div className="font-extrabold text-lg sm:text-xl text-navy-900 tracking-tight leading-tight group-hover:text-brand-600 transition">
+                  <div className="font-extrabold text-xl sm:text-2xl text-navy-900 tracking-tight leading-tight group-hover:text-brand-600 transition">
                     {displayHeading}
                   </div>
                 )}
                 {displayTagline && (
-                  <p className="text-[11px] font-medium text-slate-700 tracking-wider uppercase">
+                  <p className="text-xs sm:text-sm font-semibold text-slate-700 tracking-wider uppercase mt-0.5">
                     {displayTagline}
                   </p>
                 )}

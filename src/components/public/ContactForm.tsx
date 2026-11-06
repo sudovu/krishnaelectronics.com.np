@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, MessageSquare } from 'lucide-react';
 
 interface ContactFormProps {
   initialSubject?: string;
@@ -212,14 +212,30 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
         ></textarea>
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full sm:w-auto px-8 py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-bold rounded-lg uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
-      >
-        <Send className="w-4 h-4" />
-        <span>{loading ? 'Submitting...' : 'Submit Inquiry'}</span>
-      </button>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-8 py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-bold rounded-lg uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
+        >
+          <Send className="w-4 h-4" />
+          <span>{loading ? 'Submitting...' : 'Submit Inquiry'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            const phone = '9858083951';
+            const msg = `Hello Krishna Electronics,%0A%0AMy Name: ${encodeURIComponent(formData.customerName || 'Customer')}%0APhone: ${encodeURIComponent(formData.customerPhone || 'Not provided')}%0ASubject: ${encodeURIComponent(formData.subject || 'Website Inquiry')}%0A%0AMessage:%0A${encodeURIComponent(formData.message || 'I would like to inquire about your products/services.')}`;
+            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+          }}
+          className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition shadow-md flex items-center justify-center gap-2"
+          title="Send directly to official Krishna Electronics WhatsApp"
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>Send via WhatsApp</span>
+        </button>
+      </div>
     </form>
   );
 }
