@@ -4,7 +4,10 @@ import { getCurrentAdminFromRequest, hasPermission, logAudit } from '@/lib/auth'
 import { clearProfileCache } from '@/platform/engine/tenant-loader';
 import { revalidatePath } from 'next/cache';
 
-export async function GET() {
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export async function GET(req: NextRequest) {
   try {
     const settings = await prisma.setting.findUnique({
       where: { id: 'site-settings' },
@@ -15,7 +18,7 @@ export async function GET() {
   }
 }
 
-export async function PUT(req: NextRequest) {
+async function handleSaveSettings(req: NextRequest) {
   try {
     const admin = getCurrentAdminFromRequest(req);
     if (!admin) {
@@ -107,4 +110,12 @@ export async function PUT(req: NextRequest) {
     }
     return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
+}
+
+export async function POST(req: NextRequest) {
+  return handleSaveSettings(req);
+}
+
+export async function PUT(req: NextRequest) {
+  return handleSaveSettings(req);
 }

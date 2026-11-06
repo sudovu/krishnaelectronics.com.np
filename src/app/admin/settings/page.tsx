@@ -241,11 +241,19 @@ export default function AdminSettingsPage() {
         homeConfig: JSON.stringify(homeConfig),
       };
 
-      const res = await fetch('/api/settings', {
-        method: 'PUT',
+      let res = await fetch('/api/settings', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
+      if (res.status === 405) {
+        res = await fetch('/api/settings', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      }
 
       let data = null;
       const text = await res.text();
