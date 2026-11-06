@@ -86,9 +86,10 @@ export default function Footer({ settings }: FooterProps) {
                 <img
                   src={settings?.logoUrl || '/images/logo.jpg'}
                   alt={`${settings?.siteName || 'Krishna Electronics Order & Suppliers'} Logo`}
-                  className="w-full h-full object-contain filter contrast-105" style={{ imageRendering: '-webkit-optimize-contrast' }} width={64} height={64}
-                  width={48}
-                  height={48}
+                  className="w-full h-full object-contain filter contrast-105"
+                  style={{ imageRendering: '-webkit-optimize-contrast' }}
+                  width={64}
+                  height={64}
                   loading="lazy"
                 />
               </div>
