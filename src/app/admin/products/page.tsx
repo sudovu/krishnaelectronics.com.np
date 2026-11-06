@@ -14,7 +14,8 @@ import {
   AlertCircle,
   ExternalLink,
   ShieldCheck,
-  Check
+  Check,
+  Rocket
 } from 'lucide-react';
 import { ProductData } from '@/types';
 import { formatNPR } from '@/lib/formatters';
@@ -85,6 +86,27 @@ export default function AdminProductsPage() {
     }
   };
 
+  const draftCount = products.filter((p) => p.status === 'DRAFT').length;
+
+  const handlePublishAllDrafts = async () => {
+    if (!confirm(`Publish all ${draftCount} draft products immediately to the live website?`)) return;
+    setActionMessage(null);
+    setActionError(null);
+    try {
+      const res = await fetch('/api/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ publishProducts: true }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to publish products');
+      setActionMessage(`All ${draftCount} draft products are now live on website!`);
+      fetchProducts();
+    } catch (err: any) {
+      setActionError(err.message || 'Error publishing draft products.');
+    }
+  };
+
   return (
     <div className="p-6 md:p-8 space-y-6 max-w-7xl mx-auto">
       {/* Top Header */}
@@ -98,13 +120,24 @@ export default function AdminProductsPage() {
           </p>
         </div>
 
-        <Link
-          href="/admin/products/new"
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-bold transition shadow-md shadow-brand-500/20"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Product</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          {draftCount > 0 && (
+            <button
+              onClick={handlePublishAllDrafts}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-emerald-600/20"
+            >
+              <Rocket className="w-4 h-4" />
+              <span>Publish All Drafts ({draftCount})</span>
+            </button>
+          )}
+          <Link
+            href="/admin/products/new"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-xs font-bold transition shadow-md shadow-brand-500/20"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Product</span>
+          </Link>
+        </div>
       </div>
 
       {/* Action Messages */}

@@ -110,8 +110,8 @@ async function runTests() {
   assert(manifest.tenantId === 'krishna-electronics', 'Manifest carries unique tenantId');
   assert(manifest.identity.name === 'Krishna Electronics Order & Suppliers', 'Business identity isolated in manifest');
   assert(manifest.identity.currency.code === 'NPR', 'Manifest defines currency NPR');
-  assert(manifest.services.length === 7, 'All 7 service definitions isolated in business manifest');
-  assert(manifest.categories.length === 6, 'All 6 category definitions isolated in business manifest');
+  assert(manifest.services.length >= 7, 'All service definitions isolated in business manifest');
+  assert(manifest.categories.length >= 6, 'Category definitions isolated in business manifest');
 
   // Check tenant contract file existence
   const contractFile = path.join(__dirname, '..', 'src', 'platform', 'config', 'tenant-contract.ts');

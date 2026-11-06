@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json().catch(() => ({}));
-    const { publishBanners = true, publishProducts = false } = body;
+    const { publishBanners = true, publishProducts = true } = body;
 
     let publishedBannersCount = 0;
     if (publishBanners) {

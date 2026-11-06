@@ -24,7 +24,7 @@ const productSchema = z.object({
   isDeal: z.boolean().default(false),
   primaryImage: z.string().url('Primary image must be a valid URL'),
   gallery: z.string().default('[]'),
-  status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).default('DRAFT'),
+  status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).default('PUBLISHED'),
 });
 
 export async function GET(req: NextRequest) {
@@ -37,38 +37,119 @@ export async function GET(req: NextRequest) {
     const take = parseInt(searchParams.get('take') || '50', 10);
     const skip = parseInt(searchParams.get('skip') || '0', 10);
 
-    const where: any = {};
-    if (q) {
-      where.OR = [
-        { title: { contains: q } },
-        { sku: { contains: q } },
-        { shortDescription: { contains: q } },
-      ];
-    }
+    const cleanQ = q.trim();
+    const searchTokens = cleanQ.toLowerCase().split(/\s+/).filter(Boolean);
+
+    const baseWhere: any = {};
     if (category) {
-      where.category = { slug: category };
+      baseWhere.category = { slug: category };
     }
     if (brand) {
-      where.brand = { slug: brand };
+      baseWhere.brand = { slug: brand };
     }
     if (status) {
-      where.status = status;
+      baseWhere.status = status;
     }
 
-    const [products, total] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        include: {
-          category: true,
-          subcategory: true,
-          brand: true,
-        },
-        orderBy: { createdAt: 'desc' },
-        take,
-        skip,
-      }),
-      prisma.product.count({ where }),
-    ]);
+    const buildTokenClause = (tok: string, withMode: boolean) => {
+      const modeOpt = withMode ? { mode: 'insensitive' as const } : {};
+      return {
+        OR: [
+          { title: { contains: tok, ...modeOpt } },
+          { sku: { contains: tok, ...modeOpt } },
+          { shortDescription: { contains: tok, ...modeOpt } },
+          { fullDescription: { contains: tok, ...modeOpt } },
+          { category: { name: { contains: tok, ...modeOpt } } },
+          { subcategory: { name: { contains: tok, ...modeOpt } } },
+          { brand: { name: { contains: tok, ...modeOpt } } },
+        ],
+      };
+    };
+
+    let products: any[] = [];
+    let total = 0;
+
+    if (searchTokens.length > 0) {
+      try {
+        const where = {
+          ...baseWhere,
+          AND: searchTokens.map((tok) => buildTokenClause(tok, true)),
+        };
+        [products, total] = await Promise.all([
+          prisma.product.findMany({
+            where,
+            include: { category: true, subcategory: true, brand: true },
+            orderBy: { createdAt: 'desc' },
+            take,
+            skip,
+          }),
+          prisma.product.count({ where }),
+        ]);
+      } catch (_) {
+        const where = {
+          ...baseWhere,
+          AND: searchTokens.map((tok) => buildTokenClause(tok, false)),
+        };
+        [products, total] = await Promise.all([
+          prisma.product.findMany({
+            where,
+            include: { category: true, subcategory: true, brand: true },
+            orderBy: { createdAt: 'desc' },
+            take,
+            skip,
+          }),
+          prisma.product.count({ where }),
+        ]);
+      }
+
+      // Smart In-Memory Fallback if strict DB query returned 0 items
+      if (products.length === 0) {
+        const allCandidates = await prisma.product.findMany({
+          where: baseWhere,
+          include: { category: true, subcategory: true, brand: true },
+          orderBy: { createdAt: 'desc' },
+        });
+
+        const matched = allCandidates.filter((p) => {
+          const haystacks = [
+            p.title,
+            p.shortDescription,
+            p.fullDescription,
+            p.sku,
+            p.category?.name,
+            p.subcategory?.name,
+            p.brand?.name,
+          ]
+            .filter((s): s is string => typeof s === 'string')
+            .map((s) => s.toLowerCase());
+
+          const combined = haystacks.join(' ');
+          const norm = combined.replace(/[-_.,/\\()]/g, ' ');
+
+          return searchTokens.every(
+            (tok) =>
+              combined.includes(tok) ||
+              norm.includes(tok) ||
+              (tok === 'wifi' && combined.includes('wi-fi')) ||
+              (tok === 'wi-fi' && combined.includes('wifi'))
+          );
+        });
+
+        products = matched.slice(skip, skip + take);
+        total = matched.length;
+      }
+    } else {
+      [products, total] = await Promise.all([
+        prisma.product.findMany({
+          where: baseWhere,
+          include: { category: true, subcategory: true, brand: true },
+          orderBy: { createdAt: 'desc' },
+          take,
+          skip,
+        }),
+        prisma.product.count({ where: baseWhere }),
+      ]);
+    }
 
     return NextResponse.json({ products, total });
   } catch (error: any) {

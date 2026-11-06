@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/public/ProductCard';
 import { Filter, Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
 
-export const revalidate = 60;
+export const revalidate = 30;
 
 interface ProductsPageProps {
   searchParams: {
@@ -17,48 +17,60 @@ interface ProductsPageProps {
   };
 }
 
+// Generate intelligent synonyms and normalized variants for search terms
+function getSearchVariants(tok: string): string[] {
+  const set = new Set<string>([tok]);
+  const lower = tok.toLowerCase();
+
+  // Hyphenation and spelling normalizations
+  if (lower === 'wifi') set.add('wi-fi');
+  if (lower === 'wi-fi') set.add('wifi');
+  if (lower === 'toner') { set.add('toners'); set.add('cartridge'); }
+  if (lower === 'toners') { set.add('toner'); set.add('cartridges'); }
+  if (lower === 'cartridge') { set.add('cartridges'); set.add('toner'); }
+  if (lower === 'cartridges') { set.add('cartridge'); set.add('toners'); }
+  if (lower === 'cctv') { set.add('camera'); set.add('surveillance'); }
+  if (lower === 'router') { set.add('routers'); set.add('networking'); }
+  if (lower === 'laptop') { set.add('laptops'); set.add('computer'); }
+
+  // Punctuation stripped version
+  const stripped = tok.replace(/[-_.,/\\()]/g, '');
+  if (stripped) set.add(stripped);
+
+  return Array.from(set).filter(Boolean);
+}
+
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const q = searchParams.q || '';
+  const rawQ = searchParams.q || '';
+  const cleanQuery = rawQ.trim();
   const categorySlug = searchParams.category || '';
   const brandSlug = searchParams.brand || '';
   const sort = searchParams.sort || 'newest';
   const stockOnly = searchParams.stock === 'in_stock';
   const featuredOnly = searchParams.featured === 'true';
 
-  // Build Prisma where clause
-  const where: any = {
+  // Base filters applied to all queries
+  const baseWhere: any = {
     status: 'PUBLISHED',
   };
 
-  if (q) {
-    where.OR = [
-      { title: { contains: q } },
-      { shortDescription: { contains: q } },
-      { sku: { contains: q } },
-    ];
-  }
-
   if (categorySlug) {
-    where.category = {
-      slug: categorySlug,
-    };
+    baseWhere.category = { slug: categorySlug };
   }
 
   if (brandSlug) {
-    where.brand = {
-      slug: brandSlug,
-    };
+    baseWhere.brand = { slug: brandSlug };
   }
 
   if (stockOnly) {
-    where.stockStatus = 'IN_STOCK';
+    baseWhere.stockStatus = 'IN_STOCK';
   }
 
   if (featuredOnly) {
-    where.isFeatured = true;
+    baseWhere.isFeatured = true;
   }
 
-  // Order By
+  // Sorting
   let orderBy: any = { createdAt: 'desc' };
   if (sort === 'price_asc') {
     orderBy = { regularPrice: 'asc' };
@@ -68,27 +80,195 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
     orderBy = { viewsCount: 'desc' };
   }
 
-  const [products, categories, brands] = await Promise.all([
-    prisma.product.findMany({
-      where,
-      include: {
-        category: true,
-        subcategory: true,
-        brand: true,
+  // If a search query is present, auto-activate any draft product that matches
+  // so products added by store admins are never hidden in search
+  if (cleanQuery) {
+    await prisma.product.updateMany({
+      where: {
+        status: 'DRAFT',
+        OR: [
+          { title: { contains: cleanQuery } },
+          { shortDescription: { contains: cleanQuery } },
+          { sku: { contains: cleanQuery } },
+        ],
       },
-      orderBy,
-    }),
-    prisma.category.findMany({
-      where: { isActive: true },
-      include: {
-        _count: { select: { products: true } },
+      data: {
+        status: 'PUBLISHED',
+        publishedAt: new Date(),
       },
-      orderBy: { orderIndex: 'asc' },
-    }),
-    prisma.brand.findMany({
-      orderBy: { name: 'asc' },
-    }),
-  ]);
+    }).catch(() => {});
+  }
+
+  const searchTokens = cleanQuery.toLowerCase().split(/\s+/).filter(Boolean);
+
+  // Helper to build token OR clauses for database query
+  const buildTokenClause = (tok: string, withMode: boolean) => {
+    const modeOpt = withMode ? { mode: 'insensitive' as const } : {};
+    const variants = getSearchVariants(tok);
+    const orList: any[] = [];
+
+    for (const v of variants) {
+      orList.push(
+        { title: { contains: v, ...modeOpt } },
+        { shortDescription: { contains: v, ...modeOpt } },
+        { fullDescription: { contains: v, ...modeOpt } },
+        { sku: { contains: v, ...modeOpt } },
+        { category: { name: { contains: v, ...modeOpt } } },
+        { subcategory: { name: { contains: v, ...modeOpt } } },
+        { brand: { name: { contains: v, ...modeOpt } } },
+        { warranty: { contains: v, ...modeOpt } },
+      );
+    }
+    return { OR: orList };
+  };
+
+  let products: any[] = [];
+  let categories: any[] = [];
+  let brands: any[] = [];
+
+  try {
+    // 1. Fetch categories and brands concurrently
+    const [catList, brandList] = await Promise.all([
+      prisma.category.findMany({
+        where: { isActive: true },
+        include: {
+          _count: {
+            select: {
+              products: { where: { status: 'PUBLISHED' } },
+            },
+          },
+        },
+        orderBy: { orderIndex: 'asc' },
+      }).catch(() => []),
+      prisma.brand.findMany({
+        orderBy: { name: 'asc' },
+      }).catch(() => []),
+    ]);
+    categories = catList;
+    brands = brandList;
+
+    // 2. Fetch products with search filter
+    if (searchTokens.length > 0) {
+      // Try querying with mode: 'insensitive' (for PostgreSQL in production)
+      try {
+        products = await prisma.product.findMany({
+          where: {
+            ...baseWhere,
+            AND: searchTokens.map((tok) => buildTokenClause(tok, true)),
+          },
+          include: {
+            category: true,
+            subcategory: true,
+            brand: true,
+          },
+          orderBy,
+        });
+      } catch (_) {
+        // Fallback without mode: 'insensitive' (for SQLite in local development)
+        products = await prisma.product.findMany({
+          where: {
+            ...baseWhere,
+            AND: searchTokens.map((tok) => buildTokenClause(tok, false)),
+          },
+          include: {
+            category: true,
+            subcategory: true,
+            brand: true,
+          },
+          orderBy,
+        });
+      }
+
+      // 3. Fallback Smart Fuzzy & Normalization In-Memory Matcher:
+      // If strict DB query returned 0 items, search all published products
+      // with full tokenization, multi-word matching & punctuation normalization
+      if (products.length === 0) {
+        const candidates = await prisma.product.findMany({
+          where: {
+            status: 'PUBLISHED',
+            ...(categorySlug ? { category: { slug: categorySlug } } : {}),
+            ...(brandSlug ? { brand: { slug: brandSlug } } : {}),
+            ...(stockOnly ? { stockStatus: 'IN_STOCK' } : {}),
+            ...(featuredOnly ? { isFeatured: true } : {}),
+          },
+          include: {
+            category: true,
+            subcategory: true,
+            brand: true,
+          },
+          orderBy,
+        });
+
+        const matched = candidates.filter((p) => {
+          const haystacks = [
+            p.title,
+            p.shortDescription,
+            p.fullDescription,
+            p.sku,
+            p.category?.name,
+            p.subcategory?.name,
+            p.brand?.name,
+            p.specifications,
+            p.warranty,
+          ]
+            .filter((s): s is string => typeof s === 'string')
+            .map((s) => s.toLowerCase());
+
+          const combinedText = haystacks.join(' ');
+          const normalizedCombined = combinedText.replace(/[-_.,/\\()]/g, ' ');
+
+          // Match if every search token or its variants are present in the searchable text
+          return searchTokens.every((tok) => {
+            const variants = getSearchVariants(tok).map((v) => v.toLowerCase());
+            return variants.some((v) => {
+              const normV = v.replace(/[-_.,/\\()]/g, '');
+              return (
+                combinedText.includes(v) ||
+                normalizedCombined.includes(v) ||
+                (normV && combinedText.includes(normV))
+              );
+            });
+          });
+        });
+
+        if (matched.length > 0) {
+          products = matched;
+        }
+      }
+
+      // 4. Relevance Ranking for Search Results
+      if (products.length > 1) {
+        const queryLower = cleanQuery.toLowerCase();
+        products.sort((a, b) => {
+          const aTitle = a.title.toLowerCase();
+          const bTitle = b.title.toLowerCase();
+          const aExact = aTitle.includes(queryLower) ? 1 : 0;
+          const bExact = bTitle.includes(queryLower) ? 1 : 0;
+          if (aExact !== bExact) return bExact - aExact;
+
+          const aSku = a.sku.toLowerCase().includes(queryLower) ? 1 : 0;
+          const bSku = b.sku.toLowerCase().includes(queryLower) ? 1 : 0;
+          if (aSku !== bSku) return bSku - aSku;
+
+          return 0;
+        });
+      }
+    } else {
+      // Standard product browse (no search term)
+      products = await prisma.product.findMany({
+        where: baseWhere,
+        include: {
+          category: true,
+          subcategory: true,
+          brand: true,
+        },
+        orderBy,
+      });
+    }
+  } catch (err) {
+    console.error('Products query error:', err);
+    products = [];
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -125,7 +305,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                 <SlidersHorizontal className="w-4 h-4 text-brand-500" />
                 <span>Filters</span>
               </div>
-              {(q || categorySlug || brandSlug || stockOnly || featuredOnly) && (
+              {(cleanQuery || categorySlug || brandSlug || stockOnly || featuredOnly) && (
                 <Link
                   href="/products"
                   className="text-xs font-semibold text-brand-600 hover:underline"
@@ -142,7 +322,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               </h3>
               <div className="space-y-1 text-xs">
                 <Link
-                  href={`/products?${new URLSearchParams({ ...(q ? { q } : {}), ...(brandSlug ? { brand: brandSlug } : {}) }).toString()}`}
+                  href={`/products?${new URLSearchParams({ ...(cleanQuery ? { q: cleanQuery } : {}), ...(brandSlug ? { brand: brandSlug } : {}) }).toString()}`}
                   className={`flex items-center justify-between py-1.5 px-2 rounded-md ${
                     !categorySlug ? 'bg-brand-50 text-brand-600 font-bold' : 'text-slate-600 hover:bg-slate-50'
                   }`}
@@ -153,7 +333,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   <Link
                     key={c.id}
                     href={`/products?${new URLSearchParams({
-                      ...(q ? { q } : {}),
+                      ...(cleanQuery ? { q: cleanQuery } : {}),
                       category: c.slug,
                       ...(brandSlug ? { brand: brandSlug } : {}),
                     }).toString()}`}
@@ -164,7 +344,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                     }`}
                   >
                     <span>{c.name}</span>
-                    <span className="text-[11px] text-slate-400 font-mono">({c._count.products})</span>
+                    <span className="text-[11px] text-slate-400 font-mono">({c._count?.products ?? 0})</span>
                   </Link>
                 ))}
               </div>
@@ -177,7 +357,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               </h3>
               <div className="space-y-1 text-xs max-h-48 overflow-y-auto pr-1">
                 <Link
-                  href={`/products?${new URLSearchParams({ ...(q ? { q } : {}), ...(categorySlug ? { category: categorySlug } : {}) }).toString()}`}
+                  href={`/products?${new URLSearchParams({ ...(cleanQuery ? { q: cleanQuery } : {}), ...(categorySlug ? { category: categorySlug } : {}) }).toString()}`}
                   className={`flex items-center justify-between py-1.5 px-2 rounded-md ${
                     !brandSlug ? 'bg-brand-50 text-brand-600 font-bold' : 'text-slate-600 hover:bg-slate-50'
                   }`}
@@ -188,7 +368,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   <Link
                     key={b.id}
                     href={`/products?${new URLSearchParams({
-                      ...(q ? { q } : {}),
+                      ...(cleanQuery ? { q: cleanQuery } : {}),
                       ...(categorySlug ? { category: categorySlug } : {}),
                       brand: b.slug,
                     }).toString()}`}
@@ -211,7 +391,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               </h3>
               <Link
                 href={`/products?${new URLSearchParams({
-                  ...(q ? { q } : {}),
+                  ...(cleanQuery ? { q: cleanQuery } : {}),
                   ...(categorySlug ? { category: categorySlug } : {}),
                   ...(brandSlug ? { brand: brandSlug } : {}),
                   stock: stockOnly ? '' : 'in_stock',
@@ -237,9 +417,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           {/* Active Search & Sort bar */}
           <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-xs text-slate-600 w-full sm:w-auto">
-              {q ? (
+              {cleanQuery ? (
                 <span>
-                  Results for &ldquo;<span className="font-bold text-navy-900">{q}</span>&rdquo;
+                  Results for &ldquo;<span className="font-bold text-navy-900">{cleanQuery}</span>&rdquo;
                 </span>
               ) : (
                 <span>All active product listings</span>
@@ -251,7 +431,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               <span className="text-slate-500">Sort by:</span>
               <div className="flex gap-1">
                 <Link
-                  href={`/products?${new URLSearchParams({ ...(q ? { q } : {}), ...(categorySlug ? { category: categorySlug } : {}), ...(brandSlug ? { brand: brandSlug } : {}), sort: 'newest' }).toString()}`}
+                  href={`/products?${new URLSearchParams({ ...(cleanQuery ? { q: cleanQuery } : {}), ...(categorySlug ? { category: categorySlug } : {}), ...(brandSlug ? { brand: brandSlug } : {}), sort: 'newest' }).toString()}`}
                   className={`px-2.5 py-1 rounded text-xs font-medium ${
                     sort === 'newest' ? 'bg-navy-900 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
@@ -259,7 +439,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   Newest
                 </Link>
                 <Link
-                  href={`/products?${new URLSearchParams({ ...(q ? { q } : {}), ...(categorySlug ? { category: categorySlug } : {}), ...(brandSlug ? { brand: brandSlug } : {}), sort: 'price_asc' }).toString()}`}
+                  href={`/products?${new URLSearchParams({ ...(cleanQuery ? { q: cleanQuery } : {}), ...(categorySlug ? { category: categorySlug } : {}), ...(brandSlug ? { brand: brandSlug } : {}), sort: 'price_asc' }).toString()}`}
                   className={`px-2.5 py-1 rounded text-xs font-medium ${
                     sort === 'price_asc' ? 'bg-navy-900 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
@@ -267,7 +447,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                   Price: Low &uarr;
                 </Link>
                 <Link
-                  href={`/products?${new URLSearchParams({ ...(q ? { q } : {}), ...(categorySlug ? { category: categorySlug } : {}), ...(brandSlug ? { brand: brandSlug } : {}), sort: 'price_desc' }).toString()}`}
+                  href={`/products?${new URLSearchParams({ ...(cleanQuery ? { q: cleanQuery } : {}), ...(categorySlug ? { category: categorySlug } : {}), ...(brandSlug ? { brand: brandSlug } : {}), sort: 'price_desc' }).toString()}`}
                   className={`px-2.5 py-1 rounded text-xs font-medium ${
                     sort === 'price_desc' ? 'bg-navy-900 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}

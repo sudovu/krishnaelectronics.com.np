@@ -38,7 +38,7 @@ export default function NewProductPage() {
     isPopular: false,
     isNewArrival: true,
     isDeal: false,
-    status: 'DRAFT', // Default to DRAFT following publishing guidelines
+    status: 'PUBLISHED', // Default to PUBLISHED so newly added products are immediately live on the storefront
   });
 
   const [specs, setSpecs] = useState<Array<{ name: string; value: string }>>([
@@ -503,19 +503,7 @@ export default function NewProductPage() {
             <label className="block font-semibold text-slate-700 mb-1">
               Initial State
             </label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  name="status"
-                  value="DRAFT"
-                  checked={formData.status === 'DRAFT'}
-                  onChange={() => setFormData({ ...formData, status: 'DRAFT' })}
-                  className="text-brand-600"
-                />
-                <span className="font-bold text-amber-700">Save as Draft (Recommended for review)</span>
-              </label>
-
+            <div className="flex flex-wrap gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
@@ -525,7 +513,19 @@ export default function NewProductPage() {
                   onChange={() => setFormData({ ...formData, status: 'PUBLISHED' })}
                   className="text-brand-600"
                 />
-                <span className="font-bold text-emerald-700">Publish Immediately to Live Website</span>
+                <span className="font-bold text-emerald-700">Publish Immediately to Live Website (Recommended)</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="status"
+                  value="DRAFT"
+                  checked={formData.status === 'DRAFT'}
+                  onChange={() => setFormData({ ...formData, status: 'DRAFT' })}
+                  className="text-brand-600"
+                />
+                <span className="font-bold text-amber-700">Save as Draft (Private review)</span>
               </label>
             </div>
           </div>

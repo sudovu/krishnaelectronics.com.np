@@ -88,6 +88,14 @@
       "icon": "Printer",
       "orderIndex": 6,
       "subcategories": ["Printers & Scanners", "Toners & Ink", "Thermal Paper & Cash Registers", "Barcode Scanners", "Office Peripherals"]
+    },
+    {
+      "name": "Printer And Parts",
+      "slug": "printer-and-parts",
+      "description": "Laser printers, genuine toner cartridges, ink bottles, drum units, and printer replacement components.",
+      "icon": "Printer",
+      "orderIndex": 7,
+      "subcategories": ["Toner Cartridges", "Ink Bottles", "Printers", "Drum Units", "Printer Parts"]
     }
   ],
   "brands": [
@@ -98,6 +106,8 @@
     { "name": "Dahua", "slug": "dahua", "isPopular": true },
     { "name": "Dell", "slug": "dell", "isPopular": true },
     { "name": "HP", "slug": "hp", "isPopular": true },
+    { "name": "Canon", "slug": "canon", "isPopular": true },
+    { "name": "Brother", "slug": "brother", "isPopular": true },
     { "name": "Lenovo", "slug": "lenovo", "isPopular": true },
     { "name": "Asus", "slug": "asus", "isPopular": true },
     { "name": "Sonoff", "slug": "sonoff", "isPopular": true },
@@ -372,6 +382,59 @@
       "isFeatured": true,
       "isPopular": true,
       "isNewArrival": true,
+      "status": "PUBLISHED"
+    },
+    {
+      "title": "HP 12A Black Original LaserJet Toner Cartridge (Q2612A)",
+      "slug": "hp-12a-laserjet-toner-cartridge-q2612a",
+      "sku": "HP-12A-Q2612A",
+      "categorySlug": "printer-and-parts",
+      "brandSlug": "hp",
+      "regularPrice": 3800,
+      "offerPrice": 3400,
+      "discountPercent": 10,
+      "stockQuantity": 20,
+      "stockStatus": "IN_STOCK",
+      "shortDescription": "Original high-yield monochrome toner cartridge delivering crisp, smudge-free black text and consistent reliability for HP LaserJet 1010, 1020, 1022, 3015, 3020, 3030, and M1005 MFP.",
+      "fullDescription": "HP 12A Black LaserJet Toner Cartridge (Q2612A) delivers legendary HP quality and reliability. Average cartridge yields approximately 2,000 standard pages. Ideal for commercial offices, schools, and institutions in Surkhet requiring trouble-free, sharp document printing.",
+      "specifications": [
+        { "name": "Cartridge Color", "value": "Black" },
+        { "name": "Print Technology", "value": "Monochrome Laser" },
+        { "name": "Page Yield", "value": "~2,000 pages (ISO/IEC 19752)" },
+        { "name": "Compatibility", "value": "HP LaserJet 1010, 1012, 1018, 1020, 1022, 3015, 3020, 3030, 3050, 3052, 3055, M1005, M1319f" },
+        { "name": "Supply Type", "value": "Cartridges" }
+      ],
+      "warranty": "HP Premium Protection Warranty (Genuine Replacement)",
+      "primaryImage": "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&w=800&q=80",
+      "isFeatured": true,
+      "isPopular": true,
+      "isNewArrival": true,
+      "status": "PUBLISHED"
+    },
+    {
+      "title": "Canon Cartridge 328 Black Toner Cartridge",
+      "slug": "canon-cartridge-328-black-toner",
+      "sku": "CANON-328-TONER",
+      "categorySlug": "printer-and-parts",
+      "brandSlug": "canon",
+      "regularPrice": 3600,
+      "offerPrice": 3200,
+      "discountPercent": 11,
+      "stockQuantity": 15,
+      "stockStatus": "IN_STOCK",
+      "shortDescription": "Genuine Canon 328 all-in-one toner cartridge for Canon imageCLASS MF4410, MF4420n, MF4450, MF4550d, MF4570dn, and D520 multifunction laser printers.",
+      "fullDescription": "Canon Genuine Toner 328 is designed specifically for Canon laser multi-function printers, delivering uncompromised print quality and approximately 2,100 page yield. Fully stocked and available with local valley delivery from Krishna Electronics Surkhet.",
+      "specifications": [
+        { "name": "Color", "value": "Black" },
+        { "name": "Cartridge Type", "value": "All-in-One Toner & Drum" },
+        { "name": "Page Yield", "value": "~2,100 pages" },
+        { "name": "Compatibility", "value": "Canon imageCLASS MF4410, MF4420n, MF4450, MF4550d, MF4570dn, D520, FAX-L170" }
+      ],
+      "warranty": "Canon Genuine Warranty",
+      "primaryImage": "https://images.unsplash.com/photo-1589739900243-4b52cd9b104e?auto=format&fit=crop&w=800&q=80",
+      "isFeatured": false,
+      "isPopular": true,
+      "isNewArrival": false,
       "status": "PUBLISHED"
     }
   ],
