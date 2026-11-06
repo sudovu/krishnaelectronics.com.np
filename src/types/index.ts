@@ -155,6 +155,22 @@ export interface SiteSettingsData {
 }
 
 export interface HomeConfigData {
+  // Top Header & Heading Customization
+  showHeaderHeading?: boolean;
+  headerHeadingText?: string;
+  showHeaderTagline?: boolean;
+  headerTaglineText?: string;
+  showTopNotificationBar?: boolean;
+  topNotificationText?: string;
+  showTopContactLinks?: boolean;
+  showTopPortalLink?: boolean;
+  showContactButton?: boolean;
+  contactButtonLabel?: string;
+  showBookRepairButton?: boolean;
+  bookRepairButtonLabel?: string;
+  showNavbarBadge?: boolean;
+  navbarBadgeText?: string;
+
   // Category Section
   categoryBadge?: string;
   categoryTitle?: string;

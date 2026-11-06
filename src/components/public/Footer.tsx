@@ -96,9 +96,11 @@ export default function Footer({ settings }: FooterProps) {
                 <div className="font-bold text-base text-white tracking-wide">
                   {settings?.siteName || 'KRISHNA ELECTRONICS'}
                 </div>
-                <div className="text-xs text-cyan-accent font-medium">
-                  {settings?.siteTagline || 'Order & Suppliers • Surkhet, Nepal'}
-                </div>
+                {Boolean(settings?.siteTagline?.trim()) && (
+                  <div className="text-xs text-cyan-accent font-medium">
+                    {settings?.siteTagline}
+                  </div>
+                )}
               </div>
             </div>
 

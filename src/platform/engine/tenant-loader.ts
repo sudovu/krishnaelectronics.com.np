@@ -43,9 +43,9 @@ export async function getMergedBusinessProfile(): Promise<SiteSettingsData> {
     if (dbSetting) {
       const profile: SiteSettingsData = {
         id: dbSetting.id,
-        siteName: dbSetting.siteName || manifest.identity.name,
-        siteTagline: dbSetting.siteTagline || manifest.identity.tagline,
-        siteDescription: dbSetting.siteDescription || manifest.identity.description,
+        siteName: dbSetting.siteName !== null && dbSetting.siteName !== undefined ? dbSetting.siteName : manifest.identity.name,
+        siteTagline: dbSetting.siteTagline !== null && dbSetting.siteTagline !== undefined ? dbSetting.siteTagline : manifest.identity.tagline,
+        siteDescription: dbSetting.siteDescription !== null && dbSetting.siteDescription !== undefined ? dbSetting.siteDescription : manifest.identity.description,
         contactPhone: dbSetting.contactPhone || manifest.identity.contact.phoneDefault,
         contactEmail: dbSetting.contactEmail || manifest.identity.contact.emailDefault,
         contactWhatsapp: dbSetting.contactWhatsapp || manifest.identity.contact.whatsappDefault,

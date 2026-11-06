@@ -19,7 +19,7 @@ import {
   MessageSquare,
   Lock
 } from 'lucide-react';
-import { SiteSettingsData } from '@/types';
+import { SiteSettingsData, HomeConfigData } from '@/types';
 
 interface HeaderProps {
   settings?: SiteSettingsData | null;
@@ -38,6 +38,45 @@ export default function Header({ settings }: HeaderProps) {
     }
   };
 
+  let homeConfig: HomeConfigData = {};
+  if (settings?.homeConfig) {
+    try {
+      homeConfig = typeof settings.homeConfig === 'string'
+        ? JSON.parse(settings.homeConfig)
+        : settings.homeConfig;
+    } catch (_) {
+      homeConfig = {};
+    }
+  }
+
+  const showTopBar = homeConfig.showTopNotificationBar !== false;
+  const topNotificationCustom = homeConfig.topNotificationText?.trim();
+  const showTopContactLinks = homeConfig.showTopContactLinks !== false;
+  const showTopPortalLink = homeConfig.showTopPortalLink !== false;
+
+  const showHeaderHeading = homeConfig.showHeaderHeading !== false;
+  const rawHeading = homeConfig.headerHeadingText !== undefined
+    ? homeConfig.headerHeadingText
+    : (settings?.siteName ?? 'Krishna Electronics Order & Suppliers');
+  const displayHeading = showHeaderHeading ? rawHeading.trim() : '';
+
+  const showHeaderTagline = homeConfig.showHeaderTagline !== false;
+  const rawTagline = homeConfig.headerTaglineText !== undefined
+    ? homeConfig.headerTaglineText
+    : (settings?.siteTagline ?? 'PREMIUM ELECTRONICS, IOT SOLUTIONS & PROFESSIONAL TECHNICAL SERVICES IN SURKHET');
+  const displayTagline = showHeaderTagline ? rawTagline.trim() : '';
+
+  const hasBrandText = Boolean(displayHeading || displayTagline);
+
+  const showContactBtn = homeConfig.showContactButton !== false;
+  const contactBtnLabel = homeConfig.contactButtonLabel?.trim() || 'Contact Store';
+
+  const showBookRepairBtn = homeConfig.showBookRepairButton !== false;
+  const bookRepairBtnLabel = homeConfig.bookRepairButtonLabel?.trim() || 'Book Repair';
+
+  const showNavbarBadge = homeConfig.showNavbarBadge !== false;
+  const navbarBadgeLabel = homeConfig.navbarBadgeText?.trim() || 'Official Surkhet Store';
+
   const businessLocation = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
   const businessHours = settings?.businessHours || 'Sun - Fri: 9:30 AM - 6:30 PM';
   const phone = settings?.contactPhone || '';
@@ -46,48 +85,64 @@ export default function Header({ settings }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-slate-200">
       {/* Top Notification & Utility Bar */}
-      <div className="bg-navy-950 text-slate-300 text-xs py-2 px-4 border-b border-navy-800">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-          <div className="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
-            <span className="flex items-center gap-1.5 text-cyan-accent font-medium">
-              <MapPin className="w-3.5 h-3.5 text-brand-400" />
-              {businessLocation}
-            </span>
-            <span className="hidden md:flex items-center gap-1.5 text-slate-400">
-              <Clock className="w-3.5 h-3.5 text-slate-400" />
-              {businessHours}
-            </span>
-          </div>
+      {showTopBar && (
+        <div className="bg-navy-950 text-slate-300 text-xs py-2 px-4 border-b border-navy-800">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div className="flex items-center gap-4 flex-wrap justify-center sm:justify-start">
+              {topNotificationCustom ? (
+                <span className="flex items-center gap-1.5 text-cyan-accent font-medium">
+                  {topNotificationCustom}
+                </span>
+              ) : (
+                <>
+                  <span className="flex items-center gap-1.5 text-cyan-accent font-medium">
+                    <MapPin className="w-3.5 h-3.5 text-brand-400" />
+                    {businessLocation}
+                  </span>
+                  <span className="hidden md:flex items-center gap-1.5 text-slate-400">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
+                    {businessHours}
+                  </span>
+                </>
+              )}
+            </div>
 
-          <div className="flex items-center gap-4 text-xs">
-            {phone && (
-              <a href={`tel:${phone}`} className="flex items-center gap-1 hover:text-white transition">
-                <Phone className="w-3 h-3 text-brand-400" />
-                <span>{phone}</span>
-              </a>
-            )}
-            {whatsapp && (
-              <a 
-                href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-green-400 transition"
-              >
-                <MessageSquare className="w-3 h-3 text-green-400" />
-                <span>WhatsApp Inquiry</span>
-              </a>
-            )}
-            <Link 
-              href="/admin/login" 
-              className="flex items-center gap-1 text-slate-400 hover:text-slate-200 border-l border-navy-800 pl-3 transition"
-              title="Staff Portal"
-            >
-              <Lock className="w-3 h-3 text-slate-400" />
-              <span>Portal</span>
-            </Link>
+            <div className="flex items-center gap-4 text-xs">
+              {showTopContactLinks && (
+                <>
+                  {phone && (
+                    <a href={`tel:${phone}`} className="flex items-center gap-1 hover:text-white transition">
+                      <Phone className="w-3 h-3 text-brand-400" />
+                      <span>{phone}</span>
+                    </a>
+                  )}
+                  {whatsapp && (
+                    <a 
+                      href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 hover:text-green-400 transition"
+                    >
+                      <MessageSquare className="w-3 h-3 text-green-400" />
+                      <span>WhatsApp Inquiry</span>
+                    </a>
+                  )}
+                </>
+              )}
+              {showTopPortalLink && (
+                <Link 
+                  href="/admin/login" 
+                  className="flex items-center gap-1 text-slate-400 hover:text-slate-200 border-l border-navy-800 pl-3 transition"
+                  title="Staff Portal"
+                >
+                  <Lock className="w-3 h-3 text-slate-400" />
+                  <span>Portal</span>
+                </Link>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Branding & Search Navigation */}
       <div className="max-w-7xl mx-auto px-4 py-3 sm:py-4">
@@ -98,20 +153,26 @@ export default function Header({ settings }: HeaderProps) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={settings?.logoUrl || '/images/logo.jpg'}
-                alt={`${settings?.siteName || 'Krishna Electronics Order & Suppliers'} Logo`}
+                alt={`${displayHeading || 'Store'} Logo`}
                 className="w-full h-full object-contain"
                 width={48}
                 height={48}
               />
             </div>
-            <div>
-              <div className="font-extrabold text-lg sm:text-xl text-navy-900 tracking-tight leading-tight group-hover:text-brand-600 transition">
-                {settings?.siteName || 'Krishna Electronics Order & Suppliers'}
+            {hasBrandText && (
+              <div>
+                {displayHeading && (
+                  <div className="font-extrabold text-lg sm:text-xl text-navy-900 tracking-tight leading-tight group-hover:text-brand-600 transition">
+                    {displayHeading}
+                  </div>
+                )}
+                {displayTagline && (
+                  <p className="text-[11px] font-medium text-slate-700 tracking-wider uppercase">
+                    {displayTagline}
+                  </p>
+                )}
               </div>
-              <p className="text-[11px] font-medium text-slate-700 tracking-wider uppercase">
-                {settings?.siteTagline || 'Order & Suppliers • Surkhet'}
-              </p>
-            </div>
+            )}
           </Link>
 
           {/* Desktop Search Bar */}
@@ -136,20 +197,24 @@ export default function Header({ settings }: HeaderProps) {
 
           {/* Action CTAs */}
           <div className="hidden sm:flex items-center gap-3">
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-1.5 px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm"
-            >
-              <Phone className="w-4 h-4 text-slate-500" />
-              <span>Contact Store</span>
-            </Link>
-            <Link
-              href="/services"
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium transition shadow-md shadow-brand-500/25"
-            >
-              <Wrench className="w-4 h-4 text-white" />
-              <span>Book Repair</span>
-            </Link>
+            {showContactBtn && (
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-1.5 px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm"
+              >
+                <Phone className="w-4 h-4 text-slate-500" />
+                <span>{contactBtnLabel}</span>
+              </Link>
+            )}
+            {showBookRepairBtn && (
+              <Link
+                href="/services"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium transition shadow-md shadow-brand-500/25"
+              >
+                <Wrench className="w-4 h-4 text-white" />
+                <span>{bookRepairBtnLabel}</span>
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -294,9 +359,11 @@ export default function Header({ settings }: HeaderProps) {
             </Link>
           </div>
 
-          <div className="text-xs text-slate-300 flex items-center gap-2 font-mono">
-            <span className="text-cyan-accent">●</span> Official Surkhet Store
-          </div>
+          {showNavbarBadge && (
+            <div className="text-xs text-slate-300 flex items-center gap-2 font-mono">
+              <span className="text-cyan-accent">●</span> {navbarBadgeLabel}
+            </div>
+          )}
         </div>
       </nav>
 

@@ -27,7 +27,9 @@ import {
   RotateCcw,
   Check,
   ShieldCheck,
-  Smartphone
+  Smartphone,
+  Sliders,
+  LayoutTemplate
 } from 'lucide-react';
 import { SiteSettingsData, HomeConfigData } from '@/types';
 
@@ -99,6 +101,21 @@ const AVAILABLE_FONTS = [
 ];
 
 const DEFAULT_HOME_CONFIG: HomeConfigData = {
+  // Top Header & Heading Customization
+  showHeaderHeading: true,
+  headerHeadingText: 'Krishna Electronics Order & Suppliers',
+  showHeaderTagline: true,
+  headerTaglineText: 'PREMIUM ELECTRONICS, IOT SOLUTIONS & PROFESSIONAL TECHNICAL SERVICES IN SURKHET',
+  showTopNotificationBar: true,
+  topNotificationText: '',
+  showTopContactLinks: true,
+  showTopPortalLink: true,
+  showContactButton: true,
+  contactButtonLabel: 'Contact Store',
+  showBookRepairButton: true,
+  bookRepairButtonLabel: 'Book Repair',
+  showNavbarBadge: true,
+  navbarBadgeText: 'Official Surkhet Store',
   // Category Section
   categoryBadge: 'Explore Department Catalogs',
   categoryTitle: 'Product Categories',
@@ -144,7 +161,7 @@ const DEFAULT_HOME_CONFIG: HomeConfigData = {
   locationSubtitle: 'Whether you need a quick laptop diagnostic, a custom CCTV quote for your property, or bulk office IT equipment, our doors are open.',
 };
 
-type SettingsTab = 'all' | 'theme' | 'homepage' | 'identity' | 'contact' | 'seo' | 'store';
+type SettingsTab = 'all' | 'header' | 'homepage' | 'theme' | 'identity' | 'contact' | 'seo' | 'store';
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<SiteSettingsData | null>(null);
@@ -187,7 +204,7 @@ export default function AdminSettingsPage() {
     setSettings({ ...settings, [field]: value });
   };
 
-  const handleHomeConfigChange = (field: keyof HomeConfigData, value: string) => {
+  const handleHomeConfigChange = (field: keyof HomeConfigData, value: any) => {
     setHomeConfig((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -311,6 +328,18 @@ export default function AdminSettingsPage() {
         </button>
         <button
           type="button"
+          onClick={() => setActiveTab('header')}
+          className={`px-3.5 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 ${
+            activeTab === 'header'
+              ? 'bg-brand-500 text-white shadow-sm'
+              : 'text-slate-600 hover:bg-slate-100'
+          }`}
+        >
+          <Sliders className="w-3.5 h-3.5" />
+          <span>🏷️ Header &amp; Headings</span>
+        </button>
+        <button
+          type="button"
           onClick={() => setActiveTab('homepage')}
           className={`px-3.5 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shrink-0 ${
             activeTab === 'homepage'
@@ -386,6 +415,327 @@ export default function AdminSettingsPage() {
       {settings && (
         <form onSubmit={handleSave} className="space-y-6 text-xs">
           
+          {/* ======================================================== */}
+          {/* TAB: TOP HEADER & HEADING CONTROLS                       */}
+          {/* ======================================================== */}
+          {(activeTab === 'all' || activeTab === 'header' || activeTab === 'identity') && (
+            <div className="bg-white p-6 rounded-2xl border-2 border-brand-500/30 shadow-sm space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
+                <div>
+                  <h2 className="text-sm font-extrabold text-navy-900 uppercase tracking-wider flex items-center gap-2">
+                    <Sliders className="w-4 h-4 text-brand-500" />
+                    <span>🏷️ Top Header, Headings &amp; Banner Customizer</span>
+                  </h2>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    Change or completely remove the store heading, subheading/tagline, top notification bar, buttons, and badges.
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                  Live Changeable &amp; Removable
+                </span>
+              </div>
+
+              {/* Live Mini Header Preview */}
+              <div className="p-4 bg-slate-100 rounded-xl border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-600">
+                  <span className="flex items-center gap-1">
+                    <Eye className="w-3.5 h-3.5 text-brand-500" /> Live Header Preview (Real-Time)
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-normal">Shows how your header will appear to visitors</span>
+                </div>
+                
+                {/* Mock Browser Header */}
+                <div className="bg-white rounded-lg border border-slate-300 shadow-sm overflow-hidden text-xs">
+                  {/* Top Bar Preview */}
+                  {homeConfig.showTopNotificationBar !== false ? (
+                    <div className="bg-navy-950 text-slate-300 px-3 py-1.5 flex justify-between items-center text-[10px]">
+                      <span className="text-cyan-accent flex items-center gap-1 truncate">
+                        <MapPin className="w-3 h-3 text-brand-400 shrink-0" />
+                        {homeConfig.topNotificationText?.trim() || settings.locationAddress || 'Birendranagar-12, Surkhet, Nepal'}
+                      </span>
+                      <div className="flex items-center gap-2 text-slate-400">
+                        {homeConfig.showTopContactLinks !== false && <span>{settings.contactPhone || 'Phone'}</span>}
+                        {homeConfig.showTopPortalLink !== false && <span className="border-l border-navy-800 pl-2">Portal</span>}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-slate-200 text-slate-500 px-3 py-1 text-[10px] italic text-center border-b border-dashed border-slate-300">
+                      Top Announcement Bar is Hidden / Removed
+                    </div>
+                  )}
+
+                  {/* Main Header Preview */}
+                  <div className="p-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-full bg-white border border-brand-500 overflow-hidden p-0.5 shrink-0">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={settings.logoUrl || '/images/logo.jpg'} alt="Logo" className="w-full h-full object-contain" />
+                      </div>
+                      {(homeConfig.showHeaderHeading !== false || homeConfig.showHeaderTagline !== false) ? (
+                        <div>
+                          {homeConfig.showHeaderHeading !== false && (
+                            <div className="font-extrabold text-navy-900 text-xs sm:text-sm leading-tight">
+                              {homeConfig.headerHeadingText !== undefined ? homeConfig.headerHeadingText : (settings.siteName || 'Krishna Electronics Order & Suppliers')}
+                            </div>
+                          )}
+                          {homeConfig.showHeaderTagline !== false && (
+                            <div className="text-[9px] font-medium text-slate-600 uppercase tracking-wider">
+                              {homeConfig.headerTaglineText !== undefined ? homeConfig.headerTaglineText : (settings.siteTagline || 'Order & Suppliers • Surkhet')}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-slate-400 italic">(Logo only - heading &amp; tagline removed)</span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {homeConfig.showContactButton !== false && (
+                        <span className="px-2.5 py-1 border border-slate-300 rounded text-[10px] text-slate-700 font-medium">
+                          {homeConfig.contactButtonLabel || 'Contact Store'}
+                        </span>
+                      )}
+                      {homeConfig.showBookRepairButton !== false && (
+                        <span className="px-2.5 py-1 bg-brand-500 text-white rounded text-[10px] font-medium">
+                          {homeConfig.bookRepairButtonLabel || 'Book Repair'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Navbar Badge Preview */}
+                  {homeConfig.showNavbarBadge !== false && (
+                    <div className="bg-navy-900 text-white px-3 py-1 text-[10px] flex justify-end font-mono">
+                      <span className="text-cyan-accent mr-1">●</span> {homeConfig.navbarBadgeText || 'Official Surkhet Store'}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 1. Main Heading Configuration */}
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="showHeaderHeading"
+                      checked={homeConfig.showHeaderHeading !== false}
+                      onChange={(e) => handleHomeConfigChange('showHeaderHeading', e.target.checked)}
+                      className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 cursor-pointer"
+                    />
+                    <label htmlFor="showHeaderHeading" className="font-bold text-navy-900 text-xs cursor-pointer">
+                      Show Store Name / Main Heading next to Logo
+                    </label>
+                  </div>
+                  <span className="text-[11px] text-slate-500">
+                    {homeConfig.showHeaderHeading !== false ? '✅ Heading is visible' : '🚫 Heading is completely hidden (Logo-only mode)'}
+                  </span>
+                </div>
+
+                {homeConfig.showHeaderHeading !== false && (
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">
+                      Header Heading Text
+                    </label>
+                    <input
+                      type="text"
+                      value={homeConfig.headerHeadingText !== undefined ? homeConfig.headerHeadingText : (settings.siteName || '')}
+                      onChange={(e) => {
+                        handleHomeConfigChange('headerHeadingText', e.target.value);
+                        handleChange('siteName', e.target.value);
+                      }}
+                      placeholder="e.g. Krishna Electronics Order & Suppliers"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 font-extrabold focus:border-brand-500 outline-none"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Appears as the primary large brand title in the sticky top header on every page.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* 2. Subheading / Tagline Configuration */}
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="showHeaderTagline"
+                      checked={homeConfig.showHeaderTagline !== false}
+                      onChange={(e) => handleHomeConfigChange('showHeaderTagline', e.target.checked)}
+                      className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 cursor-pointer"
+                    />
+                    <label htmlFor="showHeaderTagline" className="font-bold text-navy-900 text-xs cursor-pointer">
+                      Show Subheading / Tagline under Heading
+                    </label>
+                  </div>
+                  <span className="text-[11px] text-slate-500">
+                    {homeConfig.showHeaderTagline !== false ? '✅ Tagline is visible' : '🚫 Tagline is completely hidden'}
+                  </span>
+                </div>
+
+                {homeConfig.showHeaderTagline !== false && (
+                  <div>
+                    <label className="block font-semibold text-slate-700 mb-1">
+                      Header Subheading / Tagline Text
+                    </label>
+                    <input
+                      type="text"
+                      value={homeConfig.headerTaglineText !== undefined ? homeConfig.headerTaglineText : (settings.siteTagline || '')}
+                      onChange={(e) => {
+                        handleHomeConfigChange('headerTaglineText', e.target.value);
+                        handleChange('siteTagline', e.target.value);
+                      }}
+                      placeholder="e.g. PREMIUM ELECTRONICS, IOT SOLUTIONS & PROFESSIONAL TECHNICAL SERVICES IN SURKHET"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-slate-900 font-medium focus:border-brand-500 outline-none"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Small uppercase slogan right beneath the store name. Leave empty or uncheck above to hide.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* 3. Top Announcement & Utility Bar Configuration */}
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="showTopNotificationBar"
+                      checked={homeConfig.showTopNotificationBar !== false}
+                      onChange={(e) => handleHomeConfigChange('showTopNotificationBar', e.target.checked)}
+                      className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 cursor-pointer"
+                    />
+                    <label htmlFor="showTopNotificationBar" className="font-bold text-navy-900 text-xs cursor-pointer">
+                      Show Top Notification &amp; Utility Bar (Dark Top Bar)
+                    </label>
+                  </div>
+                  <span className="text-[11px] text-slate-500">
+                    {homeConfig.showTopNotificationBar !== false ? '✅ Top bar visible' : '🚫 Top bar hidden'}
+                  </span>
+                </div>
+
+                {homeConfig.showTopNotificationBar !== false && (
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <label className="block font-semibold text-slate-700 mb-1">
+                        Custom Announcement Text (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={homeConfig.topNotificationText || ''}
+                        onChange={(e) => handleHomeConfigChange('topNotificationText', e.target.value)}
+                        placeholder="Leave blank to show store address &amp; opening hours, or type a custom announcement"
+                        className="w-full px-3.5 py-2 bg-white border border-slate-300 rounded-lg text-slate-900 focus:border-brand-500 outline-none"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                      <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={homeConfig.showTopContactLinks !== false}
+                          onChange={(e) => handleHomeConfigChange('showTopContactLinks', e.target.checked)}
+                          className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+                        />
+                        <span>Show Phone &amp; WhatsApp Links</span>
+                      </label>
+
+                      <label className="flex items-center gap-2 text-slate-700 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={homeConfig.showTopPortalLink !== false}
+                          onChange={(e) => handleHomeConfigChange('showTopPortalLink', e.target.checked)}
+                          className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+                        />
+                        <span>Show Admin Portal Quick Link</span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 4. Action Buttons & Navbar Badge */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Contact Button */}
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="showContactButton"
+                      checked={homeConfig.showContactButton !== false}
+                      onChange={(e) => handleHomeConfigChange('showContactButton', e.target.checked)}
+                      className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+                    />
+                    <label htmlFor="showContactButton" className="font-bold text-navy-900 text-xs cursor-pointer">
+                      Show Contact Button
+                    </label>
+                  </div>
+                  {homeConfig.showContactButton !== false && (
+                    <input
+                      type="text"
+                      value={homeConfig.contactButtonLabel !== undefined ? homeConfig.contactButtonLabel : 'Contact Store'}
+                      onChange={(e) => handleHomeConfigChange('contactButtonLabel', e.target.value)}
+                      placeholder="Contact Store"
+                      className="w-full px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-900 focus:border-brand-500 outline-none"
+                    />
+                  )}
+                </div>
+
+                {/* Book Repair Button */}
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="showBookRepairButton"
+                      checked={homeConfig.showBookRepairButton !== false}
+                      onChange={(e) => handleHomeConfigChange('showBookRepairButton', e.target.checked)}
+                      className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+                    />
+                    <label htmlFor="showBookRepairButton" className="font-bold text-navy-900 text-xs cursor-pointer">
+                      Show Book Repair Button
+                    </label>
+                  </div>
+                  {homeConfig.showBookRepairButton !== false && (
+                    <input
+                      type="text"
+                      value={homeConfig.bookRepairButtonLabel !== undefined ? homeConfig.bookRepairButtonLabel : 'Book Repair'}
+                      onChange={(e) => handleHomeConfigChange('bookRepairButtonLabel', e.target.value)}
+                      placeholder="Book Repair"
+                      className="w-full px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-900 focus:border-brand-500 outline-none"
+                    />
+                  )}
+                </div>
+
+                {/* Navbar Store Badge */}
+                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="showNavbarBadge"
+                      checked={homeConfig.showNavbarBadge !== false}
+                      onChange={(e) => handleHomeConfigChange('showNavbarBadge', e.target.checked)}
+                      className="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300"
+                    />
+                    <label htmlFor="showNavbarBadge" className="font-bold text-navy-900 text-xs cursor-pointer">
+                      Show Navbar Store Badge
+                    </label>
+                  </div>
+                  {homeConfig.showNavbarBadge !== false && (
+                    <input
+                      type="text"
+                      value={homeConfig.navbarBadgeText !== undefined ? homeConfig.navbarBadgeText : 'Official Surkhet Store'}
+                      onChange={(e) => handleHomeConfigChange('navbarBadgeText', e.target.value)}
+                      placeholder="Official Surkhet Store"
+                      className="w-full px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-slate-900 focus:border-brand-500 outline-none"
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ======================================================== */}
           {/* TAB: HOMEPAGE CUSTOMIZER (All 6 Homepage Sections)        */}
           {/* ======================================================== */}
@@ -1161,15 +1511,19 @@ export default function AdminSettingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">
-                    Business Name *
+                    Business Name
                   </label>
                   <input
                     type="text"
-                    required
                     value={settings.siteName}
-                    onChange={(e) => handleChange('siteName', e.target.value)}
+                    onChange={(e) => {
+                      handleChange('siteName', e.target.value);
+                      handleHomeConfigChange('headerHeadingText', e.target.value);
+                    }}
+                    placeholder="e.g. Krishna Electronics Order & Suppliers"
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
                   />
+                  <p className="text-[11px] text-slate-400 mt-1">Can also be customized or hidden in the Header &amp; Headings tab.</p>
                 </div>
 
                 <div>
@@ -1179,9 +1533,14 @@ export default function AdminSettingsPage() {
                   <input
                     type="text"
                     value={settings.siteTagline}
-                    onChange={(e) => handleChange('siteTagline', e.target.value)}
+                    onChange={(e) => {
+                      handleChange('siteTagline', e.target.value);
+                      handleHomeConfigChange('headerTaglineText', e.target.value);
+                    }}
+                    placeholder="e.g. PREMIUM ELECTRONICS, IOT SOLUTIONS & PROFESSIONAL TECHNICAL SERVICES IN SURKHET"
                     className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
                   />
+                  <p className="text-[11px] text-slate-400 mt-1">Leave empty to remove tagline from header and footer.</p>
                 </div>
               </div>
 
