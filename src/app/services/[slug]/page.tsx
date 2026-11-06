@@ -32,9 +32,31 @@ export async function generateMetadata({ params }: ServiceDetailPageProps): Prom
     return { title: 'Service Not Found | Krishna Electronics' };
   }
 
+  const siteUrl = 'https://krishnaelectronics.com.np';
+  const imgUrl = service.imageUrl || `${siteUrl}/images/logo.jpg`;
+
   return {
     title: `${service.title} | Krishna Electronics Surkhet`,
     description: service.shortDescription,
+    openGraph: {
+      title: `${service.title} | Krishna Electronics`,
+      description: service.shortDescription,
+      url: `${siteUrl}/services/${service.slug}`,
+      images: [
+        {
+          url: imgUrl,
+          width: 800,
+          height: 600,
+          alt: service.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: service.title,
+      description: service.shortDescription,
+      images: [imgUrl],
+    },
   };
 }
 

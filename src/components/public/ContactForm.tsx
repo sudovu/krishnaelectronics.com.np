@@ -50,7 +50,7 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
       try {
         const waNumber = '9779858083951';
         const waMessage = 
-          `*New Website Inquiry - Krishna Electronics*\n\n` +
+          `https://krishnaelectronics.com.np\n\n*New Website Inquiry - Krishna Electronics*\n` +
           `👤 *Name:* ${formData.customerName.trim()}\n` +
           `📞 *Phone:* ${formData.customerPhone.trim()}\n` +
           (formData.customerEmail?.trim() ? `✉️ *Email:* ${formData.customerEmail.trim()}\n` : '') +

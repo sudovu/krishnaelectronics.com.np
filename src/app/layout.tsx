@@ -11,6 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const title = profile.metaTitle || `${profile.siteName} | ${profile.locationAddress}`;
   const description = profile.metaDescription || profile.siteDescription;
+  const siteUrl = 'https://krishnaelectronics.com.np';
+  const ogImageUrl = `${siteUrl}/images/logo.jpg`;
 
   return {
     title: {
@@ -18,14 +20,32 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${profile.siteName}`,
     },
     description: description,
-    metadataBase: new URL('https://krishnaelectronics.com.np'),
+    metadataBase: new URL(siteUrl),
+    alternates: {
+      canonical: siteUrl,
+    },
     openGraph: {
       title: title,
       description: description,
-      url: 'https://krishnaelectronics.com.np',
+      url: siteUrl,
       siteName: profile.siteName,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 802,
+          height: 801,
+          alt: `${profile.siteName} Official Logo`,
+          type: 'image/jpeg',
+        },
+      ],
       locale: 'en_NP',
       type: 'website',
+    },
+    twitter: {
+      card: 'summary',
+      title: title,
+      description: description,
+      images: [ogImageUrl],
     },
     robots: {
       index: true,

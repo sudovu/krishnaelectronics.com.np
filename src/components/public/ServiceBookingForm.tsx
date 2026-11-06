@@ -53,7 +53,7 @@ export default function ServiceBookingForm({ serviceId, serviceTitle }: ServiceB
       try {
         const waNumber = '9779858083951';
         const waMessage = 
-          `*New Service Request - Krishna Electronics*\n\n` +
+          `https://krishnaelectronics.com.np\n\n*New Service Request - Krishna Electronics*\n` +
           `🔧 *Service:* ${serviceTitle}\n` +
           `👤 *Name:* ${formData.customerName.trim()}\n` +
           `📞 *Phone:* ${formData.customerPhone.trim()}\n` +
