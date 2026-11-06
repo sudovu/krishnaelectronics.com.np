@@ -49,6 +49,22 @@ export default function ServiceBookingForm({ serviceId, serviceTitle }: ServiceB
         throw new Error(data.error || 'Failed to submit service inquiry.');
       }
 
+      // Automatically launch WhatsApp with the pre-filled service booking details
+      try {
+        const waNumber = '9779858083951';
+        const waMessage = 
+          `*New Service Request - Krishna Electronics*\n\n` +
+          `🔧 *Service:* ${serviceTitle}\n` +
+          `👤 *Name:* ${formData.customerName.trim()}\n` +
+          `📞 *Phone:* ${formData.customerPhone.trim()}\n` +
+          (formData.customerEmail?.trim() ? `✉️ *Email:* ${formData.customerEmail.trim()}\n` : '') +
+          (formData.customerAddress?.trim() ? `📍 *Address:* ${formData.customerAddress.trim()}\n` : '') +
+          (formData.message?.trim() ? `💬 *Notes:* ${formData.message.trim()}` : '');
+
+        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
+        window.open(waUrl, '_blank');
+      } catch (_) {}
+
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');

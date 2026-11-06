@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle, MessageSquare } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface ContactFormProps {
   initialSubject?: string;
@@ -46,6 +46,22 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
         throw new Error(data.error || 'Failed to submit inquiry.');
       }
 
+      // Automatically launch WhatsApp with the pre-filled inquiry details
+      try {
+        const waNumber = '9779858083951';
+        const waMessage = 
+          `*New Website Inquiry - Krishna Electronics*\n\n` +
+          `👤 *Name:* ${formData.customerName.trim()}\n` +
+          `📞 *Phone:* ${formData.customerPhone.trim()}\n` +
+          (formData.customerEmail?.trim() ? `✉️ *Email:* ${formData.customerEmail.trim()}\n` : '') +
+          (formData.customerAddress?.trim() ? `📍 *Address:* ${formData.customerAddress.trim()}\n` : '') +
+          `📋 *Subject:* ${formData.subject?.trim() || 'General Inquiry'}\n` +
+          `💬 *Message:* ${formData.message.trim()}`;
+
+        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
+        window.open(waUrl, '_blank');
+      } catch (_) {}
+
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -60,7 +76,7 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
         <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
         <h3 className="font-bold text-lg text-emerald-900">Inquiry Sent Successfully!</h3>
         <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-          Thank you for reaching out to Krishna Electronics Order &amp; Suppliers. Your message has been logged in our system. A technician or sales representative will contact you via your preferred channel.
+          Thank you for reaching out to Krishna Electronics Order &amp; Suppliers. Your inquiry has been emailed to our official inbox, recorded in our management database, and WhatsApp opened automatically for instant messaging.
         </p>
         <button
           onClick={() => {
@@ -103,22 +119,22 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
             required
             value={formData.customerName}
             onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-            placeholder="e.g. Sunil Thapa"
+            placeholder="e.g. Ramesh Shrestha"
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
           />
         </div>
 
         <div>
           <label className="block text-slate-700 font-semibold mb-1">
-            Phone / Mobile Number *
+            Mobile / Phone Number *
           </label>
           <input
             type="tel"
             required
             value={formData.customerPhone}
             onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-            placeholder="e.g. 9848XXXXXX"
-            className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none font-mono"
+            placeholder="e.g. 98XXXXXXXX"
+            className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
           />
         </div>
       </div>
@@ -132,20 +148,20 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
             type="email"
             value={formData.customerEmail}
             onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-            placeholder="e.g. sunil@example.com"
+            placeholder="e.g. name@example.com"
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
           />
         </div>
 
         <div>
           <label className="block text-slate-700 font-semibold mb-1">
-            Location / Address in Karnali
+            Address / Organization (Optional)
           </label>
           <input
             type="text"
             value={formData.customerAddress}
             onChange={(e) => setFormData({ ...formData, customerAddress: e.target.value })}
-            placeholder="e.g. Birendranagar-12, Surkhet"
+            placeholder="e.g. Birendranagar-6, Surkhet"
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
           />
         </div>
@@ -162,20 +178,20 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
           >
             <option value="GENERAL_INQUIRY">General Inquiry</option>
-            <option value="PRODUCT_INQUIRY">Product Pricing / Availability</option>
-            <option value="SERVICE_REQUEST">Laptop / Electronics Repair</option>
+            <option value="PRODUCT_INQUIRY">Product Pricing &amp; Availability</option>
+            <option value="SERVICE_REQUEST">Repair &amp; Technical Support</option>
             <option value="AMC_REQUEST">Annual Maintenance Contract (AMC)</option>
-            <option value="DIRECT_ORDER">Direct Purchase Order</option>
+            <option value="DIRECT_ORDER">Direct Bulk Order / Quotation</option>
           </select>
         </div>
 
         <div>
           <label className="block text-slate-700 font-semibold mb-1">
-            Preferred Response Method
+            Preferred Follow-up Channel
           </label>
           <select
             value={formData.preferredContact}
-            onChange={(e) => setFormData({ ...formData, preferredContact: e.target.value as any })}
+            onChange={(e) => setFormData({ ...formData, preferredContact: e.target.value })}
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
           >
             <option value="PHONE">Phone Call</option>
@@ -212,30 +228,14 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
         ></textarea>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-8 py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-bold rounded-lg uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
-        >
-          <Send className="w-4 h-4" />
-          <span>{loading ? 'Submitting...' : 'Submit Inquiry'}</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
-            const phone = '9858083951';
-            const msg = `Hello Krishna Electronics,%0A%0AMy Name: ${encodeURIComponent(formData.customerName || 'Customer')}%0APhone: ${encodeURIComponent(formData.customerPhone || 'Not provided')}%0ASubject: ${encodeURIComponent(formData.subject || 'Website Inquiry')}%0A%0AMessage:%0A${encodeURIComponent(formData.message || 'I would like to inquire about your products/services.')}`;
-            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-          }}
-          className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition shadow-md flex items-center justify-center gap-2"
-          title="Send directly to official Krishna Electronics WhatsApp"
-        >
-          <MessageSquare className="w-4 h-4" />
-          <span>Send via WhatsApp</span>
-        </button>
-      </div>
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full sm:w-auto px-8 py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-bold rounded-lg uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
+      >
+        <Send className="w-4 h-4" />
+        <span>{loading ? 'Submitting & Dispatching...' : 'Submit Inquiry'}</span>
+      </button>
     </form>
   );
 }
