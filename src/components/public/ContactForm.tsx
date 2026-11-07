@@ -161,7 +161,7 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
             type="text"
             value={formData.customerAddress}
             onChange={(e) => setFormData({ ...formData, customerAddress: e.target.value })}
-            placeholder="e.g. Birendranagar-6, Surkhet"
+            placeholder="e.g. Birendranagar, Surkhet"
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
           />
         </div>

@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
   const siteUrl = 'https://krishnaelectronics.com.np';
   const title = `${product.title} Price & Specs | Krishna Electronics Surkhet`;
-  const description = product.shortDescription || `Buy ${product.title} (SKU: ${product.sku}) in Surkhet, Nepal at NPR ${product.offerPrice || product.regularPrice}. Official warranty, instant pickup in Birendranagar-12 or province dispatch.`;
+  const description = product.shortDescription || `Buy ${product.title} (SKU: ${product.sku}) in Surkhet, Nepal at NPR ${product.offerPrice || product.regularPrice}. Official warranty, instant pickup in Birendranagar, Surkhet or province dispatch.`;
 
   return {
     title,
@@ -168,7 +168,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         telephone: storePhone || '083-522006',
         address: {
           '@type': 'PostalAddress',
-          streetAddress: 'Birendranagar-12',
+          streetAddress: 'Birendranagar',
           addressLocality: 'Surkhet',
           addressRegion: 'Karnali Province',
           addressCountry: 'NP',
@@ -408,7 +408,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <div className="space-y-2 text-slate-300">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-cyan-accent shrink-0 mt-0.5" />
-                <span>Birendranagar-6, Buddhapath, Surkhet, Nepal</span>
+                <span>Birendranagar, Surkhet</span>
               </div>
               <div className="flex items-start gap-2">
                 <ShieldCheck className="w-4 h-4 text-cyan-accent shrink-0 mt-0.5" />

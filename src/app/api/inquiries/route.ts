@@ -101,7 +101,7 @@ async function sendInquiryEmailNotification(inquiry: {
           </div>
         </div>
         <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 12px; text-align: center; font-size: 12px; color: #94a3b8;">
-          Krishna Electronics &amp; Order Suppliers | Birendranagar-12, Surkhet, Nepal | 9858083951
+          Krishna Electronics &amp; Order Suppliers | Birendranagar, Surkhet | 9858083951
         </div>
       </div>
     `;

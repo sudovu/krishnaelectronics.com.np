@@ -12,7 +12,7 @@ export async function generateMetadata({ searchParams }: ProductsPageProps): Pro
   const cat = searchParams.category;
   
   let title = 'Electronics & IT Products Catalog | Krishna Electronics Surkhet';
-  let description = 'Shop genuine laptops, Wi-Fi 6 routers, CCTV surveillance cameras, toner cartridges, IoT relays & accessories in Birendranagar-12, Surkhet. Verified brand warranties & fast Karnali delivery.';
+  let description = 'Shop genuine laptops, Wi-Fi 6 routers, CCTV surveillance cameras, toner cartridges, IoT relays & accessories in Birendranagar, Surkhet. Verified brand warranties & fast Karnali delivery.';
   
   if (q) {
     title = `"${q}" Price in Surkhet, Nepal | Krishna Electronics`;

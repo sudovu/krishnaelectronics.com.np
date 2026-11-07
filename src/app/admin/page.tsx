@@ -59,7 +59,7 @@ export default function AdminDashboardPage() {
             Administrator Dashboard
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Krishna Electronics Order &amp; Suppliers &bull; Birendranagar-12, Surkhet
+            Krishna Electronics Order &amp; Suppliers &bull; Birendranagar, Surkhet
           </p>
         </div>
 

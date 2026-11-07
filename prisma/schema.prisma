@@ -44,11 +44,11 @@ model Setting {
   siteName            String   @default("Krishna Electronics Order & Suppliers")
   logoUrl             String   @default("/images/logo.jpg")
   siteTagline         String   @default("Premium Electronics, IoT & Professional IT Services in Surkhet")
-  siteDescription     String   @default("Sales, IoT smart home solutions, enterprise networking, CCTV surveillance, chip-level laptop & computer repair, and Annual Maintenance Contracts (AMC) in Birendranagar-12, Surkhet.")
+  siteDescription     String   @default("Sales, IoT smart home solutions, enterprise networking, CCTV surveillance, chip-level laptop & computer repair, and Annual Maintenance Contracts (AMC) in Birendranagar, Surkhet.")
   contactPhone        String   @default("") // Editable from admin - do not invent
   contactEmail        String   @default("") // Editable from admin - do not invent
   contactWhatsapp     String   @default("") // Editable from admin - do not invent
-  locationAddress     String   @default("Birendranagar-12, Surkhet, Nepal")
+  locationAddress     String   @default("Birendranagar, Surkhet")
   businessHours       String   @default("Sun - Fri: 9:30 AM - 6:30 PM | Saturday: Closed (On-call emergency services available)")
   googleMapsEmbedUrl  String   @default("")
   socialFacebook      String   @default("")

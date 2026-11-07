@@ -68,7 +68,7 @@ async function main() {
   } catch (_) {}
 
   // 2. Business Settings from Manifest (Preserves user changes if already configured)
-  const fullAddress = `${manifest.identity.location.address}, ${manifest.identity.location.city}, ${manifest.identity.location.country}`;
+  const fullAddress = 'Birendranagar, Surkhet';
   const existingSetting = await prisma.setting.findUnique({
     where: { id: 'site-settings' },
   });
@@ -103,7 +103,13 @@ async function main() {
     });
     console.log('✓ Initial site settings initialized from business manifest');
   } else {
-    console.log('✓ Existing customized site settings preserved (no overwrite)');
+    try {
+      await prisma.setting.update({
+        where: { id: 'site-settings' },
+        data: { locationAddress: 'Birendranagar, Surkhet' },
+      });
+      console.log('✓ Existing site settings updated: locationAddress set to Birendranagar, Surkhet');
+    } catch (_) {}
   }
 
   // 3. Categories & Subcategories

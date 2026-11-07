@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
               Authorized Portal
             </p>
             <p className="text-xs text-slate-400 mt-1">
-              Birendranagar-12, Surkhet, Nepal
+              Birendranagar, Surkhet
             </p>
           </div>
         </div>

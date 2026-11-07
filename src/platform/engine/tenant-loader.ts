@@ -49,7 +49,9 @@ export async function getMergedBusinessProfile(): Promise<SiteSettingsData> {
         contactPhone: dbSetting.contactPhone || manifest.identity.contact.phoneDefault,
         contactEmail: dbSetting.contactEmail || manifest.identity.contact.emailDefault,
         contactWhatsapp: dbSetting.contactWhatsapp || manifest.identity.contact.whatsappDefault,
-        locationAddress: dbSetting.locationAddress || `${manifest.identity.location.address}, ${manifest.identity.location.city}, ${manifest.identity.location.country}`,
+        locationAddress: (dbSetting.locationAddress && !dbSetting.locationAddress.includes('Birendranagar-12') && dbSetting.locationAddress !== 'Birendranagar, Surkhet, Nepal') 
+          ? dbSetting.locationAddress 
+          : 'Birendranagar, Surkhet',
         businessHours: dbSetting.businessHours || manifest.identity.contact.hoursDefault,
         googleMapsEmbedUrl: dbSetting.googleMapsEmbedUrl || '',
         socialFacebook: dbSetting.socialFacebook || '',
@@ -90,7 +92,7 @@ export async function getMergedBusinessProfile(): Promise<SiteSettingsData> {
     contactPhone: manifest.identity.contact.phoneDefault,
     contactEmail: manifest.identity.contact.emailDefault,
     contactWhatsapp: manifest.identity.contact.whatsappDefault,
-    locationAddress: `${manifest.identity.location.address}, ${manifest.identity.location.city}, ${manifest.identity.location.country}`,
+    locationAddress: 'Birendranagar, Surkhet',
     businessHours: manifest.identity.contact.hoursDefault,
     googleMapsEmbedUrl: '',
     socialFacebook: '',

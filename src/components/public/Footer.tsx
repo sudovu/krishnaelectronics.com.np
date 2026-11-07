@@ -20,7 +20,10 @@ interface FooterProps {
 
 export default function Footer({ settings }: FooterProps) {
   const currentYear = new Date().getFullYear();
-  const address = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
+  const rawAddress = settings?.locationAddress || 'Birendranagar, Surkhet';
+  const address = (rawAddress.includes('Birendranagar-12') || rawAddress === 'Birendranagar, Surkhet, Nepal')
+    ? 'Birendranagar, Surkhet'
+    : rawAddress;
   const hours = settings?.businessHours || 'Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency services available)';
   const phone = settings?.contactPhone || '';
   const email = settings?.contactEmail || '';
@@ -301,7 +304,7 @@ export default function Footer({ settings }: FooterProps) {
       <div className="bg-navy-950 py-4 px-4 border-t border-navy-900 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <p>
-            &copy; {currentYear} Krishna Electronics Order &amp; Suppliers. All rights reserved. Birendranagar-12, Surkhet, Nepal.
+            &copy; {currentYear} Krishna Electronics Order &amp; Suppliers. All rights reserved. Birendranagar, Surkhet.
           </p>
           <p className="flex items-center gap-1 text-[11px]">
             <span>Official Domain:</span>

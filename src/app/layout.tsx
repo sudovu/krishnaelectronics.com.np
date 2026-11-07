@@ -32,7 +32,7 @@ const SEO_KEYWORDS = [
   'computer shop birendranagar',
   'laptop shop in surkhet',
   'karnali province electronics supplier',
-  'electronics store birendranagar 12',
+  'electronics store birendranagar',
   'electronics order suppliers surkhet',
   // Technical Services & Repair Lab
   'laptop repair in surkhet',
@@ -178,7 +178,7 @@ export default async function RootLayout({
         description: profile.siteDescription,
         address: {
           '@type': 'PostalAddress',
-          streetAddress: 'Birendranagar-12',
+          streetAddress: 'Birendranagar',
           addressLocality: 'Surkhet',
           addressRegion: 'Karnali Province',
           postalCode: '21700',

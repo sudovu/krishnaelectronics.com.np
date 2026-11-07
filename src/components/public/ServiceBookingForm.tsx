@@ -146,7 +146,7 @@ export default function ServiceBookingForm({ serviceId, serviceTitle }: ServiceB
             type="text"
             value={formData.customerAddress}
             onChange={(e) => setFormData({ ...formData, customerAddress: e.target.value })}
-            placeholder="e.g. Birendranagar-4, Main Market"
+            placeholder="e.g. Birendranagar, Surkhet"
             className="w-full px-3.5 py-2.5 bg-navy-900 border border-navy-700 rounded-lg text-white placeholder-slate-500 focus:border-brand-500 focus:outline-none"
           />
         </div>

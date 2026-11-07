@@ -78,7 +78,10 @@ export default function Header({ settings }: HeaderProps) {
   const showNavbarBadge = homeConfig.showNavbarBadge !== false;
   const navbarBadgeLabel = homeConfig.navbarBadgeText?.trim() || 'Official Surkhet Store';
 
-  const businessLocation = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
+  const rawLocation = settings?.locationAddress || 'Birendranagar, Surkhet';
+  const businessLocation = (rawLocation.includes('Birendranagar-12') || rawLocation === 'Birendranagar, Surkhet, Nepal')
+    ? 'Birendranagar, Surkhet'
+    : rawLocation;
   const businessHours = settings?.businessHours || 'Sun - Fri: 9:30 AM - 6:30 PM';
   const phone = settings?.contactPhone || '';
   const whatsapp = settings?.contactWhatsapp || '';

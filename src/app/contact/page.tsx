@@ -8,12 +8,12 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Contact Store & Service Center | Krishna Electronics Surkhet',
-  description: 'Visit Krishna Electronics Order & Suppliers at Birendranagar-12, Surkhet. Call 083-522006, WhatsApp, or request an instant diagnostic or quotation online.',
+  description: 'Visit Krishna Electronics Order & Suppliers at Birendranagar, Surkhet. Call 083-522006, WhatsApp, or request an instant diagnostic or quotation online.',
   keywords: [
     'contact krishna electronics',
     'krishna electronics phone number',
     'krishna electronics location surkhet',
-    'birendranagar 12 electronics shop',
+    'birendranagar electronics shop',
     'computer repair contact surkhet',
     'whatsapp krishna electronics surkhet',
   ],
@@ -33,7 +33,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
     where: { id: 'site-settings' },
   }).catch(() => null);
 
-  const address = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
+  const rawAddress = settings?.locationAddress || 'Birendranagar, Surkhet';
+  const address = (rawAddress.includes('Birendranagar-12') || rawAddress === 'Birendranagar, Surkhet, Nepal')
+    ? 'Birendranagar, Surkhet'
+    : rawAddress;
   const hours = settings?.businessHours || 'Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency services available)';
   const phone = settings?.contactPhone || '';
   const email = settings?.contactEmail || '';
@@ -61,7 +64,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </h1>
 
           <p className="text-slate-300 text-sm leading-relaxed">
-            Have questions about equipment availability, computer motherboard diagnostics, or corporate structured cabling? We welcome visits to our Birendranagar-12 store and respond promptly to all online inquiries.
+            Have questions about equipment availability, computer motherboard diagnostics, or corporate structured cabling? We welcome visits to our Birendranagar, Surkhet store and respond promptly to all online inquiries.
           </p>
         </div>
       </div>
@@ -170,7 +173,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               </div>
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-brand-500" />
-                <span>Valley deliveries dispatched daily from Birendranagar-12</span>
+                <span>Valley deliveries dispatched daily across Birendranagar, Surkhet</span>
               </div>
             </div>
           </div>
@@ -193,9 +196,9 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             ) : (
               <div className="h-60 bg-slate-100 flex flex-col items-center justify-center p-6 text-center text-xs text-slate-500">
                 <MapPin className="w-8 h-8 text-brand-500 mb-2" />
-                <div className="font-bold text-navy-900 text-sm">Birendranagar-12, Surkhet, Nepal</div>
+                <div className="font-bold text-navy-900 text-sm">Birendranagar, Surkhet</div>
                 <p className="text-slate-400 mt-1">
-                  Near Birendranagar-12 center. Google Maps embed URL can be configured from the Admin Panel settings.
+                  Located in Birendranagar, Surkhet. Google Maps embed URL can be configured from the Admin Panel settings.
                 </p>
               </div>
             )}

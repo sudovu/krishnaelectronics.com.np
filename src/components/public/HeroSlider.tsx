@@ -29,7 +29,7 @@ export default function HeroSlider({ banners }: HeroSliderProps) {
       id: 'default-2',
       title: 'Precision Chip-Level Laptop & PC Repair Lab',
       subtitle: 'Motherboard micro-soldering, liquid damage recovery, broken screen replacement & clean OS tuning.',
-      badgeText: 'Diagnostic Lab • Birendranagar-12',
+      badgeText: 'Diagnostic Lab • Birendranagar, Surkhet',
       ctaText: 'Book Service Inspection',
       ctaLink: '/services/computer-laptop-repair',
       imageUrl: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=1600&q=80',
@@ -149,7 +149,7 @@ export default function HeroSlider({ banners }: HeroSliderProps) {
               <div className="absolute bottom-4 left-4 right-4 bg-navy-950/85 backdrop-blur-md p-3 rounded-xl border border-navy-700 text-xs flex items-center justify-between">
                 <div>
                   <div className="text-[10px] uppercase font-bold text-slate-400">Location</div>
-                  <div className="font-semibold text-white">Birendranagar-12, Surkhet</div>
+                  <div className="font-semibold text-white">Birendranagar, Surkhet</div>
                 </div>
                 <div className="text-right">
                   <div className="text-[10px] uppercase font-bold text-slate-400">Default Currency</div>

@@ -207,7 +207,7 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
             <h4 className="font-bold text-sm text-cyan-accent">Surkhet Workshop</h4>
             <div className="flex items-start gap-2 text-slate-300">
               <MapPin className="w-4 h-4 text-cyan-accent shrink-0 mt-0.5" />
-              <span>Birendranagar-6, Buddhapath, Surkhet</span>
+              <span>Birendranagar, Surkhet</span>
             </div>
             <div className="flex items-start gap-2 text-slate-300">
               <Clock className="w-4 h-4 text-cyan-accent shrink-0 mt-0.5" />

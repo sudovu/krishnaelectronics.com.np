@@ -31,7 +31,7 @@ export const revalidate = 30;
 
 export const metadata: Metadata = {
   title: 'Krishna Electronics & Order Suppliers | Electronics, Laptop Repair & CCTV in Surkhet',
-  description: 'Krishna Electronics & Order Suppliers is the leading electronics store & IT service center in Birendranagar-12, Surkhet, Nepal. We supply laptops, Wi-Fi 6 routers, Hikvision CCTV, IoT smart devices, chip-level computer repairs, and institutional AMC support across Karnali Province.',
+  description: 'Krishna Electronics & Order Suppliers is the leading electronics store & IT service center in Birendranagar, Surkhet, Nepal. We supply laptops, Wi-Fi 6 routers, Hikvision CCTV, IoT smart devices, chip-level computer repairs, and institutional AMC support across Karnali Province.',
   keywords: [
     'Krishna Electronics',
     'Krishna Electronics Surkhet',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     'computer shop surkhet',
     'laptop repair surkhet',
     'cctv camera installation surkhet',
-    'birendranagar 12 electronics',
+    'birendranagar electronics',
     'karnali province IT hardware',
     'कृष्ण इलेक्ट्रोनिक्स सुर्खेत',
   ],
@@ -118,7 +118,10 @@ export default async function HomePage() {
     }
   };
 
-  const businessLocation = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
+  const rawLocation = settings?.locationAddress || 'Birendranagar, Surkhet';
+  const businessLocation = (rawLocation.includes('Birendranagar-12') || rawLocation === 'Birendranagar, Surkhet, Nepal')
+    ? 'Birendranagar, Surkhet'
+    : rawLocation;
   const businessHours = settings?.businessHours || 'Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency services available)';
 
   // Parse homepage customizer configurations

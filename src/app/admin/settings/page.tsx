@@ -477,7 +477,7 @@ export default function AdminSettingsPage() {
                     <div className="bg-navy-950 text-slate-300 px-3 py-1.5 flex justify-between items-center text-[10px]">
                       <span className="text-cyan-accent flex items-center gap-1 truncate">
                         <MapPin className="w-3 h-3 text-brand-400 shrink-0" />
-                        {homeConfig.topNotificationText?.trim() || settings.locationAddress || 'Birendranagar-12, Surkhet, Nepal'}
+                        {homeConfig.topNotificationText?.trim() || settings.locationAddress || 'Birendranagar, Surkhet'}
                       </span>
                       <div className="flex items-center gap-2 text-slate-400">
                         {homeConfig.showTopContactLinks !== false && <span>{settings.contactPhone || 'Phone'}</span>}
