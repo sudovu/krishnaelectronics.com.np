@@ -46,22 +46,6 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
         throw new Error(data.error || 'Failed to submit inquiry.');
       }
 
-      // Automatically launch WhatsApp with the pre-filled inquiry details
-      try {
-        const waNumber = '9779858083951';
-        const waMessage = 
-          `https://krishnaelectronics.com.np\n\n*New Website Inquiry - Krishna Electronics*\n` +
-          `👤 *Name:* ${formData.customerName.trim()}\n` +
-          `📞 *Phone:* ${formData.customerPhone.trim()}\n` +
-          (formData.customerEmail?.trim() ? `✉️ *Email:* ${formData.customerEmail.trim()}\n` : '') +
-          (formData.customerAddress?.trim() ? `📍 *Address:* ${formData.customerAddress.trim()}\n` : '') +
-          `📋 *Subject:* ${formData.subject?.trim() || 'General Inquiry'}\n` +
-          `💬 *Message:* ${formData.message.trim()}`;
-
-        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(waMessage)}`;
-        window.open(waUrl, '_blank');
-      } catch (_) {}
-
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -74,28 +58,38 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
     return (
       <div className="bg-emerald-50 border border-emerald-200 p-8 rounded-xl text-center space-y-3">
         <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-        <h3 className="font-bold text-lg text-emerald-900">Inquiry Sent Successfully!</h3>
+        <h3 className="font-bold text-lg text-emerald-900">Inquiry Received Successfully!</h3>
         <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-          Thank you for reaching out to Krishna Electronics Order &amp; Suppliers. Your inquiry has been emailed to our official inbox, recorded in our management database, and WhatsApp opened automatically for instant messaging.
+          Thank you for reaching out to Krishna Electronics Order &amp; Suppliers. We have recorded your inquiry and automatically notified our desk via email &amp; WhatsApp. A technical specialist will contact you shortly.
         </p>
-        <button
-          onClick={() => {
-            setSuccess(false);
-            setFormData({
-              customerName: '',
-              customerPhone: '',
-              customerEmail: '',
-              customerAddress: '',
-              type: 'GENERAL_INQUIRY',
-              subject: '',
-              message: '',
-              preferredContact: 'PHONE',
-            });
-          }}
-          className="mt-4 px-4 py-2 bg-navy-900 text-white rounded-lg text-xs font-semibold hover:bg-brand-600 transition"
-        >
-          Send Another Message
-        </button>
+        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button
+            onClick={() => {
+              setSuccess(false);
+              setFormData({
+                customerName: '',
+                customerPhone: '',
+                customerEmail: '',
+                customerAddress: '',
+                type: 'GENERAL_INQUIRY',
+                subject: '',
+                message: '',
+                preferredContact: 'PHONE',
+              });
+            }}
+            className="px-4 py-2 bg-navy-900 text-white rounded-lg text-xs font-semibold hover:bg-brand-600 transition"
+          >
+            Send Another Message
+          </button>
+          <a
+            href="https://wa.me/9779858083951"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition"
+          >
+            Need Urgent Help? Chat on WhatsApp
+          </a>
+        </div>
       </div>
     );
   }
