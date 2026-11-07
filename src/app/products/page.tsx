@@ -3,8 +3,48 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/public/ProductCard';
 import { Filter, Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
+import type { Metadata } from 'next';
 
 export const revalidate = 30;
+
+export async function generateMetadata({ searchParams }: ProductsPageProps): Promise<Metadata> {
+  const q = searchParams.q?.trim();
+  const cat = searchParams.category;
+  
+  let title = 'Electronics & IT Products Catalog | Krishna Electronics Surkhet';
+  let description = 'Shop genuine laptops, Wi-Fi 6 routers, CCTV surveillance cameras, toner cartridges, IoT relays & accessories in Birendranagar-12, Surkhet. Verified brand warranties & fast Karnali delivery.';
+  
+  if (q) {
+    title = `"${q}" Price in Surkhet, Nepal | Krishna Electronics`;
+    description = `Buy genuine ${q} in Surkhet at lowest NPR rates. In-stock hardware, official warranty, and on-site support from Krishna Electronics Order & Suppliers.`;
+  } else if (cat) {
+    const formattedCat = cat.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    title = `${formattedCat} Price in Surkhet, Nepal | Krishna Electronics`;
+    description = `Browse official ${formattedCat} in Surkhet, Karnali Province. Genuine products with warranty from Krishna Electronics Order & Suppliers.`;
+  }
+
+  return {
+    title,
+    description,
+    keywords: [
+      'electronics catalog surkhet',
+      'buy electronics in surkhet',
+      'computer store birendranagar',
+      'laptops price in surkhet',
+      'wi-fi routers surkhet',
+      'cctv camera price surkhet',
+      'toner cartridge in surkhet',
+      'Krishna Electronics products',
+      'इलेक्ट्रोनिक्स पसल सुर्खेत',
+    ],
+    openGraph: {
+      title,
+      description,
+      url: 'https://krishnaelectronics.com.np/products',
+      images: [{ url: 'https://krishnaelectronics.com.np/images/logo.png', width: 1600, height: 1600 }],
+    },
+  };
+}
 
 interface ProductsPageProps {
   searchParams: {

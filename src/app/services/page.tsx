@@ -20,8 +20,20 @@ import type { Metadata } from 'next';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Technical Services, Repairs & AMC | Krishna Electronics Surkhet',
-  description: 'Certified chip-level laptop repairs, structured network cabling, Wi-Fi 6 solutions, CCTV surveillance systems, IoT smart devices, and Annual Maintenance Contracts (AMC) in Surkhet.',
+  title: 'Technical Services, Computer Repairs & AMC | Krishna Electronics Surkhet',
+  description: 'Certified chip-level laptop & computer repairs, structured Cat6/fiber cabling, enterprise Wi-Fi 6, Hikvision CCTV installation, IoT smart home solutions, and Annual Maintenance Contracts (AMC) in Birendranagar-12, Surkhet, Nepal.',
+  keywords: [
+    'computer repair in surkhet',
+    'laptop repair surkhet',
+    'chip-level motherboard repair surkhet',
+    'cctv installation surkhet',
+    'network cabling surkhet',
+    'mikrotik setup surkhet',
+    'amc computer contract surkhet',
+    'iot automation surkhet',
+    'कम्प्युटर मर्मत सुर्खेत',
+    'ल्यापटप मर्मत सुर्खेत',
+  ],
 };
 
 export default async function ServicesPage() {

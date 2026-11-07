@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 const productSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
-  sku: z.string().min(1, 'SKU is required (can be single digit, e.g. 1)'),
+  sku: z.string().trim().min(1, 'SKU is required (can be single digit, e.g. 1)'),
   categoryId: z.string().min(1, 'Category is required'),
   subcategoryId: z.string().optional().nullable(),
   brandId: z.string().optional().nullable(),
@@ -179,13 +179,22 @@ export async function POST(req: NextRequest) {
       slug = `${baseSlug}-${count++}`;
     }
 
+    const finalSku = validated.sku.trim().toUpperCase();
+
     // Check SKU uniqueness
-    const existingSku = await prisma.product.findUnique({
-      where: { sku: validated.sku },
+    const existingSku = await prisma.product.findFirst({
+      where: { sku: finalSku },
     });
     if (existingSku) {
       return NextResponse.json(
-        { error: `SKU "${validated.sku}" is already in use by another product.` },
+        {
+          error: `SKU "${finalSku}" is already in use by another product: "${existingSku.title}".`,
+          conflictingProduct: {
+            id: existingSku.id,
+            title: existingSku.title,
+            sku: existingSku.sku,
+          },
+        },
         { status: 400 }
       );
     }
@@ -201,6 +210,7 @@ export async function POST(req: NextRequest) {
     const newProduct = await prisma.product.create({
       data: {
         ...validated,
+        sku: finalSku,
         slug,
         discountPercent,
         publishedAt: validated.status === 'PUBLISHED' ? new Date() : null,

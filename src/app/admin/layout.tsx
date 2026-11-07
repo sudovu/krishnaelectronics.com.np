@@ -143,7 +143,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full overflow-hidden bg-white p-0.5 border border-brand-500 shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo.jpg" alt="Logo" className="w-full h-full object-contain filter contrast-105" style={{ imageRendering: '-webkit-optimize-contrast' }} width={48} height={48} />
+            <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" width={48} height={48} />
           </div>
           <span className="font-bold text-sm tracking-tight truncate max-w-[200px]">{siteName}</span>
         </div>
@@ -167,7 +167,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="p-5 border-b border-navy-800 hidden md:flex items-center gap-3">
             <div className="w-12 h-12 rounded-full overflow-hidden bg-white p-0.5 border-2 border-brand-500 shadow-md shrink-0 ring-1 ring-brand-200/50">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/logo.jpg" alt="Logo" className="w-full h-full object-contain" />
+              <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="font-extrabold text-xs text-white tracking-tight truncate max-w-[150px]" title={siteName}>

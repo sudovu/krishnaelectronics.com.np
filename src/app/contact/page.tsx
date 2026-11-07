@@ -7,8 +7,16 @@ import type { Metadata } from 'next';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Contact Us & Store Location | Krishna Electronics Surkhet',
-  description: 'Visit Krishna Electronics Order & Suppliers at Birendranagar-12, Surkhet. Send an inquiry, book a diagnostic, or request a commercial quote.',
+  title: 'Contact Store & Service Center | Krishna Electronics Surkhet',
+  description: 'Visit Krishna Electronics Order & Suppliers at Birendranagar-12, Surkhet. Call 083-522006, WhatsApp, or request an instant diagnostic or quotation online.',
+  keywords: [
+    'contact krishna electronics',
+    'krishna electronics phone number',
+    'krishna electronics location surkhet',
+    'birendranagar 12 electronics shop',
+    'computer repair contact surkhet',
+    'whatsapp krishna electronics surkhet',
+  ],
 };
 
 interface ContactPageProps {

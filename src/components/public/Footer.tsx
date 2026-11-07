@@ -21,7 +21,7 @@ interface FooterProps {
 export default function Footer({ settings }: FooterProps) {
   const currentYear = new Date().getFullYear();
   const address = settings?.locationAddress || 'Birendranagar-12, Surkhet, Nepal';
-  const hours = settings?.businessHours || 'Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency service available)';
+  const hours = settings?.businessHours || 'Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency services available)';
   const phone = settings?.contactPhone || '';
   const email = settings?.contactEmail || '';
   const whatsapp = settings?.contactWhatsapp || '';
@@ -84,13 +84,13 @@ export default function Footer({ settings }: FooterProps) {
               <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-white p-1 border-2 border-brand-500 shadow-lg shadow-brand-500/20 shrink-0 flex items-center justify-center ring-2 ring-brand-100/30">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={settings?.logoUrl || '/images/logo.jpg'}
+                  src={settings?.logoUrl || '/images/logo.png'}
                   alt={`${settings?.siteName || 'Krishna Electronics Order & Suppliers'} Logo`}
-                  className="w-full h-full object-contain filter contrast-105"
-                  style={{ imageRendering: '-webkit-optimize-contrast' }}
+                  className="w-full h-full object-contain"
                   width={64}
                   height={64}
                   loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div>
@@ -114,9 +114,12 @@ export default function Footer({ settings }: FooterProps) {
                 <MapPin className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
                 <span>{address}</span>
               </div>
-              <div className="flex items-center gap-2 text-slate-300">
-                <Clock className="w-4 h-4 text-brand-400 shrink-0" />
-                <span>{hours}</span>
+              <div className="flex items-start gap-2.5 text-slate-200 bg-navy-900/90 p-3 rounded-xl border border-navy-800 shadow-sm">
+                <Clock className="w-4 h-4 text-cyan-accent shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <span className="font-bold text-white text-[11px] uppercase tracking-wider block">Store Opening &amp; Service Hours</span>
+                  <p className="text-slate-300 text-xs leading-relaxed font-medium">{hours}</p>
+                </div>
               </div>
               {phone ? (
                 <div className="flex items-center gap-2 text-slate-300">

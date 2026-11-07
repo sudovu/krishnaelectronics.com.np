@@ -36,13 +36,48 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
     return { title: 'Product Not Found | Krishna Electronics' };
   }
 
+  const siteUrl = 'https://krishnaelectronics.com.np';
+  const title = `${product.title} Price & Specs | Krishna Electronics Surkhet`;
+  const description = product.shortDescription || `Buy ${product.title} (SKU: ${product.sku}) in Surkhet, Nepal at NPR ${product.offerPrice || product.regularPrice}. Official warranty, instant pickup in Birendranagar-12 or province dispatch.`;
+
   return {
-    title: `${product.title} - Price & Specs | Krishna Electronics Surkhet`,
-    description: product.shortDescription,
+    title,
+    description,
+    keywords: [
+      product.title,
+      `${product.title} price in Nepal`,
+      `${product.title} Surkhet`,
+      product.sku,
+      product.brand?.name || 'Electronics',
+      product.category?.name || 'Hardware',
+      'buy electronics surkhet',
+      'Krishna Electronics Surkhet',
+      'computer shop birendranagar',
+      'official brand warranty nepal',
+    ].filter(Boolean),
+    alternates: {
+      canonical: `${siteUrl}/products/${product.slug}`,
+    },
     openGraph: {
-      title: product.title,
-      description: product.shortDescription,
-      images: [{ url: product.primaryImage }],
+      title,
+      description,
+      url: `${siteUrl}/products/${product.slug}`,
+      siteName: 'Krishna Electronics Order & Suppliers',
+      images: [
+        {
+          url: product.primaryImage,
+          width: 800,
+          height: 800,
+          alt: product.title,
+        },
+      ],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [product.primaryImage],
     },
   };
 }
@@ -104,8 +139,79 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     `Hello Krishna Electronics, I am interested in purchasing/inquiring about: ${product.title} (SKU: ${product.sku}) listed for NPR ${currentPrice}. Please provide availability and payment details.`
   );
 
+    const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    image: [product.primaryImage],
+    description: product.shortDescription || product.fullDescription,
+    sku: product.sku,
+    mpn: product.sku,
+    brand: {
+      '@type': 'Brand',
+      name: product.brand?.name || 'Krishna Electronics',
+    },
+    category: product.category?.name,
+    offers: {
+      '@type': 'Offer',
+      url: `https://krishnaelectronics.com.np/products/${product.slug}`,
+      priceCurrency: 'NPR',
+      price: product.offerPrice || product.regularPrice,
+      priceValidUntil: '2027-12-31',
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: product.stockStatus === 'OUT_OF_STOCK'
+        ? 'https://schema.org/OutOfStock'
+        : 'https://schema.org/InStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'Krishna Electronics Order & Suppliers',
+        telephone: storePhone || '083-522006',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Birendranagar-12',
+          addressLocality: 'Surkhet',
+          addressRegion: 'Karnali Province',
+          addressCountry: 'NP',
+        },
+      },
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://krishnaelectronics.com.np',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: product.category?.name || 'Products',
+        item: `https://krishnaelectronics.com.np/products?category=${product.category?.slug || ''}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: product.title,
+        item: `https://krishnaelectronics.com.np/products/${product.slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-slate-500 mb-6 flex-wrap">
         <Link href="/" className="hover:text-brand-600">Home</Link>

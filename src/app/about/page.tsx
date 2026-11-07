@@ -7,8 +7,16 @@ import type { Metadata } from 'next';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'About Krishna Electronics Order & Suppliers | Surkhet, Nepal',
-  description: 'Learn about Krishna Electronics Order & Suppliers in Birendranagar-12, Surkhet. Our mission, technical laboratory, authorized equipment, and commitment to Karnali Province.',
+  title: 'About Krishna Electronics Order & Suppliers | Birendranagar-12, Surkhet',
+  description: 'Learn about Krishna Electronics Order & Suppliers in Birendranagar-12, Surkhet. Discover our chip-level technical laboratory, enterprise IT engineering, authorized hardware sales, and community leadership in Karnali Province.',
+  keywords: [
+    'about krishna electronics',
+    'krishna electronics history surkhet',
+    'electronics supplier surkhet',
+    'birendranagar 12 electronics',
+    'karnali province IT partner',
+    'कृष्ण इलेक्ट्रोनिक्स सुर्खेत',
+  ],
 };
 
 export default async function AboutPage() {

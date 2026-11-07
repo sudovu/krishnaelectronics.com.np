@@ -32,7 +32,7 @@ export async function POST(
     if (!product.title || product.title.trim().length < 3) {
       validationErrors.push('Product title must be at least 3 characters.');
     }
-    if (!product.sku || product.sku.trim().length < 2) {
+    if (!product.sku || product.sku.trim().length < 1) {
       validationErrors.push('SKU is required.');
     }
     if (!product.regularPrice || product.regularPrice <= 0) {

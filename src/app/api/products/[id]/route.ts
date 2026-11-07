@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 const updateProductSchema = z.object({
   title: z.string().min(3).optional(),
-  sku: z.string().min(1, 'SKU is required (can be single digit, e.g. 1)').optional(),
+  sku: z.string().trim().min(1, 'SKU is required (can be single digit, e.g. 1)').optional(),
   categoryId: z.string().min(1).optional(),
   subcategoryId: z.string().optional().nullable(),
   brandId: z.string().optional().nullable(),
@@ -71,14 +71,26 @@ export async function PUT(
     const json = await req.json();
     const validated = updateProductSchema.parse(json);
 
-    // If SKU changed, verify uniqueness
-    if (validated.sku && validated.sku !== existingProduct.sku) {
-      const skuCheck = await prisma.product.findUnique({
-        where: { sku: validated.sku },
+    const finalSku = validated.sku !== undefined ? validated.sku.trim().toUpperCase() : undefined;
+
+    // If SKU changed, verify uniqueness against all other products
+    if (finalSku && finalSku !== existingProduct.sku.trim().toUpperCase()) {
+      const skuCheck = await prisma.product.findFirst({
+        where: {
+          sku: finalSku,
+          NOT: { id: params.id },
+        },
       });
       if (skuCheck) {
         return NextResponse.json(
-          { error: `SKU "${validated.sku}" is already in use.` },
+          {
+            error: `SKU "${finalSku}" is already in use by another product: "${skuCheck.title}".`,
+            conflictingProduct: {
+              id: skuCheck.id,
+              title: skuCheck.title,
+              sku: skuCheck.sku,
+            },
+          },
           { status: 400 }
         );
       }
@@ -96,6 +108,7 @@ export async function PUT(
       where: { id: params.id },
       data: {
         ...validated,
+        sku: finalSku ?? existingProduct.sku,
         discountPercent,
         publishedAt:
           validated.status === 'PUBLISHED' && existingProduct.status !== 'PUBLISHED'

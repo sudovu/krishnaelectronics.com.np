@@ -8,7 +8,6 @@ import {
   Save, 
   Trash2, 
   Plus, 
-  CheckCircle2, 
   AlertCircle 
 } from 'lucide-react';
 
@@ -19,6 +18,8 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [conflictInfo, setConflictInfo] = useState<{ id: string; title: string; sku: string } | null>(null);
+  const [initialSku, setInitialSku] = useState<string>('');
 
   const [formData, setFormData] = useState<any>({
     title: '',
@@ -53,6 +54,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
       if (prodData.product) {
         const p = prodData.product;
+        setInitialSku(p.sku || '');
         setFormData({
           title: p.title || '',
           sku: p.sku || '',
@@ -104,10 +106,12 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
     e.preventDefault();
     setSaving(true);
     setError(null);
+    setConflictInfo(null);
 
     try {
       const payload = {
         ...formData,
+        sku: formData.sku.trim().toUpperCase(),
         regularPrice: parseFloat(formData.regularPrice),
         offerPrice: formData.offerPrice ? parseFloat(formData.offerPrice) : null,
         stockQuantity: parseInt(formData.stockQuantity, 10) || 0,
@@ -122,6 +126,9 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
 
       const data = await res.json();
       if (!res.ok) {
+        if (data.conflictingProduct) {
+          setConflictInfo(data.conflictingProduct);
+        }
         throw new Error(data.error || 'Failed to update product');
       }
 
@@ -153,17 +160,41 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
           </Link>
           <div>
             <h1 className="text-xl font-extrabold text-navy-900 tracking-tight">
-              Edit Product: {formData.title}
+              Edit Product: {formData.title || 'Untitled'}
             </h1>
-            <p className="text-xs text-slate-500 font-mono">SKU: {formData.sku}</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-xs text-slate-500 font-mono">
+                Current SKU: <span className="font-bold text-navy-900">{initialSku || 'None'}</span>
+              </span>
+              {formData.sku && formData.sku.trim().toUpperCase() !== initialSku && (
+                <span className="text-xs text-brand-600 font-mono font-medium">
+                  → Changing to: <span className="font-bold">{formData.sku.trim().toUpperCase()}</span>
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 text-red-800 text-xs rounded-xl flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-          <span>{error}</span>
+        <div className="p-4 bg-red-50 border border-red-200 text-red-800 text-xs rounded-xl flex items-start gap-2.5">
+          <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-semibold">{error}</span>
+            {conflictInfo && (
+              <p className="text-slate-600 mt-1">
+                Tip: You can{' '}
+                <Link
+                  href={`/admin/products/${conflictInfo.id}/edit`}
+                  className="font-bold text-brand-600 underline hover:text-brand-700"
+                  target="_blank"
+                >
+                  open &quot;{conflictInfo.title}&quot; (SKU: {conflictInfo.sku})
+                </Link>{' '}
+                in another tab to change its SKU, or assign another unique SKU to this product.
+              </p>
+            )}
+          </div>
         </div>
       )}
 
@@ -197,7 +228,7 @@ export default function EditProductPage({ params }: { params: { id: string } }) 
                 required
                 value={formData.sku}
                 onChange={(e) => setFormData({ ...formData, sku: e.target.value.toUpperCase() })}
-                placeholder="e.g. 1, 101, or TPL-AX73-GIG"
+                placeholder="e.g. 1, 10, or TPL-AX73-GIG"
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none font-mono"
               />
             </div>

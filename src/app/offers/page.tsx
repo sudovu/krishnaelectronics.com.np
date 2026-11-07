@@ -9,8 +9,16 @@ import type { Metadata } from 'next';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Special Offers & Seasonal Promotions | Krishna Electronics Surkhet',
-  description: 'Exclusive discounts on Wi-Fi routers, CCTV kits, laptops, and smart IoT devices at Krishna Electronics, Surkhet.',
+  title: 'Special Offers, Discounts & Festive Deals | Krishna Electronics Surkhet',
+  description: 'Exclusive seasonal discounts on laptops, Wi-Fi 6 routers, CCTV security camera kits, toner cartridges, and smart IoT home devices in Surkhet, Nepal.',
+  keywords: [
+    'electronics offers surkhet',
+    'laptop discount surkhet',
+    'cctv camera offers nepal',
+    'router deals surkhet',
+    'festive discount krishna electronics',
+    'छुट अफर सुर्खेत',
+  ],
 };
 
 export default async function OffersPage() {

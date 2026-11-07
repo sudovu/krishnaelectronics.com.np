@@ -20,6 +20,7 @@ export default function NewProductPage() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [conflictInfo, setConflictInfo] = useState<{ id: string; title: string; sku: string } | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -109,6 +110,7 @@ export default function NewProductPage() {
 
     setLoading(true);
     setError(null);
+    setConflictInfo(null);
 
     try {
       const payload = {
@@ -127,6 +129,9 @@ export default function NewProductPage() {
 
       const data = await res.json();
       if (!res.ok) {
+        if (data.conflictingProduct) {
+          setConflictInfo(data.conflictingProduct);
+        }
         throw new Error(data.error || 'Failed to create product');
       }
 
@@ -161,9 +166,24 @@ export default function NewProductPage() {
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 text-red-800 text-xs rounded-xl flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-          <span>{error}</span>
+        <div className="p-4 bg-red-50 border border-red-200 text-red-800 text-xs rounded-xl flex items-start gap-2.5">
+          <AlertCircle className="w-4 h-4 shrink-0 text-red-600 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-semibold">{error}</span>
+            {conflictInfo && (
+              <p className="text-slate-600 mt-1">
+                Tip: You can{' '}
+                <Link
+                  href={`/admin/products/${conflictInfo.id}/edit`}
+                  className="font-bold text-brand-600 underline hover:text-brand-700"
+                  target="_blank"
+                >
+                  open &quot;{conflictInfo.title}&quot; (SKU: {conflictInfo.sku})
+                </Link>{' '}
+                in another tab to change its SKU first, or assign a different unique SKU.
+              </p>
+            )}
+          </div>
         </div>
       )}
 

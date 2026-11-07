@@ -8,7 +8,15 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions (FAQs) | Krishna Electronics Surkhet',
-  description: 'Find answers to common questions about electronics warranties, laptop repairs, network installations, delivery across Karnali, and payment methods.',
+  description: 'Find official answers regarding computer repairs, warranty claims, CCTV setups, AMC contracts, local valley delivery, and payment methods in Surkhet, Nepal.',
+  keywords: [
+    'krishna electronics faqs',
+    'laptop repair cost surkhet',
+    'cctv warranty nepal',
+    'surkhet delivery electronics',
+    'amc computer contract surkhet',
+    'कम्प्युटर मर्मत सुर्खेत',
+  ],
 };
 
 export default async function FAQsPage() {
@@ -25,8 +33,25 @@ export default async function FAQsPage() {
     groupedFaqs[cat].push(faq);
   });
 
+    const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer,
+      },
+    })),
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Header */}
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-50 text-brand-600 text-xs font-bold uppercase tracking-wider">

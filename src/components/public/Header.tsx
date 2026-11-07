@@ -113,10 +113,6 @@ export default function Header({ settings }: HeaderProps) {
                       <span>{email}</span>
                     </a>
                   )}
-                  <span className="hidden md:flex items-center gap-1.5 text-slate-400 border-l border-navy-800 pl-3">
-                    <Clock className="w-3.5 h-3.5 text-slate-400" />
-                    {businessHours}
-                  </span>
                 </>
               )}
             </div>
@@ -124,12 +120,6 @@ export default function Header({ settings }: HeaderProps) {
             <div className="flex items-center gap-4 text-xs">
               {showTopContactLinks && (
                 <>
-                  {phone && (
-                    <a href={`tel:${phone}`} className="flex items-center gap-1 hover:text-white transition">
-                      <Phone className="w-3 h-3 text-brand-400" />
-                      <span>{phone}</span>
-                    </a>
-                  )}
                   {whatsapp && (
                     <a 
                       href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`} 
@@ -195,12 +185,13 @@ export default function Header({ settings }: HeaderProps) {
             <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-brand-500 shadow-lg shadow-brand-500/20 group-hover:scale-105 transition-transform bg-white p-1 flex-shrink-0 flex items-center justify-center ring-2 ring-brand-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={settings?.logoUrl || '/images/logo.jpg'}
+                src={settings?.logoUrl || '/images/logo.png'}
                 alt={`${displayHeading || 'Store'} Logo`}
-                className="w-full h-full object-contain filter contrast-105"
-                width={96}
-                height={96}
-                style={{ imageRendering: '-webkit-optimize-contrast' }}
+                className="w-full h-full object-contain"
+                width={128}
+                height={128}
+                loading="eager"
+                decoding="async"
               />
             </div>
             {hasBrandText && (
