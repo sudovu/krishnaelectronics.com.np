@@ -137,6 +137,9 @@ model Product {
   fullDescription  String
   specifications   String     @default("[]") // JSON string of [{ "name": "Key", "value": "Val" }]
   warranty         String?    // e.g. "1 Year Official Brand Warranty"
+  metaTitle        String?
+  metaDescription  String?
+  seoKeywords      String?    // Auto-optimized wide range of search keywords
   
   isFeatured     Boolean      @default(false)
   isPopular      Boolean      @default(false)

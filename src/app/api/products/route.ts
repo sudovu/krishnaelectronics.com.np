@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentAdminFromRequest, logAudit } from '@/lib/auth';
 import { z } from 'zod';
+import { generateProductSeo } from '@/lib/seo/product-seo';
 
 const productSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -25,6 +26,9 @@ const productSchema = z.object({
   primaryImage: z.string().url('Primary image must be a valid URL'),
   gallery: z.string().default('[]'),
   status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).default('PUBLISHED'),
+  metaTitle: z.string().optional().nullable(),
+  metaDescription: z.string().optional().nullable(),
+  seoKeywords: z.string().optional().nullable(),
 });
 
 export async function GET(req: NextRequest) {
@@ -59,6 +63,7 @@ export async function GET(req: NextRequest) {
           { sku: { contains: tok, ...modeOpt } },
           { shortDescription: { contains: tok, ...modeOpt } },
           { fullDescription: { contains: tok, ...modeOpt } },
+          { seoKeywords: { contains: tok, ...modeOpt } },
           { category: { name: { contains: tok, ...modeOpt } } },
           { subcategory: { name: { contains: tok, ...modeOpt } } },
           { brand: { name: { contains: tok, ...modeOpt } } },
@@ -116,6 +121,7 @@ export async function GET(req: NextRequest) {
             p.shortDescription,
             p.fullDescription,
             p.sku,
+            (p as any).seoKeywords,
             p.category?.name,
             p.subcategory?.name,
             p.brand?.name,
@@ -207,10 +213,42 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Automatically optimize SEO keywords and meta if not manually specified
+    let metaTitle = validated.metaTitle;
+    let metaDescription = validated.metaDescription;
+    let seoKeywords = validated.seoKeywords;
+
+    if (!metaTitle || !metaDescription || !seoKeywords) {
+      const [category, brand, subcategory] = await Promise.all([
+        prisma.category.findUnique({ where: { id: validated.categoryId } }),
+        validated.brandId ? prisma.brand.findUnique({ where: { id: validated.brandId } }) : null,
+        validated.subcategoryId ? prisma.subcategory.findUnique({ where: { id: validated.subcategoryId } }) : null,
+      ]);
+
+      const autoSeo = generateProductSeo({
+        title: validated.title,
+        brandName: brand?.name,
+        categoryName: category?.name,
+        subcategoryName: subcategory?.name,
+        regularPrice: validated.regularPrice,
+        offerPrice: validated.offerPrice,
+        specifications: validated.specifications,
+        warranty: validated.warranty,
+        shortDescription: validated.shortDescription,
+      });
+
+      if (!metaTitle) metaTitle = autoSeo.metaTitle;
+      if (!metaDescription) metaDescription = autoSeo.metaDescription;
+      if (!seoKeywords) seoKeywords = autoSeo.seoKeywords;
+    }
+
     const newProduct = await prisma.product.create({
       data: {
         ...validated,
         sku: finalSku,
+        metaTitle,
+        metaDescription,
+        seoKeywords,
         slug,
         discountPercent,
         publishedAt: validated.status === 'PUBLISHED' ? new Date() : null,

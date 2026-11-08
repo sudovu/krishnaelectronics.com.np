@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, MessageSquare } from 'lucide-react';
 
 interface ContactFormProps {
   initialSubject?: string;
@@ -22,6 +22,7 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,6 +47,10 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
         throw new Error(data.error || 'Failed to submit inquiry.');
       }
 
+      if (data.whatsappUrl) {
+        setWhatsappUrl(data.whatsappUrl);
+      }
+
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -56,16 +61,35 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
 
   if (success) {
     return (
-      <div className="bg-emerald-50 border border-emerald-200 p-8 rounded-xl text-center space-y-3">
+      <div className="bg-emerald-50 border border-emerald-200 p-8 rounded-xl text-center space-y-4">
         <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-        <h3 className="font-bold text-lg text-emerald-900">Inquiry Received Successfully!</h3>
+        <h3 className="font-bold text-lg text-emerald-900">Inquiry Sent Successfully!</h3>
         <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-          Thank you for reaching out to Krishna Electronics Order &amp; Suppliers. We have recorded your inquiry and automatically notified our desk via email &amp; WhatsApp. A technical specialist will contact you shortly.
+          Thank you for reaching out to Krishna Electronics Order &amp; Suppliers. Your message has been logged and email notifications have been dispatched.
         </p>
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+
+        {whatsappUrl && (
+          <div className="pt-2">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl font-extrabold text-xs shadow-lg transition transform hover:scale-[1.02]"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Open WhatsApp with This Inquiry &rarr;</span>
+            </a>
+            <p className="text-[10px] text-slate-400 mt-1.5">
+              Click above to chat directly with our Surkhet technicians on WhatsApp with this inquiry attached.
+            </p>
+          </div>
+        )}
+
+        <div>
           <button
             onClick={() => {
               setSuccess(false);
+              setWhatsappUrl(null);
               setFormData({
                 customerName: '',
                 customerPhone: '',
@@ -77,18 +101,10 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
                 preferredContact: 'PHONE',
               });
             }}
-            className="px-4 py-2 bg-navy-900 text-white rounded-lg text-xs font-semibold hover:bg-brand-600 transition"
+            className="mt-2 px-4 py-2 bg-navy-900 text-white rounded-lg text-xs font-semibold hover:bg-brand-600 transition"
           >
             Send Another Message
           </button>
-          <a
-            href="https://wa.me/9779858083951"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold transition"
-          >
-            Need Urgent Help? Chat on WhatsApp
-          </a>
         </div>
       </div>
     );
@@ -113,22 +129,22 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
             required
             value={formData.customerName}
             onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-            placeholder="e.g. Ramesh Shrestha"
+            placeholder="e.g. Sunil Thapa"
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
           />
         </div>
 
         <div>
           <label className="block text-slate-700 font-semibold mb-1">
-            Mobile / Phone Number *
+            Phone / Mobile Number *
           </label>
           <input
             type="tel"
             required
             value={formData.customerPhone}
             onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-            placeholder="e.g. 98XXXXXXXX"
-            className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
+            placeholder="e.g. 9848XXXXXX"
+            className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none font-mono"
           />
         </div>
       </div>
@@ -142,20 +158,20 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
             type="email"
             value={formData.customerEmail}
             onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-            placeholder="e.g. name@example.com"
+            placeholder="e.g. sunil@example.com"
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
           />
         </div>
 
         <div>
           <label className="block text-slate-700 font-semibold mb-1">
-            Address / Organization (Optional)
+            Location / Address in Karnali
           </label>
           <input
             type="text"
             value={formData.customerAddress}
             onChange={(e) => setFormData({ ...formData, customerAddress: e.target.value })}
-            placeholder="e.g. Birendranagar, Surkhet"
+            placeholder="e.g. Birendranagar-12, Surkhet"
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:bg-white focus:border-brand-500 outline-none"
           />
         </div>
@@ -172,20 +188,20 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
           >
             <option value="GENERAL_INQUIRY">General Inquiry</option>
-            <option value="PRODUCT_INQUIRY">Product Pricing &amp; Availability</option>
-            <option value="SERVICE_REQUEST">Repair &amp; Technical Support</option>
+            <option value="PRODUCT_INQUIRY">Product Pricing / Availability</option>
+            <option value="SERVICE_REQUEST">Laptop / Electronics Repair</option>
             <option value="AMC_REQUEST">Annual Maintenance Contract (AMC)</option>
-            <option value="DIRECT_ORDER">Direct Bulk Order / Quotation</option>
+            <option value="DIRECT_ORDER">Direct Purchase Order</option>
           </select>
         </div>
 
         <div>
           <label className="block text-slate-700 font-semibold mb-1">
-            Preferred Follow-up Channel
+            Preferred Response Method
           </label>
           <select
             value={formData.preferredContact}
-            onChange={(e) => setFormData({ ...formData, preferredContact: e.target.value })}
+            onChange={(e) => setFormData({ ...formData, preferredContact: e.target.value as any })}
             className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 focus:bg-white focus:border-brand-500 outline-none"
           >
             <option value="PHONE">Phone Call</option>
@@ -228,7 +244,7 @@ export default function ContactForm({ initialSubject = '', initialType = 'GENERA
         className="w-full sm:w-auto px-8 py-3 bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-bold rounded-lg uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2"
       >
         <Send className="w-4 h-4" />
-        <span>{loading ? 'Submitting & Dispatching...' : 'Submit Inquiry'}</span>
+        <span>{loading ? 'Submitting...' : 'Submit Inquiry'}</span>
       </button>
     </form>
   );

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/public/ProductCard';
 import { formatNPR } from '@/lib/formatters';
+import { generateProductSeo } from '@/lib/seo/product-seo';
 import { 
   ShieldCheck, 
   CheckCircle2, 
@@ -29,7 +30,7 @@ interface ProductDetailPageProps {
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const product = await prisma.product.findUnique({
     where: { slug: params.slug },
-    include: { brand: true, category: true },
+    include: { brand: true, category: true, subcategory: true },
   });
 
   if (!product) {
@@ -37,24 +38,28 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   }
 
   const siteUrl = 'https://krishnaelectronics.com.np';
-  const title = `${product.title} Price & Specs | Krishna Electronics Surkhet`;
-  const description = product.shortDescription || `Buy ${product.title} (SKU: ${product.sku}) in Surkhet, Nepal at NPR ${product.offerPrice || product.regularPrice}. Official warranty, instant pickup in Birendranagar, Surkhet or province dispatch.`;
+  const seo = generateProductSeo({
+    title: product.title,
+    brandName: product.brand?.name,
+    categoryName: product.category?.name,
+    subcategoryName: (product as any).subcategory?.name,
+    regularPrice: product.regularPrice,
+    offerPrice: product.offerPrice,
+    specifications: product.specifications,
+    warranty: product.warranty,
+    shortDescription: product.shortDescription,
+  });
+
+  const title = (product as any).metaTitle || seo.metaTitle;
+  const description = (product as any).metaDescription || seo.metaDescription;
+  const keywords = (product as any).seoKeywords
+    ? (product as any).seoKeywords.split(',').map((s: string) => s.trim()).filter(Boolean)
+    : seo.keywordsList;
 
   return {
     title,
     description,
-    keywords: [
-      product.title,
-      `${product.title} price in Nepal`,
-      `${product.title} Surkhet`,
-      product.sku,
-      product.brand?.name || 'Electronics',
-      product.category?.name || 'Hardware',
-      'buy electronics surkhet',
-      'Krishna Electronics Surkhet',
-      'computer shop birendranagar',
-      'official brand warranty nepal',
-    ].filter(Boolean),
+    keywords,
     alternates: {
       canonical: `${siteUrl}/products/${product.slug}`,
     },

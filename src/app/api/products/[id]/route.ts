@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCurrentAdminFromRequest, hasPermission, logAudit } from '@/lib/auth';
 import { z } from 'zod';
+import { generateProductSeo } from '@/lib/seo/product-seo';
 
 const updateProductSchema = z.object({
   title: z.string().min(3).optional(),
@@ -25,6 +26,9 @@ const updateProductSchema = z.object({
   primaryImage: z.string().url().optional(),
   gallery: z.string().optional(),
   status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).optional(),
+  metaTitle: z.string().optional().nullable(),
+  metaDescription: z.string().optional().nullable(),
+  seoKeywords: z.string().optional().nullable(),
 });
 
 export async function GET(
@@ -104,11 +108,51 @@ export async function PUT(
       discountPercent = Math.round(((finalRegularPrice - finalOfferPrice) / finalRegularPrice) * 100);
     }
 
+    // Automatically optimize SEO keywords, title, and description on every edit
+    const finalTitle = validated.title ?? existingProduct.title;
+    const finalCategoryId = validated.categoryId ?? existingProduct.categoryId;
+    const finalBrandId = validated.brandId !== undefined ? validated.brandId : existingProduct.brandId;
+    const finalSubcategoryId = validated.subcategoryId !== undefined ? validated.subcategoryId : existingProduct.subcategoryId;
+    const finalSpecs = validated.specifications ?? existingProduct.specifications;
+    const finalWarranty = validated.warranty !== undefined ? validated.warranty : existingProduct.warranty;
+    const finalShortDesc = validated.shortDescription ?? existingProduct.shortDescription;
+
+    let metaTitle = validated.metaTitle;
+    let metaDescription = validated.metaDescription;
+    let seoKeywords = validated.seoKeywords;
+
+    if (!metaTitle || !metaDescription || !seoKeywords) {
+      const [category, brand, subcategory] = await Promise.all([
+        prisma.category.findUnique({ where: { id: finalCategoryId } }),
+        finalBrandId ? prisma.brand.findUnique({ where: { id: finalBrandId } }) : null,
+        finalSubcategoryId ? prisma.subcategory.findUnique({ where: { id: finalSubcategoryId } }) : null,
+      ]);
+
+      const autoSeo = generateProductSeo({
+        title: finalTitle,
+        brandName: brand?.name,
+        categoryName: category?.name,
+        subcategoryName: subcategory?.name,
+        regularPrice: finalRegularPrice,
+        offerPrice: finalOfferPrice,
+        specifications: finalSpecs,
+        warranty: finalWarranty,
+        shortDescription: finalShortDesc,
+      });
+
+      if (!metaTitle) metaTitle = autoSeo.metaTitle;
+      if (!metaDescription) metaDescription = autoSeo.metaDescription;
+      if (!seoKeywords) seoKeywords = autoSeo.seoKeywords;
+    }
+
     const updatedProduct = await prisma.product.update({
       where: { id: params.id },
       data: {
         ...validated,
         sku: finalSku ?? existingProduct.sku,
+        metaTitle,
+        metaDescription,
+        seoKeywords,
         discountPercent,
         publishedAt:
           validated.status === 'PUBLISHED' && existingProduct.status !== 'PUBLISHED'

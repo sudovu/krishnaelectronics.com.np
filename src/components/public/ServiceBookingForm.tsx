@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, MessageSquare } from 'lucide-react';
 
 interface ServiceBookingFormProps {
   serviceId: string;
@@ -20,6 +20,7 @@ export default function ServiceBookingForm({ serviceId, serviceTitle }: ServiceB
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,6 +50,10 @@ export default function ServiceBookingForm({ serviceId, serviceTitle }: ServiceB
         throw new Error(data.error || 'Failed to submit service inquiry.');
       }
 
+      if (data.whatsappUrl) {
+        setWhatsappUrl(data.whatsappUrl);
+      }
+
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -59,12 +64,49 @@ export default function ServiceBookingForm({ serviceId, serviceTitle }: ServiceB
 
   if (success) {
     return (
-      <div className="bg-emerald-950/60 border border-emerald-800 p-6 rounded-xl text-center space-y-3">
+      <div className="bg-emerald-950/60 border border-emerald-800 p-6 rounded-xl text-center space-y-4">
         <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
-        <h4 className="font-bold text-base text-white">Inquiry Received Successfully!</h4>
-        <p className="text-xs text-slate-300 max-w-md mx-auto">
-          Thank you for choosing Krishna Electronics. Our technical team in Surkhet will review your request for &ldquo;{serviceTitle}&rdquo; and contact you shortly.
+        <h4 className="font-bold text-base text-white">Service Booking Request Received!</h4>
+        <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
+          Thank you for choosing Krishna Electronics. Our certified laboratory team in Surkhet has logged your booking for &ldquo;{serviceTitle}&rdquo; and email notifications have been dispatched.
         </p>
+
+        {whatsappUrl && (
+          <div className="pt-2">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl font-extrabold text-xs shadow-lg transition transform hover:scale-[1.02]"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Send Booking to WhatsApp Directly &rarr;</span>
+            </a>
+            <p className="text-[10px] text-slate-400 mt-1.5">
+              Click to initiate priority conversation with our Surkhet repair laboratory on WhatsApp.
+            </p>
+          </div>
+        )}
+
+        <div>
+          <button
+            onClick={() => {
+              setSuccess(false);
+              setWhatsappUrl(null);
+              setFormData({
+                customerName: '',
+                customerPhone: '',
+                customerEmail: '',
+                customerAddress: '',
+                preferredContact: 'PHONE',
+                message: '',
+              });
+            }}
+            className="mt-2 px-4 py-2 bg-navy-800 hover:bg-navy-700 text-white rounded-lg text-xs font-semibold border border-navy-700 transition"
+          >
+            Submit Another Request
+          </button>
+        </div>
       </div>
     );
   }
@@ -130,7 +172,7 @@ export default function ServiceBookingForm({ serviceId, serviceTitle }: ServiceB
             type="text"
             value={formData.customerAddress}
             onChange={(e) => setFormData({ ...formData, customerAddress: e.target.value })}
-            placeholder="e.g. Birendranagar, Surkhet"
+            placeholder="e.g. Birendranagar-4, Main Market"
             className="w-full px-3.5 py-2.5 bg-navy-900 border border-navy-700 rounded-lg text-white placeholder-slate-500 focus:border-brand-500 focus:outline-none"
           />
         </div>

@@ -179,7 +179,10 @@ export default function AdminSettingsPage() {
 
   useEffect(() => {
     fetch('/api/settings')
-      .then((r) => r.json())
+      .then(async (r) => {
+        const text = await r.text();
+        return text ? JSON.parse(text) : {};
+      })
       .then((data) => {
         if (data.settings) {
           setSettings(data.settings);

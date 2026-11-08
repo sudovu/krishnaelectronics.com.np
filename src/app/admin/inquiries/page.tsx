@@ -148,8 +148,9 @@ export default function AdminInquiriesPage() {
         ) : (
           inquiries.map((inq) => {
             const cleanPhone = inq.customerPhone.replace(/[^0-9]/g, '');
+            const formattedPhone = cleanPhone.length === 10 ? `977${cleanPhone}` : cleanPhone;
             const waGreeting = encodeURIComponent(
-              `Namaste ${inq.customerName}, this is Krishna Electronics & Order Suppliers Surkhet following up on your inquiry: "${inq.subject}". How can we assist you?`
+              `Namaste ${inq.customerName}, this is Krishna Electronics Order & Suppliers (Surkhet) following up on your ${inq.type.replace(/_/g, ' ').toLowerCase()}: "${inq.subject}". How can we assist you today?`
             );
 
             return (
@@ -247,16 +248,25 @@ export default function AdminInquiriesPage() {
                     </button>
                   </div>
 
-                  <div className="md:col-span-4 flex items-center justify-end gap-2">
+                  <div className="md:col-span-4 flex items-center justify-end gap-2 flex-wrap">
                     <a
-                      href={`https://wa.me/${cleanPhone}?text=${waGreeting}`}
+                      href={`https://wa.me/${formattedPhone}?text=${waGreeting}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold flex items-center gap-1.5 shadow-sm"
+                      className="px-3 py-1.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-lg font-bold flex items-center gap-1.5 shadow-sm"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
                       <span>WhatsApp Response</span>
                     </a>
+                    {inq.customerEmail && (
+                      <a
+                        href={`mailto:${inq.customerEmail}?subject=${encodeURIComponent(`Re: ${inq.subject} - Krishna Electronics`)}`}
+                        className="px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-bold flex items-center gap-1.5 shadow-sm"
+                      >
+                        <Mail className="w-3.5 h-3.5" />
+                        <span>Email</span>
+                      </a>
+                    )}
                     <a
                       href={`tel:${inq.customerPhone}`}
                       className="px-3 py-1.5 bg-navy-900 hover:bg-navy-800 text-white rounded-lg font-bold flex items-center gap-1.5 shadow-sm"

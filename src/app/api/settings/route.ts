@@ -5,24 +5,28 @@ import { clearProfileCache } from '@/platform/engine/tenant-loader';
 import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export const runtime = 'nodejs';
 
 export async function GET(req: NextRequest) {
   try {
     const settings = await prisma.setting.findUnique({
       where: { id: 'site-settings' },
     });
-    return NextResponse.json({ settings });
+    return NextResponse.json({ settings }, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0'
+      }
+    });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
   }
 }
 
-async function handleSaveSettings(req: NextRequest) {
+async function handleUpdateSettings(req: NextRequest) {
   try {
     const admin = getCurrentAdminFromRequest(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Please log in to update settings.' }, { status: 401 });
     }
 
     if (!hasPermission(admin.role, 'canManageSettings')) {
@@ -43,24 +47,24 @@ async function handleSaveSettings(req: NextRequest) {
       : undefined;
 
     const settingPayload = {
-      siteName: data.siteName,
-      logoUrl: data.logoUrl,
-      siteTagline: data.siteTagline,
-      siteDescription: data.siteDescription,
-      contactPhone: data.contactPhone,
-      contactEmail: data.contactEmail,
-      contactWhatsapp: data.contactWhatsapp,
-      locationAddress: data.locationAddress,
-      businessHours: data.businessHours,
-      googleMapsEmbedUrl: data.googleMapsEmbedUrl,
-      socialFacebook: data.socialFacebook,
-      socialInstagram: data.socialInstagram,
-      socialLinkedin: data.socialLinkedin,
-      socialYoutube: data.socialYoutube,
-      deliveryInfo: data.deliveryInfo,
-      paymentMethods: data.paymentMethods,
-      currencyCode: data.currencyCode,
-      currencySymbol: data.currencySymbol,
+      siteName: data.siteName !== undefined ? data.siteName : undefined,
+      logoUrl: data.logoUrl !== undefined ? data.logoUrl : undefined,
+      siteTagline: data.siteTagline !== undefined ? data.siteTagline : undefined,
+      siteDescription: data.siteDescription !== undefined ? data.siteDescription : undefined,
+      contactPhone: data.contactPhone !== undefined ? data.contactPhone : undefined,
+      contactEmail: data.contactEmail !== undefined ? data.contactEmail : undefined,
+      contactWhatsapp: data.contactWhatsapp !== undefined ? data.contactWhatsapp : undefined,
+      locationAddress: data.locationAddress !== undefined ? data.locationAddress : undefined,
+      businessHours: data.businessHours !== undefined ? data.businessHours : undefined,
+      googleMapsEmbedUrl: data.googleMapsEmbedUrl !== undefined ? data.googleMapsEmbedUrl : undefined,
+      socialFacebook: data.socialFacebook !== undefined ? data.socialFacebook : undefined,
+      socialInstagram: data.socialInstagram !== undefined ? data.socialInstagram : undefined,
+      socialLinkedin: data.socialLinkedin !== undefined ? data.socialLinkedin : undefined,
+      socialYoutube: data.socialYoutube !== undefined ? data.socialYoutube : undefined,
+      deliveryInfo: data.deliveryInfo !== undefined ? data.deliveryInfo : undefined,
+      paymentMethods: data.paymentMethods !== undefined ? data.paymentMethods : undefined,
+      currencyCode: data.currencyCode !== undefined ? data.currencyCode : undefined,
+      currencySymbol: data.currencySymbol !== undefined ? data.currencySymbol : undefined,
       taxRatePercent: taxRatePercent,
       maintenanceMode: data.maintenanceMode !== undefined ? Boolean(data.maintenanceMode) : undefined,
       primaryColor: data.primaryColor || undefined,
@@ -69,8 +73,8 @@ async function handleSaveSettings(req: NextRequest) {
       darkSurface: data.darkSurface || undefined,
       lightSurface: data.lightSurface || undefined,
       fontFamily: data.fontFamily || undefined,
-      metaTitle: data.metaTitle,
-      metaDescription: data.metaDescription,
+      metaTitle: data.metaTitle !== undefined ? data.metaTitle : undefined,
+      metaDescription: data.metaDescription !== undefined ? data.metaDescription : undefined,
       ogImageUrl: data.ogImageUrl,
       homeConfig: homeConfig,
     };
@@ -112,10 +116,10 @@ async function handleSaveSettings(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
-  return handleSaveSettings(req);
+export async function PUT(req: NextRequest) {
+  return handleUpdateSettings(req);
 }
 
-export async function PUT(req: NextRequest) {
-  return handleSaveSettings(req);
+export async function POST(req: NextRequest) {
+  return handleUpdateSettings(req);
 }
