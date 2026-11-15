@@ -90,13 +90,7 @@ async function main() {
     });
     console.log('✓ Initial site settings initialized from business manifest');
   } else {
-    try {
-      await prisma.setting.update({
-        where: { id: 'site-settings' },
-        data: { locationAddress: 'Birendranagar, Surkhet' },
-      });
-      console.log('✓ Existing site settings updated: locationAddress set to Birendranagar, Surkhet');
-    } catch (_) {}
+    console.log('✓ Existing site settings preserved (no overwrite).');
   }
 
   // 3. Categories & Subcategories

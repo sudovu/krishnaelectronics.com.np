@@ -5,24 +5,48 @@ try {
 }
 const { execSync } = require('child_process');
 
+/**
+ * Explicit database schema synchronization script.
+ * Separated from application build to prevent uncontrolled production mutations.
+ * Usage: npm run db:deploy
+ */
 async function run() {
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) {
+    console.error('[deploy-db] ERROR: No DATABASE_URL specified. Aborting database deployment.');
+    process.exit(1);
+  }
+
+  console.log(`[deploy-db] Synchronizing database schema for: ${dbUrl.replace(/:[^:@]*@/, ':***@')}`);
+
+  // Require explicit flag for destructive operations
+  const allowDataLoss = process.env.ALLOW_DATA_LOSS === 'true';
+  const pushArgs = allowDataLoss ? '--accept-data-loss' : '';
+
+  if (allowDataLoss) {
+    console.warn('[deploy-db] WARNING: ALLOW_DATA_LOSS=true is set. Schema changes that cause data loss will be accepted.');
+  }
+
   try {
-    const dbUrl = process.env.POSTGRES_PRISMA_URL || process.env.DATABASE_URL;
-    if (!dbUrl) {
-      console.log('[deploy-db] No DATABASE_URL specified. Skipping remote DB push.');
-      return;
-    }
-
-    console.log('[deploy-db] Synchronizing database schema with Prisma...');
-    execSync('npx prisma db push --accept-data-loss', { stdio: 'inherit' });
-    console.log('[deploy-db] Database schema synchronized.');
-
-    console.log('[deploy-db] Seeding initial tenant catalog and settings...');
-    execSync('node prisma/seed.js', { stdio: 'inherit' });
-    console.log('[deploy-db] Seeding complete.');
+    execSync(`npx prisma db push ${pushArgs}`.trim(), { stdio: 'inherit' });
+    console.log('[deploy-db] ✓ Database schema synchronized successfully.');
   } catch (err) {
-    console.warn('[deploy-db] Notice: Could not sync/seed database during this build step:', err.message);
-    // Don't crash build so Next.js static build can complete
+    console.error('[deploy-db] ✗ Failed to synchronize database schema:', err.message);
+    process.exit(1);
+  }
+
+  // Seeding is decoupled and must be explicitly requested
+  if (process.env.SEED_ON_DEPLOY === 'true') {
+    console.log('[deploy-db] SEED_ON_DEPLOY=true detected. Seeding tenant catalog and settings...');
+    try {
+      execSync('node prisma/seed.js', { stdio: 'inherit' });
+      console.log('[deploy-db] ✓ Seeding complete.');
+    } catch (err) {
+      console.error('[deploy-db] ✗ Seeding failed:', err.message);
+      process.exit(1);
+    }
+  } else {
+    console.log('[deploy-db] Note: Database seeding was not executed. Run "npm run db:seed" separately if initial data is needed.');
   }
 }
 

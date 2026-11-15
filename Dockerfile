@@ -2,10 +2,10 @@
 # Optimized for Ubuntu Server 22.04 / 24.04 LTS
 
 FROM node:20-alpine AS base
+RUN apk add --no-cache libc6-compat sqlite
 
 # 1. Install dependencies only when needed
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
