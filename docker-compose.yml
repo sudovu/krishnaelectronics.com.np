@@ -12,7 +12,7 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/prisma/prod.db
-      - JWT_SECRET=${JWT_SECRET:-krishna-electronics-secure-production-key-2026}
+      - JWT_SECRET=${JWT_SECRET:?JWT_SECRET must be explicitly provided}
       - NEXT_PUBLIC_APP_URL=https://krishnaelectronics.com.np
       - NEXT_PUBLIC_SITE_NAME=Krishna Electronics & Order Suppliers
       - NEXT_PUBLIC_DEFAULT_CURRENCY=NPR

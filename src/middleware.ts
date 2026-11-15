@@ -64,7 +64,15 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    const secret = process.env.JWT_SECRET || 'dev-local-jwt-secret-do-not-use-in-production-32chars';
+    const secret = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? '' : 'dev-local-jwt-secret-do-not-use-in-production-32chars');
+    if (!secret) {
+      // In production without JWT_SECRET configured, fail closed immediately
+      const loginUrl = new URL('/admin/login', req.url);
+      loginUrl.searchParams.set('from', pathname);
+      const res = NextResponse.redirect(loginUrl);
+      res.cookies.delete(AUTH_COOKIE_NAME);
+      return res;
+    }
     const isValid = await verifyEdgeToken(sessionToken, secret);
 
     if (!isValid) {

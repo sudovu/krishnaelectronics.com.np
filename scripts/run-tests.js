@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'krishna-electronics-default-fallback-secret-2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-local-jwt-secret-do-not-use-in-production-32chars';
 
 let passed = 0;
 let failed = 0;

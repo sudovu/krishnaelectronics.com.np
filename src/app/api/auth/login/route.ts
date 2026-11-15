@@ -7,6 +7,7 @@ import { signToken, AUTH_COOKIE_NAME, logAudit } from '@/lib/auth';
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000; // 15 minutes window
 const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes lockout
+const MAX_CONCURRENT_PER_IP = 2; // Prevent race conditions from concurrent brute-force bursts
 
 // In-memory cache layer for immediate fast-path rate limiting
 interface AttemptRecord {
@@ -15,13 +16,25 @@ interface AttemptRecord {
   lockedUntil?: number;
 }
 const memoryRateLimiter = new Map<string, AttemptRecord>();
+const inFlightLogins = new Map<string, number>();
 
 // Dummy hash for constant-time comparison on nonexistent accounts
 const DUMMY_HASH = '$2a$10$wN3tNq5PqL6n0p0W4P1s4Oe2nQ4T9jYfB3hA0mC8kD6lM8qE0sS6i';
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || req.headers.get('x-real-ip') || 'local';
+
+  // Concurrency gate: Prevent race condition bypasses from simultaneous parallel bursts
+  const currentInFlight = inFlightLogins.get(ip) || 0;
+  if (currentInFlight >= MAX_CONCURRENT_PER_IP) {
+    return NextResponse.json(
+      { error: 'Too many simultaneous authentication requests from this IP. Please submit requests sequentially.' },
+      { status: 429 }
+    );
+  }
+  inFlightLogins.set(ip, currentInFlight + 1);
+
   try {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || req.headers.get('x-real-ip') || 'local';
     const now = Date.now();
 
     // 1. In-memory fast-path check
@@ -59,8 +72,15 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (dbErr) {
-      // In case database rate-limit query encounters error, log and continue with memory limiter
-      console.warn('Database rate-limit check notice:', dbErr);
+      // In production, enforce fail-closed: do not allow unrestricted logins if persistent security check is broken
+      if (process.env.NODE_ENV === 'production') {
+        console.error('FATAL: Database rate limiter check failed in production:', dbErr);
+        return NextResponse.json(
+          { error: 'Authentication service temporarily unavailable. Security verification checks cannot be completed. Please try again in a few moments.' },
+          { status: 503 }
+        );
+      }
+      console.warn('Database rate-limit check notice (development fallback active):', dbErr);
     }
 
     const { email, password } = await req.json();
@@ -175,5 +195,12 @@ export async function POST(req: NextRequest) {
       { error: 'An unexpected authentication error occurred.' },
       { status: 500 }
     );
+  } finally {
+    const remaining = (inFlightLogins.get(ip) || 1) - 1;
+    if (remaining <= 0) {
+      inFlightLogins.delete(ip);
+    } else {
+      inFlightLogins.set(ip, remaining);
+    }
   }
 }
