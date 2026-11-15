@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentAdminFromRequest, logAudit } from '@/lib/auth';
+import { getAuthenticatedAdmin, hasPermission, logAudit } from '@/lib/auth';
 import { z } from 'zod';
 import { generateProductSeo } from '@/lib/seo/product-seo';
 
@@ -44,6 +44,11 @@ export async function GET(req: NextRequest) {
     const cleanQ = q.trim();
     const searchTokens = cleanQ.toLowerCase().split(/\s+/).filter(Boolean);
 
+    // Enforce publication boundaries:
+    // Public requests MUST strictly see PUBLISHED products only.
+    // Only authenticated administrative sessions can view DRAFT or ARCHIVED inventory.
+    const admin = await getAuthenticatedAdmin(req);
+
     const baseWhere: any = {};
     if (category) {
       baseWhere.category = { slug: category };
@@ -51,8 +56,14 @@ export async function GET(req: NextRequest) {
     if (brand) {
       baseWhere.brand = { slug: brand };
     }
-    if (status) {
-      baseWhere.status = status;
+
+    if (!admin) {
+      // Strictly enforce published products for public visitors
+      baseWhere.status = 'PUBLISHED';
+    } else {
+      if (status && status !== 'ALL') {
+        baseWhere.status = status;
+      }
     }
 
     const buildTokenClause = (tok: string, withMode: boolean) => {
@@ -166,13 +177,21 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
     }
 
     const json = await req.json();
     const validated = productSchema.parse(json);
+
+    // Enforce publication permissions on product creation
+    if (validated.status === 'PUBLISHED' && !hasPermission(admin.role, 'canPublishProducts')) {
+      return NextResponse.json(
+        { error: 'Forbidden: Your role does not have permission to publish products directly to the live catalog. You may save as DRAFT.' },
+        { status: 403 }
+      );
+    }
 
     // Generate unique slug from title
     let baseSlug = validated.title

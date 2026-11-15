@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentAdminFromRequest } from '@/lib/auth';
+import { getAuthenticatedAdmin } from '@/lib/auth';
 import fs from 'fs';
 import path from 'path';
 
 export async function POST(req: NextRequest) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
     }
 
     const formData = await req.formData();

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentAdminFromRequest } from '@/lib/auth';
+import { getAuthenticatedAdmin, hasPermission, logAudit } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -18,9 +18,16 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
+    }
+
+    if (!hasPermission(admin.role, 'canManageSettings') && !hasPermission(admin.role, 'canPublishProducts')) {
+      return NextResponse.json(
+        { error: 'Forbidden: Your role does not have permission to create brands.' },
+        { status: 403 }
+      );
     }
 
     const { name, isPopular, websiteUrl } = await req.json();
@@ -31,6 +38,16 @@ export async function POST(req: NextRequest) {
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const brand = await prisma.brand.create({
       data: { name, slug, isPopular: Boolean(isPopular), websiteUrl },
+    });
+
+    await logAudit({
+      userId: admin.id,
+      userName: admin.name,
+      action: 'CREATE_BRAND',
+      entity: 'Brand',
+      entityId: brand.id,
+      details: `Created brand "${brand.name}"`,
+      ipAddress: req.headers.get('x-forwarded-for') || 'local',
     });
 
     return NextResponse.json({ success: true, brand }, { status: 201 });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentAdminFromRequest, logAudit } from '@/lib/auth';
+import { getAuthenticatedAdmin, hasPermission, logAudit } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,6 +11,13 @@ export async function GET(req: NextRequest) {
     if (!all) {
       where.status = 'PUBLISHED';
       where.isApproved = true;
+    } else {
+      // Accessing unpublished or unapproved banners requires active administrative authentication
+      const admin = await getAuthenticatedAdmin(req);
+      if (!admin) {
+        where.status = 'PUBLISHED';
+        where.isApproved = true;
+      }
     }
 
     const banners = await prisma.banner.findMany({
@@ -26,9 +33,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
     }
 
     const data = await req.json();
@@ -38,6 +45,11 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Role-based approval permission check
+    const canApprove = hasPermission(admin.role, 'canApproveBanners');
+    const isApproved = canApprove ? Boolean(data.isApproved) : false;
+    const bannerStatus = isApproved ? (data.status || 'PUBLISHED') : 'DRAFT';
 
     const discount = data.discountPercent !== undefined && data.discountPercent !== null && data.discountPercent !== '' && !isNaN(parseInt(data.discountPercent, 10))
       ? parseInt(data.discountPercent, 10)
@@ -62,8 +74,10 @@ export async function POST(req: NextRequest) {
         isAiGenerated: Boolean(data.isAiGenerated),
         aiPrompt: data.aiPrompt || null,
         aiStyle: data.aiStyle || null,
-        status: data.status || 'DRAFT',
-        isApproved: Boolean(data.isApproved),
+        status: bannerStatus,
+        isApproved: isApproved,
+        approvedBy: isApproved ? admin.email : null,
+        approvedAt: isApproved ? new Date() : null,
       },
     });
 

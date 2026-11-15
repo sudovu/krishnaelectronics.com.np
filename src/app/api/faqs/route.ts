@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentAdminFromRequest, logAudit } from '@/lib/auth';
+import { getAuthenticatedAdmin, hasPermission, logAudit } from '@/lib/auth';
 
 export async function GET() {
   try {
@@ -15,9 +15,16 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
+    }
+
+    if (!hasPermission(admin.role, 'canManageSettings') && !hasPermission(admin.role, 'canManageServices')) {
+      return NextResponse.json(
+        { error: 'Forbidden: Your role does not have permission to manage FAQs.' },
+        { status: 403 }
+      );
     }
 
     const { question, answer, category, orderIndex, isActive } = await req.json();

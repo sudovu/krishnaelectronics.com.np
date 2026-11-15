@@ -44,7 +44,8 @@ try {
 
     let envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
     if (!envContent.includes('DATABASE_URL=')) {
-      envContent += `\nDATABASE_URL="${fallbackDbUrl}"\nJWT_SECRET="${process.env.JWT_SECRET || 'krishna-electronics-default-fallback-secret-2026'}"\n`;
+      const generatedSecret = process.env.JWT_SECRET || require('crypto').randomBytes(32).toString('hex');
+      envContent += `\nDATABASE_URL="${fallbackDbUrl}"\nJWT_SECRET="${generatedSecret}"\n`;
       fs.writeFileSync(envPath, envContent, 'utf8');
     }
 

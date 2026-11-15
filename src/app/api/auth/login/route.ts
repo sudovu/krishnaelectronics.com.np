@@ -3,34 +3,64 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { signToken, AUTH_COOKIE_NAME, logAudit } from '@/lib/auth';
 
-// In-memory rate limiter for brute-force defense
+// Rate limiter configuration for brute-force defense
+const MAX_ATTEMPTS = 5;
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes window
+const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes lockout
+
+// In-memory cache layer for immediate fast-path rate limiting
 interface AttemptRecord {
   count: number;
   firstAttempt: number;
   lockedUntil?: number;
 }
-
-const loginAttempts = new Map<string, AttemptRecord>();
-const MAX_ATTEMPTS = 5;
-const WINDOW_MS = 15 * 60 * 1000; // 15 minutes window
-const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes lockout
+const memoryRateLimiter = new Map<string, AttemptRecord>();
 
 // Dummy hash for constant-time comparison on nonexistent accounts
 const DUMMY_HASH = '$2a$10$wN3tNq5PqL6n0p0W4P1s4Oe2nQ4T9jYfB3hA0mC8kD6lM8qE0sS6i';
 
 export async function POST(req: NextRequest) {
   try {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'local';
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || req.headers.get('x-real-ip') || 'local';
     const now = Date.now();
 
-    // Check rate limit for IP
-    const ipRecord = loginAttempts.get(ip);
-    if (ipRecord && ipRecord.lockedUntil && now < ipRecord.lockedUntil) {
-      const remainingMin = Math.ceil((ipRecord.lockedUntil - now) / 60000);
+    // 1. In-memory fast-path check
+    const memRecord = memoryRateLimiter.get(ip);
+    if (memRecord && memRecord.lockedUntil && now < memRecord.lockedUntil) {
+      const remainingMin = Math.ceil((memRecord.lockedUntil - now) / 60000);
       return NextResponse.json(
         { error: `Too many failed login attempts. Temporarily locked for security. Please try again in ${remainingMin} minute(s).` },
         { status: 429 }
       );
+    }
+
+    // 2. Persistent database-backed rate limiting check (survives restarts and serverless lambdas)
+    try {
+      const windowStart = new Date(now - WINDOW_MS);
+      const recentFailures = await prisma.auditLog.findMany({
+        where: {
+          action: 'LOGIN_FAILED',
+          ipAddress: ip,
+          createdAt: { gte: windowStart },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: MAX_ATTEMPTS,
+      });
+
+      if (recentFailures.length >= MAX_ATTEMPTS) {
+        const lastFailure = recentFailures[0];
+        const elapsed = now - lastFailure.createdAt.getTime();
+        if (elapsed < LOCKOUT_MS) {
+          const remainingMin = Math.ceil((LOCKOUT_MS - elapsed) / 60000);
+          return NextResponse.json(
+            { error: `Too many failed login attempts. Temporarily locked for security. Please try again in ${remainingMin} minute(s).` },
+            { status: 429 }
+          );
+        }
+      }
+    } catch (dbErr) {
+      // In case database rate-limit query encounters error, log and continue with memory limiter
+      console.warn('Database rate-limit check notice:', dbErr);
     }
 
     const { email, password } = await req.json();
@@ -58,8 +88,8 @@ export async function POST(req: NextRequest) {
     const isValidPassword = await bcrypt.compare(password, hashToCompare);
 
     if (!user || !user.isActive || !isValidPassword) {
-      // Record failed attempt
-      const current = loginAttempts.get(ip) || { count: 0, firstAttempt: now };
+      // Record failed attempt in memory cache
+      const current = memoryRateLimiter.get(ip) || { count: 0, firstAttempt: now };
       if (now - current.firstAttempt > WINDOW_MS) {
         current.count = 1;
         current.firstAttempt = now;
@@ -70,16 +100,16 @@ export async function POST(req: NextRequest) {
       if (current.count >= MAX_ATTEMPTS) {
         current.lockedUntil = now + LOCKOUT_MS;
       }
-      loginAttempts.set(ip, current);
+      memoryRateLimiter.set(ip, current);
 
-      // Audit log failed login
+      // Audit log failed login (persists across restarts and instances)
       await logAudit({
         userId: user?.id || undefined,
         userName: user?.name || identifier,
         action: 'LOGIN_FAILED',
         entity: 'Security',
         entityId: 'auth',
-        details: `Failed administrative login attempt (Attempt ${current.count}/${MAX_ATTEMPTS})`,
+        details: `Failed administrative login attempt (Attempt count ${current.count})`,
         ipAddress: ip,
       }).catch(() => {});
 
@@ -89,8 +119,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Reset rate limiter on successful authentication
-    loginAttempts.delete(ip);
+    // Reset memory rate limiter on successful authentication
+    memoryRateLimiter.delete(ip);
 
     // Update lastLoginAt
     await prisma.user.update({

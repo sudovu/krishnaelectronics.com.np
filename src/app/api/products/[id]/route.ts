@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentAdminFromRequest, hasPermission, logAudit } from '@/lib/auth';
+import { getAuthenticatedAdmin, hasPermission, logAudit } from '@/lib/auth';
 import { z } from 'zod';
 import { generateProductSeo } from '@/lib/seo/product-seo';
 
@@ -49,6 +49,15 @@ export async function GET(
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
+    // Public protection: If product is in DRAFT or ARCHIVED state,
+    // restrict visibility strictly to authenticated administrative users.
+    if (product.status !== 'PUBLISHED') {
+      const admin = await getAuthenticatedAdmin(req);
+      if (!admin) {
+        return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+      }
+    }
+
     return NextResponse.json({ product });
   } catch (error: any) {
     return NextResponse.json({ error: 'Failed to fetch product' }, { status: 500 });
@@ -60,9 +69,9 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
     }
 
     const existingProduct = await prisma.product.findUnique({
@@ -74,6 +83,16 @@ export async function PUT(
 
     const json = await req.json();
     const validated = updateProductSchema.parse(json);
+
+    // Enforce publication permissions on update
+    if (validated.status === 'PUBLISHED' && existingProduct.status !== 'PUBLISHED') {
+      if (!hasPermission(admin.role, 'canPublishProducts')) {
+        return NextResponse.json(
+          { error: 'Forbidden: Your role does not have permission to publish products.' },
+          { status: 403 }
+        );
+      }
+    }
 
     const finalSku = validated.sku !== undefined ? validated.sku.trim().toUpperCase() : undefined;
 
@@ -190,9 +209,9 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
     }
 
     if (!hasPermission(admin.role, 'canDeleteProducts')) {

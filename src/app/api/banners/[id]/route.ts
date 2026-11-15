@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentAdminFromRequest, logAudit } from '@/lib/auth';
+import { getAuthenticatedAdmin, hasPermission, logAudit } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 
 export async function PUT(
@@ -8,12 +8,21 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
     }
 
     const data = await req.json();
+
+    // Enforce role-based banner approval authorization
+    const canApprove = hasPermission(admin.role, 'canApproveBanners');
+    if (data.isApproved === true && !canApprove) {
+      return NextResponse.json(
+        { error: 'Forbidden: Only administrators with banner approval permission can approve promotional banners.' },
+        { status: 403 }
+      );
+    }
 
     const discountPercent = data.discountPercent !== undefined
       ? (data.discountPercent !== null && data.discountPercent !== '' && !isNaN(parseInt(data.discountPercent, 10)) ? parseInt(data.discountPercent, 10) : null)
@@ -71,9 +80,16 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
+    }
+
+    if (!hasPermission(admin.role, 'canApproveBanners') && !hasPermission(admin.role, 'canManageSettings')) {
+      return NextResponse.json(
+        { error: 'Forbidden: Your role does not have permission to delete promotional banners.' },
+        { status: 403 }
+      );
     }
 
     const banner = await prisma.banner.findUnique({

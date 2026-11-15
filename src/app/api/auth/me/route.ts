@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentAdminFromRequest } from '@/lib/auth';
+import { getAuthenticatedAdmin } from '@/lib/auth';
 import { ROLE_PERMISSIONS } from '@/lib/constants';
 
 export async function GET(req: NextRequest) {
-  const admin = getCurrentAdminFromRequest(req);
+  const admin = await getAuthenticatedAdmin(req);
   if (!admin) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }

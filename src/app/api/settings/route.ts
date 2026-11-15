@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentAdminFromRequest, hasPermission, logAudit } from '@/lib/auth';
+import { getAuthenticatedAdmin, hasPermission, logAudit } from '@/lib/auth';
 import { clearProfileCache } from '@/platform/engine/tenant-loader';
 import { revalidatePath } from 'next/cache';
 
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
 async function handleUpdateSettings(req: NextRequest) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
       return NextResponse.json({ error: 'Unauthorized: Please log in to update settings.' }, { status: 401 });
     }

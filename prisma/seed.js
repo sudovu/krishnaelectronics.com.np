@@ -18,54 +18,41 @@ async function main() {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   console.log(`[Platform Seeder] Loaded manifest: ${manifest.identity.name} (v${manifest.manifestVersion})`);
 
-  // 1. Initial Admin User (Supports 'adminbikram' & 'adminbikram@krishnaelectronics.com.np')
-  const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'adminbikram@krishnaelectronics.com.np';
-  const rawPassword = process.env.INITIAL_ADMIN_PASSWORD || 'Bikram@221$#@!';
-  const passwordHash = await bcrypt.hash(rawPassword, 10);
-
-  const admin = await prisma.user.upsert({
-    where: { email: adminEmail },
-    update: {
-      name: `Bikram - ${manifest.identity.name} Administrator`,
-      role: 'SUPER_ADMIN',
-      passwordHash: passwordHash,
-      isActive: true,
-    },
-    create: {
-      email: adminEmail,
-      name: `Bikram - ${manifest.identity.name} Administrator`,
-      passwordHash: passwordHash,
-      role: 'SUPER_ADMIN',
-      isActive: true,
-    },
-  });
-  console.log(`✓ Admin user upserted: ${admin.email}`);
-
-  // Also support bare username 'adminbikram'
-  await prisma.user.upsert({
-    where: { email: 'adminbikram' },
-    update: {
-      name: `Bikram (Super Admin)`,
-      role: 'SUPER_ADMIN',
-      passwordHash: passwordHash,
-      isActive: true,
-    },
-    create: {
-      email: 'adminbikram',
-      name: `Bikram (Super Admin)`,
-      passwordHash: passwordHash,
-      role: 'SUPER_ADMIN',
-      isActive: true,
+  // 1. Administrator Account Check & Non-Destructive Initial Setup
+  // IMPORTANT: Existing administrator accounts retain their credentials. NEVER overwrite or reset passwords.
+  const existingAdmins = await prisma.user.findMany({
+    where: {
+      role: { in: ['SUPER_ADMIN', 'ADMIN'] },
     },
   });
 
-  // Also update previous admin if existing
-  try {
-    await prisma.user.updateMany({
-      where: { email: 'admin@krishnaelectronics.com.np' },
-      data: { passwordHash: passwordHash },
+  if (existingAdmins.length > 0) {
+    console.log(`[Platform Seeder] Verified existing administrator account(s) present (${existingAdmins.length} found). Preserving all existing credentials.`);
+  } else {
+    const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'adminbikram@krishnaelectronics.com.np';
+    const rawPassword = process.env.INITIAL_ADMIN_PASSWORD;
+
+    if (!rawPassword && process.env.NODE_ENV === 'production') {
+      throw new Error('[Platform Seeder] FATAL: INITIAL_ADMIN_PASSWORD environment variable must be provided for initial production database bootstrapping.');
+    }
+
+    const initialPassword = rawPassword || (require('crypto').randomBytes(16).toString('hex') + '!Aa1');
+    const passwordHash = await bcrypt.hash(initialPassword, 12);
+
+    const admin = await prisma.user.create({
+      data: {
+        email: adminEmail,
+        name: `Bikram - ${manifest.identity.name} Administrator`,
+        passwordHash: passwordHash,
+        role: 'SUPER_ADMIN',
+        isActive: true,
+      },
     });
-  } catch (_) {}
+    console.log(`✓ Initial admin created: ${admin.email}`);
+    if (!rawPassword) {
+      console.log(`[Platform Seeder] Notice: Generated one-time local setup password: ${initialPassword}`);
+    }
+  }
 
   // 2. Business Settings from Manifest (Preserves user changes if already configured)
   const fullAddress = 'Birendranagar, Surkhet';

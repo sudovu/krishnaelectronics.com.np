@@ -39,20 +39,32 @@ async function importDatabase() {
       console.log(`✓ Settings restored (${data.settings.length})`);
     }
 
-    // 2. Users
+    // 2. Users (Preserves existing passwords; never overwrites hashes)
     if (data.users && data.users.length > 0) {
       for (const u of data.users) {
-        await prisma.user.upsert({
-          where: { email: u.email },
-          update: {
-            name: u.name,
-            role: u.role,
-            isActive: u.isActive,
-            avatarUrl: u.avatarUrl,
-            updatedAt: new Date(),
-          },
-          create: u,
-        });
+        const existing = await prisma.user.findUnique({ where: { email: u.email } });
+        if (existing) {
+          await prisma.user.update({
+            where: { email: u.email },
+            data: {
+              name: u.name,
+              role: u.role,
+              isActive: u.isActive,
+              avatarUrl: u.avatarUrl,
+              updatedAt: new Date(),
+            },
+          });
+        } else {
+          const fallbackHash = u.passwordHash && u.passwordHash.startsWith('$2')
+            ? u.passwordHash
+            : await require('bcryptjs').hash(require('crypto').randomBytes(16).toString('hex') + '!Aa1', 12);
+          await prisma.user.create({
+            data: {
+              ...u,
+              passwordHash: fallbackHash,
+            },
+          });
+        }
       }
       console.log(`✓ Users restored (${data.users.length})`);
     }

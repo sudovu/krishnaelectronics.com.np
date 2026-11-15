@@ -1,15 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentAdminFromRequest, logAudit } from '@/lib/auth';
+import { getAuthenticatedAdmin, hasPermission, logAudit } from '@/lib/auth';
 
 export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
+    }
+
+    if (!hasPermission(admin.role, 'canManageSettings') && !hasPermission(admin.role, 'canPublishProducts')) {
+      return NextResponse.json(
+        { error: 'Forbidden: Your role does not have permission to modify categories.' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;
@@ -51,9 +58,16 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Administrative authentication required.' }, { status: 401 });
+    }
+
+    if (!hasPermission(admin.role, 'canDeleteProducts') && !hasPermission(admin.role, 'canManageSettings')) {
+      return NextResponse.json(
+        { error: 'Forbidden: Your role does not have permission to delete categories.' },
+        { status: 403 }
+      );
     }
 
     const { id } = params;

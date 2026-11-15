@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentAdminFromRequest, logAudit } from '@/lib/auth';
+import { getAuthenticatedAdmin, hasPermission, logAudit } from '@/lib/auth';
 import { clearProfileCache } from '@/platform/engine/tenant-loader';
 import { revalidatePath } from 'next/cache';
 
 export async function POST(req: NextRequest) {
   try {
-    const admin = getCurrentAdminFromRequest(req);
+    const admin = await getAuthenticatedAdmin(req);
     if (!admin) {
       return NextResponse.json({ error: 'Unauthorized: Please log in first.' }, { status: 401 });
+    }
+
+    if (!hasPermission(admin.role, 'canPublishProducts')) {
+      return NextResponse.json(
+        { error: 'Forbidden: Your role does not have permission to publish content to production.' },
+        { status: 403 }
+      );
     }
 
     const body = await req.json().catch(() => ({}));

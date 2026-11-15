@@ -55,7 +55,13 @@ async function exportDatabase() {
       },
       data: {
         settings,
-        users,
+        users: users.map((u) => {
+          const { passwordHash, ...safeUser } = u;
+          return {
+            ...safeUser,
+            passwordHash: '[REDACTED_FOR_SECURITY]',
+          };
+        }),
         categories,
         subcategories,
         brands,
