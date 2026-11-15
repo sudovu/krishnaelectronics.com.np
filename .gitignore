@@ -40,6 +40,8 @@
 /backup/*.dump
 /backup/*.tar.gz
 !/backup/.gitkeep
+/backups/
+*.sqlite.gz
 
 # TypeScript
 *.tsbuildinfo

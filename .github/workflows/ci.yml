@@ -38,6 +38,15 @@ jobs:
           JWT_SECRET: "ci-test-secret-key-32-chars-long"
         run: node scripts/run-tests.js
 
+      - name: Run Security Regression Suite
+        env:
+          DATABASE_URL: "file:./dev.db"
+          JWT_SECRET: "ci-test-secret-key-32-chars-long"
+        run: node scripts/verify-security.js
+
+      - name: Run Isolated Linux Permissions & Backup/Restore Test
+        run: sudo bash scripts/test-linux-permissions.sh
+
       - name: Next.js Production Build
         env:
           DATABASE_URL: "file:./dev.db"
