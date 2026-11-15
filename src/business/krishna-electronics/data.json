@@ -18,9 +18,9 @@
       }
     },
     "contact": {
-      "phoneDefault": "",
-      "emailDefault": "",
-      "whatsappDefault": "",
+      "phoneDefault": "083-522006",
+      "emailDefault": "krishanelectronics2077@gmail.com",
+      "whatsappDefault": "9858083951",
       "hoursDefault": "Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency services available)"
     },
     "currency": {
@@ -96,6 +96,14 @@
       "icon": "Printer",
       "orderIndex": 7,
       "subcategories": ["Toner Cartridges", "Ink Bottles", "Printers", "Drum Units", "Printer Parts"]
+    },
+    {
+      "name": "Accessory Items",
+      "slug": "accessory-items",
+      "description": "Extension cords, multi-plug sockets, adapters, converters, cables, and power accessories.",
+      "icon": "Zap",
+      "orderIndex": 8,
+      "subcategories": ["Extension Cords", "Multi-Plug Sockets", "Power Adapters", "Cables & Converters", "Surge Protectors"]
     }
   ],
   "brands": [
@@ -114,7 +122,8 @@
     { "name": "Tuya Smart", "slug": "tuya-smart", "isPopular": true },
     { "name": "D-Link", "slug": "d-link", "isPopular": false },
     { "name": "Epson", "slug": "epson", "isPopular": true },
-    { "name": "APC", "slug": "apc", "isPopular": true }
+    { "name": "APC", "slug": "apc", "isPopular": true },
+    { "name": "Micro", "slug": "micro", "isPopular": true }
   ],
   "services": [
     {
@@ -436,6 +445,33 @@
       "isPopular": true,
       "isNewArrival": false,
       "status": "PUBLISHED"
+    },
+    {
+      "title": "Micro MPS-A141-A 4 Sockets Extension Cord",
+      "slug": "micro-mps-a141-a-4-sockets-extension-cord",
+      "sku": "10",
+      "categorySlug": "accessory-items",
+      "brandSlug": "micro",
+      "regularPrice": 1650,
+      "offerPrice": 1300,
+      "discountPercent": 21,
+      "stockQuantity": 0,
+      "stockStatus": "OUT_OF_STOCK",
+      "shortDescription": "Heavy-duty 4-socket multi-plug extension cord with individual on/off power switches, surge protection, and safety indicator lights.",
+      "fullDescription": "Micro MPS-A141-A 4 Sockets Extension Cord features 4 universal multi-standard power sockets, individual LED-illuminated switches for each socket, high-grade copper internal busbars, flame-retardant outer housing, and integrated surge protection. Designed for reliable daily power delivery to desktop computers, monitors, printers, chargers, and home electronics in Surkhet.",
+      "specifications": [
+        { "name": "Sockets", "value": "4 Universal Multi-Standard Sockets" },
+        { "name": "Switches", "value": "4 Individual On/Off Switches with LED Indicators" },
+        { "name": "Voltage / Current", "value": "250V ~ 10A Max" },
+        { "name": "Cable", "value": "Heavy-Duty Insulated Copper Cable" },
+        { "name": "Safety Protection", "value": "Surge & Spike Suppression, Fire-Retardant ABS Enclosure" }
+      ],
+      "warranty": "6 Months Official Warranty",
+      "primaryImage": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+      "isFeatured": false,
+      "isPopular": true,
+      "isNewArrival": true,
+      "status": "PUBLISHED"
     }
   ],
   "banners": [
@@ -497,5 +533,62 @@
       "category": "Enterprise AMC",
       "orderIndex": 5
     }
-  ]
+  ],
+  "homeConfig": {
+    "showHeaderHeading": true,
+    "headerHeadingText": "Krishna Electronics Order & Suppliers",
+    "showHeaderTagline": true,
+    "headerTaglineText": "PREMIUM ELECTRONICS, IOT SOLUTIONS & PROFESSIONAL TECHNICAL SERVICES IN SURKHET",
+    "showTopNotificationBar": true,
+    "topNotificationText": "",
+    "showTopContactLinks": true,
+    "showTopPortalLink": true,
+    "showOccasionBanner": true,
+    "occasionBannerText": "🎉 Happy Tihar from Krishna Electronics! Special seasonal discounts & offers available across Surkhet & Karnali Province. Visit our store or order online! 🪔",
+    "occasionBannerBadge": "Festive Greeting",
+    "occasionBannerRollable": true,
+    "showContactButton": true,
+    "contactButtonLabel": "Contact Store",
+    "showBookRepairButton": true,
+    "bookRepairButtonLabel": "Book Repair",
+    "showNavbarBadge": true,
+    "navbarBadgeText": "Official Surkhet Store",
+    "categoryBadge": "Explore Department Catalogs",
+    "categoryTitle": "Product Categories",
+    "categorySubtitle": "Select a specialized category for commercial equipment, networking, and smart electronics.",
+    "featuredBadge": "Verified Top Recommendations",
+    "featuredTitle": "Featured Electronics & Hardware",
+    "featuredSubtitle": "Top-selling routers, surveillance cameras, laptops, and IoT devices in Surkhet.",
+    "showcaseBadge": "Next-Gen Smart Living",
+    "showcaseTitle": "Transform Your Home & Facility with IoT Automation",
+    "showcaseSubtitle": "We supply and commission automated water tank controllers, smart circuit breakers, Sonoff/Tuya Wi-Fi relays, and environmental telemetry sensors across Karnali Province. Control everything from your smartphone.",
+    "showcaseCtaText": "Explore IoT Solutions",
+    "showcaseCtaLink": "/services/iot-smart-device-solutions",
+    "showcaseCtaSecondaryText": "Request Smart Site Survey",
+    "showcaseCtaSecondaryLink": "/contact",
+    "showcaseFeature1Title": "Mobile App",
+    "showcaseFeature1Desc": "Remote control of lights, pumps & AC from anywhere",
+    "showcaseFeature2Title": "Energy Saving",
+    "showcaseFeature2Desc": "Real-time kWh telemetry & automated cut-off schedules",
+    "showcaseFeature3Title": "Tank Automation",
+    "showcaseFeature3Desc": "Automatic water pump on/off with dry-run protection",
+    "showcaseFeature4Title": "Professional Lab",
+    "showcaseFeature4Desc": "Tested and calibrated for local 220V grid stability",
+    "servicesBadge": "Certified Laboratory & On-Site Support",
+    "servicesTitle": "Repair, Installation & Maintenance Services",
+    "servicesSubtitle": "From chip-level laptop motherboard diagnostics to enterprise optical fiber cabling and corporate Annual Maintenance Contracts (AMC).",
+    "whyTitle": "Why Customers Rely on Us",
+    "whySubtitle": "Serving Birendranagar and Karnali Province with genuine hardware, transparent pricing, and deep technical mastery.",
+    "whyCard1Title": "100% Genuine Brands",
+    "whyCard1Desc": "Authorized TP-Link, MikroTik, Hikvision, Dell, HP, and Sonoff equipment with genuine manufacturer warranties.",
+    "whyCard2Title": "Chip-Level Repair Lab",
+    "whyCard2Desc": "Advanced micro-soldering, motherboard component tracing, clean OS flashing, and diagnostic instruments under one roof.",
+    "whyCard3Title": "Enterprise AMC Contracts",
+    "whyCard3Desc": "Guaranteed response SLA, routine preventative maintenance, and on-call engineer dispatch for institutions.",
+    "whyCard4Title": "Local Store & Lab",
+    "whyCard4Desc": "Walk into our physical facility in Surkhet for direct consultation, live testing, and handover.",
+    "locationBadge": "Visit Our Local Facility",
+    "locationTitle": "Krishna Electronics Order & Suppliers",
+    "locationSubtitle": "Whether you need a quick laptop diagnostic, a custom CCTV quote for your property, or bulk office IT equipment, our doors are open."
+  }
 }

@@ -86,11 +86,25 @@ async function main() {
         maintenanceMode: false,
         metaTitle: `${manifest.identity.name} | ${manifest.identity.location.city}, ${manifest.identity.location.country}`,
         metaDescription: manifest.identity.description,
+        homeConfig: typeof manifest.homeConfig === 'object' ? JSON.stringify(manifest.homeConfig) : (manifest.homeConfig || null),
       },
     });
     console.log('✓ Initial site settings initialized from business manifest');
   } else {
-    console.log('✓ Existing site settings preserved (no overwrite).');
+    try {
+      await prisma.setting.update({
+        where: { id: 'site-settings' },
+        data: {
+          siteName: manifest.identity.name,
+          locationAddress: 'Birendranagar, Surkhet',
+          contactPhone: existingSetting.contactPhone || manifest.identity.contact.phoneDefault,
+          contactEmail: existingSetting.contactEmail || manifest.identity.contact.emailDefault,
+          contactWhatsapp: existingSetting.contactWhatsapp || manifest.identity.contact.whatsappDefault,
+          homeConfig: existingSetting.homeConfig || (typeof manifest.homeConfig === 'object' ? JSON.stringify(manifest.homeConfig) : manifest.homeConfig),
+        },
+      });
+      console.log('✓ Existing site settings updated: locationAddress and contact defaults set');
+    } catch (_) {}
   }
 
   // 3. Categories & Subcategories

@@ -50,3 +50,7 @@ next-env.d.ts
 # Uploads directory
 /public/uploads/*
 !/public/uploads/.gitkeep
+
+# Freeze and Pre-Reconstruct Backups
+freeze_backup_*
+pre_reconstruct_backup_*
