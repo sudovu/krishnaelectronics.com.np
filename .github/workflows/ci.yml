@@ -45,7 +45,12 @@ jobs:
         run: node scripts/verify-security.js
 
       - name: Run Isolated Linux Permissions & Backup/Restore Test
-        run: sudo bash scripts/test-linux-permissions.sh
+        run: |
+          sudo bash scripts/test-linux-permissions.sh 2>&1 | tee /tmp/perm_test.log || {
+            ERR=$(tail -n 20 /tmp/perm_test.log | tr '\n' ' ')
+            echo "::error title=Linux Permissions Test Failure::$ERR"
+            exit 1
+          }
 
       - name: Next.js Production Build
         env:
