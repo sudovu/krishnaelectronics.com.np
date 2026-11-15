@@ -213,6 +213,20 @@ async function main() {
           publishedAt: p.status === 'PUBLISHED' ? new Date() : null,
         },
       });
+    } else {
+      await prisma.product.update({
+        where: { id: existingProduct.id },
+        data: {
+          sku: p.sku,
+          title: p.title,
+          regularPrice: p.regularPrice,
+          offerPrice: p.offerPrice,
+          discountPercent: p.discountPercent,
+          stockQuantity: p.stockQuantity,
+          stockStatus: p.stockStatus,
+          status: p.status,
+        },
+      });
     }
   }
   console.log('✓ Products verified/seeded');
