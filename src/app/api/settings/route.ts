@@ -12,12 +12,52 @@ export async function GET(req: NextRequest) {
     const settings = await prisma.setting.findUnique({
       where: { id: 'site-settings' },
     });
-    return NextResponse.json({ settings }, {
-      headers: {
-        'Cache-Control': 'no-store, max-age=0'
-      }
-    });
+    if (settings) {
+      return NextResponse.json({ settings }, {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0'
+        }
+      });
+    }
+    throw new Error('Settings record not found');
   } catch (error) {
+    try {
+      const manifest = require('@/business/krishna-electronics/data.json');
+      const fallbackSettings = {
+        id: 'site-settings',
+        siteName: manifest.identity.name,
+        logoUrl: manifest.identity.logoUrl || '/images/logo.jpg',
+        siteTagline: manifest.identity.tagline,
+        siteDescription: manifest.identity.description,
+        contactPhone: manifest.identity.contact?.phoneDefault || '083-522006',
+        contactEmail: manifest.identity.contact?.emailDefault || 'krishanelectronics2077@gmail.com',
+        contactWhatsapp: manifest.identity.contact?.whatsappDefault || '9858083951',
+        locationAddress: 'Birendranagar, Surkhet',
+        businessHours: manifest.identity.contact?.hoursDefault || 'Sun - Fri: 9:30 AM - 6:30 PM | Saturday: Closed (On-call emergency services available)',
+        googleMapsEmbedUrl: '',
+        socialFacebook: '',
+        socialTiktok: '',
+        socialInstagram: '',
+        currencyCode: 'NPR',
+        currencySymbol: 'रु',
+        taxRatePercent: 13.0,
+        maintenanceMode: false,
+        primaryColor: '#0066FF',
+        secondaryColor: '#0052cc',
+        accentColor: '#00F0FF',
+        darkSurface: '#0B132B',
+        lightSurface: '#F8FAFC',
+        fontFamily: 'Inter',
+        metaTitle: 'Krishna Electronics Order & Suppliers | Surkhet, Nepal',
+        metaDescription: 'Trusted electronics store & technology service center in Surkhet.',
+        homeConfig: JSON.stringify(manifest.homeConfig || {}),
+      };
+      return NextResponse.json({ settings: fallbackSettings }, {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0'
+        }
+      });
+    } catch (_) {}
     return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
   }
 }

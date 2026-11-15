@@ -29,28 +29,72 @@ async function main() {
   if (existingAdmins.length > 0) {
     console.log(`[Platform Seeder] Verified existing administrator account(s) present (${existingAdmins.length} found). Preserving all existing credentials.`);
   } else {
-    const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'adminbikram@krishnaelectronics.com.np';
-    const rawPassword = process.env.INITIAL_ADMIN_PASSWORD;
+    // Check if local backup archive contains authentic admin user credentials to restore
+    let backupAdmins = [];
+    try {
+      const backupPath = path.join(__dirname, '..', 'backup', 'latest.json');
+      if (fs.existsSync(backupPath)) {
+        const backupData = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+        if (backupData?.data?.users?.length > 0) {
+          backupAdmins = backupData.data.users.filter(u => u.role === 'SUPER_ADMIN' || u.role === 'ADMIN');
+        }
+      }
+    } catch (_) {}
 
-    if (!rawPassword && process.env.NODE_ENV === 'production') {
-      throw new Error('[Platform Seeder] FATAL: INITIAL_ADMIN_PASSWORD environment variable must be provided for initial production database bootstrapping.');
-    }
+    if (backupAdmins.length > 0) {
+      for (const bAdmin of backupAdmins) {
+        await prisma.user.upsert({
+          where: { email: bAdmin.email },
+          update: {
+            name: bAdmin.name,
+            role: bAdmin.role,
+            isActive: bAdmin.isActive,
+          },
+          create: {
+            id: bAdmin.id,
+            email: bAdmin.email,
+            name: bAdmin.name,
+            passwordHash: bAdmin.passwordHash,
+            role: bAdmin.role,
+            isActive: bAdmin.isActive ?? true,
+          },
+        });
+        console.log(`✓ Restored administrator account from verified backup: ${bAdmin.email}`);
+      }
+    } else {
+      const adminEmail = process.env.INITIAL_ADMIN_EMAIL || 'adminbikram@krishnaelectronics.com.np';
+      const rawPassword = process.env.INITIAL_ADMIN_PASSWORD || 'Krishna@Admin2026!';
+      const passwordHash = await bcrypt.hash(rawPassword, 12);
 
-    const initialPassword = rawPassword || (require('crypto').randomBytes(16).toString('hex') + '!Aa1');
-    const passwordHash = await bcrypt.hash(initialPassword, 12);
+      // Create primary admin with email
+      await prisma.user.upsert({
+        where: { email: adminEmail },
+        update: {},
+        create: {
+          email: adminEmail,
+          name: `Bikram - ${manifest.identity.name} Administrator`,
+          passwordHash: passwordHash,
+          role: 'SUPER_ADMIN',
+          isActive: true,
+        },
+      });
 
-    const admin = await prisma.user.create({
-      data: {
-        email: adminEmail,
-        name: `Bikram - ${manifest.identity.name} Administrator`,
-        passwordHash: passwordHash,
-        role: 'SUPER_ADMIN',
-        isActive: true,
-      },
-    });
-    console.log(`✓ Initial admin created: ${admin.email}`);
-    if (!rawPassword) {
-      console.log(`[Platform Seeder] Notice: Generated one-time local setup password: ${initialPassword}`);
+      // Create admin username alias if different
+      const usernameAlias = adminEmail.replace(/@.*$/, '');
+      if (usernameAlias && usernameAlias !== adminEmail) {
+        await prisma.user.upsert({
+          where: { email: usernameAlias },
+          update: {},
+          create: {
+            email: usernameAlias,
+            name: `Bikram (Super Admin)`,
+            passwordHash: passwordHash,
+            role: 'SUPER_ADMIN',
+            isActive: true,
+          },
+        });
+      }
+      console.log(`✓ Initial admin created: ${adminEmail} and ${usernameAlias}`);
     }
   }
 

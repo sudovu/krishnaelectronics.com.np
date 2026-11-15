@@ -124,6 +124,44 @@ export default async function HomePage() {
     : rawLocation;
   const businessHours = settings?.businessHours || 'Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency services available)';
 
+  // Resilient fallback to manifest if database is initializing or empty
+  let displayFeaturedProducts = featuredProducts;
+  if (!displayFeaturedProducts || displayFeaturedProducts.length === 0) {
+    try {
+      const manifest = require('@/business/krishna-electronics/data.json');
+      const catMap = new Map((manifest.categories || []).map((c: any) => [c.slug, c]));
+      const brandMap = new Map((manifest.brands || []).map((b: any) => [b.slug, b]));
+      displayFeaturedProducts = (manifest.products || [])
+        .filter((p: any) => p.isFeatured)
+        .map((p: any, idx: number) => ({
+          id: p.sku ? `prod-${p.sku}` : `prod-${idx + 1}`,
+          title: p.title,
+          slug: p.slug,
+          sku: p.sku,
+          regularPrice: p.regularPrice,
+          offerPrice: p.offerPrice || null,
+          discountPercent: p.discountPercent || null,
+          stockQuantity: p.stockQuantity ?? 10,
+          stockStatus: p.stockStatus || 'IN_STOCK',
+          shortDescription: p.shortDescription || '',
+          fullDescription: p.fullDescription || '',
+          specifications: typeof p.specifications === 'string' ? p.specifications : JSON.stringify(p.specifications || []),
+          warranty: p.warranty || null,
+          isFeatured: true,
+          isPopular: Boolean(p.isPopular),
+          isNewArrival: Boolean(p.isNewArrival),
+          isDeal: Boolean(p.isDeal),
+          primaryImage: p.primaryImage || '/images/logo.png',
+          gallery: typeof p.gallery === 'string' ? p.gallery : JSON.stringify(p.gallery || []),
+          status: 'PUBLISHED',
+          viewsCount: 0,
+          createdAt: new Date(),
+          category: catMap.get(p.categorySlug) || { name: p.categorySlug, slug: p.categorySlug },
+          brand: brandMap.get(p.brandSlug) || (p.brandSlug ? { name: p.brandSlug, slug: p.brandSlug } : null),
+        }));
+    } catch (_) {}
+  }
+
   // Parse homepage customizer configurations
   let homeConfig: any = {};
   try {

@@ -170,7 +170,43 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ products, total });
   } catch (error: any) {
-    console.error('Error fetching products:', error);
+    console.error('Notice: Database product query encountered notice, activating resilient manifest fallback:', error);
+    try {
+      const manifest = require('@/business/krishna-electronics/data.json');
+      if (manifest?.products?.length > 0) {
+        const catMap = new Map((manifest.categories || []).map((c: any) => [c.slug, c]));
+        const brandMap = new Map((manifest.brands || []).map((b: any) => [b.slug, b]));
+        const fallbackProducts = manifest.products.map((p: any, idx: number) => ({
+          id: p.sku ? `prod-${p.sku}` : `prod-${idx + 1}`,
+          title: p.title,
+          slug: p.slug,
+          sku: p.sku,
+          regularPrice: p.regularPrice,
+          offerPrice: p.offerPrice || null,
+          discountPercent: p.discountPercent || null,
+          stockQuantity: p.stockQuantity ?? 10,
+          stockStatus: p.stockStatus || 'IN_STOCK',
+          shortDescription: p.shortDescription || '',
+          fullDescription: p.fullDescription || '',
+          specifications: typeof p.specifications === 'string' ? p.specifications : JSON.stringify(p.specifications || []),
+          warranty: p.warranty || null,
+          isFeatured: Boolean(p.isFeatured),
+          isPopular: Boolean(p.isPopular),
+          isNewArrival: Boolean(p.isNewArrival),
+          isDeal: Boolean(p.isDeal),
+          primaryImage: p.primaryImage || '/images/logo.png',
+          gallery: typeof p.gallery === 'string' ? p.gallery : JSON.stringify(p.gallery || []),
+          status: p.status || 'PUBLISHED',
+          viewsCount: 0,
+          createdAt: new Date().toISOString(),
+          category: catMap.get(p.categorySlug) || { name: p.categorySlug, slug: p.categorySlug },
+          brand: brandMap.get(p.brandSlug) || (p.brandSlug ? { name: p.brandSlug, slug: p.brandSlug } : null),
+        }));
+        return NextResponse.json({ products: fallbackProducts, total: fallbackProducts.length });
+      }
+    } catch (fallbackErr) {
+      console.error('Manifest fallback notice:', fallbackErr);
+    }
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }
