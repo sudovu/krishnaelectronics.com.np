@@ -10,7 +10,12 @@ import {
   Truck, 
   CreditCard, 
   Lock, 
-  MessageSquare 
+  MessageSquare,
+  Wrench,
+  Wifi,
+  Laptop,
+  CheckCircle2,
+  ExternalLink
 } from 'lucide-react';
 import { SiteSettingsData } from '@/types';
 
@@ -25,83 +30,83 @@ export default function Footer({ settings }: FooterProps) {
     ? 'Birendranagar, Surkhet'
     : rawAddress;
   const hours = settings?.businessHours || 'Sunday – Friday: 9:30 AM – 6:30 PM | Saturday: Closed (On-call emergency services available)';
-  const phone = settings?.contactPhone || '';
-  const email = settings?.contactEmail || '';
-  const whatsapp = settings?.contactWhatsapp || '';
+  const phone = settings?.contactPhone || '083-522006';
+  const email = settings?.contactEmail || 'admin@krishnaelectronics.com.np';
+  const whatsapp = settings?.contactWhatsapp || '9858083951';
   const deliveryInfo = settings?.deliveryInfo || 'Prompt local delivery across Surkhet Valley and scheduled dispatch throughout Karnali Province.';
   const paymentMethods = settings?.paymentMethods || 'Cash on Delivery, Bank Transfer, Fonepay / QR, eSewa, Khalti';
 
   return (
-    <footer className="bg-navy-950 text-slate-300 border-t border-navy-800">
-      {/* Value Proposition Strip */}
-      <div className="border-b border-navy-800 bg-navy-900/60 py-6">
+    <footer className="bg-[#060B18] text-slate-300 border-t border-slate-800">
+      {/* 1. Value Proposition Strip */}
+      <div className="border-b border-slate-800/80 bg-[#0B132B]/70 py-6">
         <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center shrink-0 border border-brand-500/20">
+            <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-cyan-accent flex items-center justify-center shrink-0 border border-brand-500/20">
               <ShieldCheck className="w-5 h-5 text-cyan-accent" />
             </div>
             <div>
               <h4 className="text-xs font-bold text-white uppercase tracking-wider">Official Warranties</h4>
-              <p className="text-xs text-slate-400">Genuine products with official brand &amp; lab warranty</p>
+              <p className="text-xs text-slate-400 mt-0.5">Authorized brands &amp; genuine parts</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center shrink-0 border border-brand-500/20">
+            <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-cyan-accent flex items-center justify-center shrink-0 border border-brand-500/20">
               <Truck className="w-5 h-5 text-cyan-accent" />
             </div>
             <div>
               <h4 className="text-xs font-bold text-white uppercase tracking-wider">Surkhet &amp; Karnali Logistics</h4>
-              <p className="text-xs text-slate-400">Valley dispatch &amp; courier across provinces</p>
+              <p className="text-xs text-slate-400 mt-0.5">Valley delivery &amp; provincial dispatch</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center shrink-0 border border-brand-500/20">
-              <Cpu className="w-5 h-5 text-cyan-accent" />
+            <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-cyan-accent flex items-center justify-center shrink-0 border border-brand-500/20">
+              <Wrench className="w-5 h-5 text-cyan-accent" />
             </div>
             <div>
               <h4 className="text-xs font-bold text-white uppercase tracking-wider">Chip-Level Repair Lab</h4>
-              <p className="text-xs text-slate-400">Motherboard, display, and power diagnostics</p>
+              <p className="text-xs text-slate-400 mt-0.5">Motherboard &amp; hardware micro-soldering</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-lg bg-brand-500/10 text-brand-400 flex items-center justify-center shrink-0 border border-brand-500/20">
+            <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-cyan-accent flex items-center justify-center shrink-0 border border-brand-500/20">
               <CreditCard className="w-5 h-5 text-cyan-accent" />
             </div>
             <div>
               <h4 className="text-xs font-bold text-white uppercase tracking-wider">Transparent Pricing</h4>
-              <p className="text-xs text-slate-400">All prices in NPR (रु) with clear quotation</p>
+              <p className="text-xs text-slate-400 mt-0.5">All prices in NPR (रु) with clear quotation</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand Info */}
+      {/* 2. Main Footer Navigation Grid */}
+      <div className="max-w-7xl mx-auto px-4 py-12 lg:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
+          {/* Brand & Store Facility Summary */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-white p-1 border-2 border-brand-500 shadow-lg shadow-brand-500/20 shrink-0 flex items-center justify-center ring-2 ring-brand-100/30">
+              <div className="w-12 h-12 rounded-2xl overflow-hidden bg-white p-1 border border-brand-500 shadow-md shrink-0 flex items-center justify-center ring-2 ring-brand-500/20">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={settings?.logoUrl || '/images/logo.png'}
-                  alt={`${settings?.siteName || 'Krishna Electronics Order & Suppliers'} Logo`}
+                  alt={`${settings?.siteName || 'Krishna Electronics'} Logo`}
                   className="w-full h-full object-contain"
-                  width={64}
-                  height={64}
+                  width={48}
+                  height={48}
                   loading="lazy"
                   decoding="async"
                 />
               </div>
               <div>
-                <div className="font-bold text-base text-white tracking-wide">
+                <div className="font-extrabold text-base text-white tracking-wide">
                   {settings?.siteName || 'KRISHNA ELECTRONICS'}
                 </div>
                 {Boolean(settings?.siteTagline?.trim()) && (
-                  <div className="text-xs text-cyan-accent font-medium">
+                  <div className="text-[11px] text-cyan-accent font-semibold tracking-wider uppercase">
                     {settings?.siteTagline}
                   </div>
                 )}
@@ -112,50 +117,40 @@ export default function Footer({ settings }: FooterProps) {
               {settings?.siteDescription || 'Your premier electronics, networking, and technical service partner in Karnali Province. We provide certified IT hardware, CCTV surveillance, IoT automation, chip-level laptop repairs, and Annual Maintenance Contracts (AMC) for institutions.'}
             </p>
 
-            <div className="space-y-2 text-xs">
-              <div className="flex items-start gap-2 text-slate-300">
+            <div className="space-y-2.5 text-xs pt-1">
+              <div className="flex items-start gap-2.5 text-slate-300">
                 <MapPin className="w-4 h-4 text-brand-400 shrink-0 mt-0.5" />
                 <span>{address}</span>
               </div>
-              <div className="flex items-start gap-2.5 text-slate-200 bg-navy-900/90 p-3 rounded-xl border border-navy-800 shadow-sm">
+              <div className="flex items-start gap-2.5 text-slate-200 bg-[#0B132B] p-3 rounded-xl border border-slate-800">
                 <Clock className="w-4 h-4 text-cyan-accent shrink-0 mt-0.5" />
-                <div className="space-y-0.5">
+                <div>
                   <span className="font-bold text-white text-[11px] uppercase tracking-wider block">Store Opening &amp; Service Hours</span>
-                  <p className="text-slate-300 text-xs leading-relaxed font-medium">{hours}</p>
+                  <p className="text-slate-400 text-xs leading-relaxed mt-0.5">{hours}</p>
                 </div>
               </div>
-              {phone ? (
-                <div className="flex items-center gap-2 text-slate-300">
+              {phone && (
+                <div className="flex items-center gap-2.5 text-slate-300">
                   <Phone className="w-4 h-4 text-brand-400 shrink-0" />
-                  <a href={`tel:${phone}`} className="hover:text-white transition">{phone}</a>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-slate-500 italic text-[11px]">
-                  <Phone className="w-4 h-4 shrink-0 text-slate-600" />
-                  <span>Phone inquiries: Visit store or configure in Admin</span>
+                  <a href={`tel:${phone}`} className="hover:text-white transition font-mono">{phone}</a>
                 </div>
               )}
-              {email ? (
-                <div className="flex items-center gap-2 text-slate-300">
+              {email && (
+                <div className="flex items-center gap-2.5 text-slate-300">
                   <Mail className="w-4 h-4 text-brand-400 shrink-0" />
                   <a href={`mailto:${email}`} className="hover:text-white transition">{email}</a>
                 </div>
-              ) : (
-                <div className="flex items-center gap-2 text-slate-500 italic text-[11px]">
-                  <Mail className="w-4 h-4 shrink-0 text-slate-600" />
-                  <span>Email inquiries: Configure in Admin settings</span>
-                </div>
               )}
               {whatsapp && (
-                <div className="flex items-center gap-2 text-green-400">
+                <div className="flex items-center gap-2.5 text-emerald-400">
                   <MessageSquare className="w-4 h-4 shrink-0" />
                   <a 
                     href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="hover:underline font-medium"
+                    className="hover:underline font-bold"
                   >
-                    Chat on WhatsApp ({whatsapp})
+                    Direct WhatsApp Desk ({whatsapp})
                   </a>
                 </div>
               )}
@@ -164,38 +159,28 @@ export default function Footer({ settings }: FooterProps) {
 
           {/* Technical Services */}
           <div>
-            <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-4 border-b border-navy-800 pb-2">
+            <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-4 border-b border-slate-800 pb-2">
               Technical Services
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2.5 text-xs text-slate-400">
               <li>
                 <Link href="/services/computer-laptop-repair" className="hover:text-cyan-accent transition">
-                  Laptop &amp; PC Motherboard Repair
+                  Laptop Motherboard Micro-Repair
                 </Link>
               </li>
               <li>
                 <Link href="/services/networking-installation-maintenance" className="hover:text-cyan-accent transition">
-                  Structured Cat6/Fiber Cabling
-                </Link>
-              </li>
-              <li>
-                <Link href="/services/router-switch-wifi-solutions" className="hover:text-cyan-accent transition">
-                  Wi-Fi 6 &amp; MikroTik Bandwidth Setup
+                  Structured Cat6 / Optical Fiber
                 </Link>
               </li>
               <li>
                 <Link href="/services/cctv-surveillance-installation" className="hover:text-cyan-accent transition">
-                  CCTV &amp; Surveillance Systems
+                  Hikvision CCTV Surveillance
                 </Link>
               </li>
               <li>
                 <Link href="/services/iot-smart-device-solutions" className="hover:text-cyan-accent transition">
-                  IoT Smart Home &amp; Automation
-                </Link>
-              </li>
-              <li>
-                <Link href="/services/electronics-repair-troubleshooting" className="hover:text-cyan-accent transition">
-                  Inverter &amp; Board Troubleshooting
+                  IoT Smart Automation &amp; Relays
                 </Link>
               </li>
               <li>
@@ -203,54 +188,59 @@ export default function Footer({ settings }: FooterProps) {
                   Annual Maintenance Contracts (AMC)
                 </Link>
               </li>
+              <li className="pt-1">
+                <Link href="/services" className="text-brand-400 hover:text-brand-300 font-bold">
+                  View All 7 Services &rarr;
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Product Categories */}
+          {/* Verified Categories */}
           <div>
-            <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-4 border-b border-navy-800 pb-2">
+            <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-4 border-b border-slate-800 pb-2">
               Product Categories
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2.5 text-xs text-slate-400">
               <li>
                 <Link href="/products?category=networking-and-connectivity" className="hover:text-cyan-accent transition">
-                  Networking &amp; Routers
+                  Wi-Fi 6 Routers &amp; Switches
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=cctv-and-surveillance" className="hover:text-cyan-accent transition">
+                <Link href="/products?category=surveillance-and-security" className="hover:text-cyan-accent transition">
                   CCTV Cameras &amp; NVRs
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=laptops-and-computers" className="hover:text-cyan-accent transition">
-                  Business Laptops &amp; Desktops
+                <Link href="/products?category=computing-and-it-hardware" className="hover:text-cyan-accent transition">
+                  Business Laptops &amp; PCs
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=iot-and-smart-devices" className="hover:text-cyan-accent transition">
+                <Link href="/products?category=smart-electronics-and-iot" className="hover:text-cyan-accent transition">
                   IoT Relays &amp; Smart Switches
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=electronics-and-troubleshooting" className="hover:text-cyan-accent transition">
-                  Electronics Lab &amp; Tools
+                <Link href="/products?category=printers-and-toners" className="hover:text-cyan-accent transition">
+                  LaserJet Toners &amp; Cartridges
                 </Link>
               </li>
               <li>
-                <Link href="/products?category=office-and-order-supplies" className="hover:text-cyan-accent transition">
-                  Office &amp; Order Supplies
+                <Link href="/products?category=electrical-and-power-accessories" className="hover:text-cyan-accent transition">
+                  Extension Cords &amp; Power
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Legal, Support & Policies */}
+          {/* Support & Policies */}
           <div>
-            <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-4 border-b border-navy-800 pb-2">
+            <h4 className="text-xs font-bold text-white tracking-wider uppercase mb-4 border-b border-slate-800 pb-2">
               Support &amp; Policies
             </h4>
-            <ul className="space-y-2 text-xs">
+            <ul className="space-y-2.5 text-xs text-slate-400">
               <li>
                 <Link href="/faqs" className="hover:text-cyan-accent transition">
                   Frequently Asked Questions
@@ -273,13 +263,13 @@ export default function Footer({ settings }: FooterProps) {
               </li>
               <li>
                 <Link href="/contact" className="hover:text-cyan-accent transition">
-                  Store Map &amp; Quotation Request
+                  Store Directions &amp; Inquiry
                 </Link>
               </li>
               <li className="pt-2">
                 <Link 
                   href="/admin/login" 
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-navy-900 hover:bg-navy-800 text-slate-300 rounded border border-navy-700 hover:text-white transition text-xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0B132B] hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-700 hover:text-white transition text-xs font-medium"
                 >
                   <Lock className="w-3 h-3 text-cyan-accent" />
                   <span>Admin Panel Login</span>
@@ -289,25 +279,25 @@ export default function Footer({ settings }: FooterProps) {
           </div>
         </div>
 
-        {/* Payment & Logistics details */}
-        <div className="mt-8 pt-6 border-t border-navy-900 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        {/* Payment & Logistics Strip */}
+        <div className="mt-10 pt-6 border-t border-slate-800/80 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <div>
-            <span className="font-semibold text-slate-300">Accepted Payment Methods:</span> {paymentMethods}
+            <span className="font-bold text-slate-200">Accepted Payment Methods:</span> {paymentMethods}
           </div>
           <div>
-            <span className="font-semibold text-slate-300">Delivery Coverage:</span> {deliveryInfo}
+            <span className="font-bold text-slate-200">Delivery Coverage:</span> {deliveryInfo}
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="bg-navy-950 py-4 px-4 border-t border-navy-900 text-xs text-slate-500">
+      {/* 3. Bottom Copyright Bar */}
+      <div className="bg-[#040810] py-4 px-4 border-t border-slate-900 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <p>
-            &copy; {currentYear} Krishna Electronics Order &amp; Suppliers. All rights reserved. Birendranagar, Surkhet.
+            &copy; {currentYear} Krishna Electronics Order &amp; Suppliers. All rights reserved. Birendranagar, Surkhet, Nepal.
           </p>
           <p className="flex items-center gap-1 text-[11px]">
-            <span>Official Domain:</span>
+            <span>Official Storefront:</span>
             <a href="https://krishnaelectronics.com.np" className="text-cyan-accent hover:underline font-mono">
               krishnaelectronics.com.np
             </a>

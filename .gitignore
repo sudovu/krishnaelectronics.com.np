@@ -35,6 +35,7 @@
 *.sqlite-journal
 
 # Database backup and restore artifacts
+archive/
 /backup/*.json
 /backup/*.sql
 /backup/*.dump
