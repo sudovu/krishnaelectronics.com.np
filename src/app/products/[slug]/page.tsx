@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/public/ProductCard';
+import ProductEnquiryButton from '@/components/public/ProductEnquiryButton';
 import { formatNPR } from '@/lib/formatters';
 import { generateProductSeo } from '@/lib/seo/product-seo';
 import { 
@@ -257,7 +258,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 flex flex-col items-center gap-1">
               <RotateCcw className="w-4 h-4 text-cyan-600" />
               <span className="font-semibold text-slate-700">Store Pickup</span>
-              <span className="text-[11px] text-slate-600">Buddhapath</span>
+              <span className="text-[11px] text-slate-600">Birendranagar</span>
             </div>
           </div>
         </div>
@@ -332,25 +333,11 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           {/* Action CTAs */}
           <div className="pt-6 mt-6 border-t border-slate-200 space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {whatsappNumber ? (
-                <a
-                  href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${whatsappMessage}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition shadow-md shadow-emerald-600/20"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  <span>Order via WhatsApp</span>
-                </a>
-              ) : (
-                <Link
-                  href={`/contact?inquiry=${encodeURIComponent(product.title)}&sku=${product.sku}`}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-bold text-sm transition shadow-md shadow-brand-500/20"
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  <span>Request Quotation</span>
-                </Link>
-              )}
+              <ProductEnquiryButton
+                product={product as any}
+                label="Order / Inquire on Website"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm transition shadow-md shadow-emerald-600/20 cursor-pointer"
+              />
 
               <Link
                 href={`/contact?inquiry=${encodeURIComponent(product.title)}&sku=${product.sku}`}
@@ -362,7 +349,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </div>
 
             <div className="text-center text-xs text-slate-500">
-              Pick up directly at our Buddhapath, Surkhet store or request local Valley delivery.
+              Pick up directly at our Birendranagar, Surkhet store or request local Valley delivery.
             </div>
           </div>
         </div>

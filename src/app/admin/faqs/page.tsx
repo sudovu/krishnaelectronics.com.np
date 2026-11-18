@@ -211,7 +211,7 @@ export default function AdminFAQsPage() {
               <HelpCircle className="w-10 h-10 text-slate-300 mx-auto" />
               <h3 className="font-bold text-sm text-slate-700">No FAQs created yet</h3>
               <p className="text-xs text-slate-400 max-w-sm mx-auto">
-                Click "+ Add New FAQ" to create your first frequently asked question.
+                Click &ldquo;+ Add New FAQ&rdquo; to create your first frequently asked question.
               </p>
             </div>
           )}

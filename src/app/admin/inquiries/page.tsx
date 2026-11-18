@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   MessageSquare, 
   Phone, 
@@ -25,7 +25,7 @@ export default function AdminInquiriesPage() {
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
 
-  const fetchInquiries = () => {
+  const fetchInquiries = useCallback(() => {
     setLoading(true);
     const params = new URLSearchParams();
     if (statusFilter) params.append('status', statusFilter);
@@ -42,11 +42,11 @@ export default function AdminInquiriesPage() {
         setNotes(nMap);
         setLoading(false);
       });
-  };
+  }, [statusFilter, typeFilter]);
 
   useEffect(() => {
     fetchInquiries();
-  }, [statusFilter, typeFilter]);
+  }, [fetchInquiries]);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
     setUpdatingId(id);

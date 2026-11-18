@@ -23,5 +23,11 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "backup_enquiry_feature_pre_phase2",
+    "backup",
+    "freeze_backup_*",
+    "pre_reconstruct_backup_*"
+  ]
 }

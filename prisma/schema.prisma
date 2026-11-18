@@ -210,21 +210,58 @@ model Banner {
 }
 
 model Inquiry {
-  id               String   @id @default(cuid())
-  customerName     String
-  customerPhone    String
-  customerEmail    String?
-  customerAddress  String?
-  type             String   @default("GENERAL_INQUIRY") // PRODUCT_INQUIRY, SERVICE_REQUEST, AMC_REQUEST, DIRECT_ORDER, GENERAL_INQUIRY
-  subject          String
-  message          String
-  productId        String?
-  serviceId        String?
-  preferredContact String   @default("PHONE") // PHONE, WHATSAPP, EMAIL
-  status           String   @default("NEW") // NEW, CONTACTED, IN_PROGRESS, RESOLVED, CANCELLED
-  adminNotes       String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                  String               @id @default(cuid())
+  reference           String?              @unique // Unique business reference: e.g. KE-261118-A7X9
+  customerName        String
+  customerPhone       String
+  customerEmail       String?
+  customerAddress     String?
+  type                String               @default("GENERAL_INQUIRY") // PRODUCT_INQUIRY, SERVICE_REQUEST, AMC_REQUEST, DIRECT_ORDER, GENERAL_INQUIRY
+  category            String?              @default("GENERAL") // PRODUCT, WHATSAPP, REPAIR, SERVICE, GENERAL
+  subject             String
+  message             String
+  productId           String?
+  serviceId           String?
+  deviceCategory      String?              // Laptop, Desktop, Smartphone, CCTV, Router, Printer, IoT, Other
+  deviceBrand         String?              // Dell, HP, Canon, Hikvision, etc.
+  deviceModel         String?              // Model name / number
+  preferredDate       String?              // Preferred service or inspection date
+  productDetails      String?              // JSON string of { title, sku, price, url, image }
+  serviceDetails      String?              // JSON string of { title, slug, startingPrice }
+  attachments         String?              @default("[]") // JSON array of [{ id, originalName, mimeType, size, storageKey, url }]
+  preferredContact    String               @default("PHONE") // PHONE, WHATSAPP, EMAIL
+  status              String               @default("NEW") // NEW, CONTACTED, IN_PROGRESS, RESOLVED, CANCELLED
+  adminNotes          String?
+  emailStatus         String?              @default("PENDING") // PENDING, SENT, FAILED, NOT_CONFIGURED
+  emailError          String?
+  emailSentAt         DateTime?
+  whatsappStatus      String?              @default("NOT_CONFIGURED") // NOT_CONFIGURED, PENDING, SENT, DELIVERED, FAILED
+  whatsappError       String?
+  whatsappMessageId   String?
+  whatsappSentAt      DateTime?
+  notificationRetries Int                  @default(0)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+
+  notifications       NotificationOutbox[]
+}
+
+model NotificationOutbox {
+  id             String    @id @default(cuid())
+  inquiryId      String
+  channel        String    // "EMAIL", "WHATSAPP"
+  recipient      String    // Email address or WhatsApp phone number
+  payload        String    // JSON serialized payload
+  status         String    @default("PENDING") // "PENDING", "PROCESSING", "SENT", "FAILED"
+  attempts       Int       @default(0)
+  maxAttempts    Int       @default(3)
+  lastError      String?
+  idempotencyKey String    @unique
+  sentAt         DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  inquiry        Inquiry   @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
 }
 
 model BlogPost {

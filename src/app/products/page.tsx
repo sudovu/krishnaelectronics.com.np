@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/public/ProductCard';
+import ProductsGridWithEnquiry from '@/components/public/ProductsGridWithEnquiry';
 import { Filter, Search, SlidersHorizontal, ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
 
@@ -551,11 +552,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product as any} />
-              ))}
-            </div>
+            <ProductsGridWithEnquiry products={products as any} />
           )}
         </main>
       </div>
